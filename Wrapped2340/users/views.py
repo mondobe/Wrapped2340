@@ -1,10 +1,10 @@
 import requests
 from django.shortcuts import render,redirect
-from users import spotifyAPI
+from . import spotifyAPI
 import os
 from dotenv import load_dotenv
 
-from users.spotifyAPI import client_id
+from .spotifyAPI import client_id
 
 # Loads variables from .env
 load_dotenv()

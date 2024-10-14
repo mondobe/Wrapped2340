@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Wrapped2340.SpotifyWrapped',
+    'Wrapped2340.users',
 ]
 
 MIDDLEWARE = [
