@@ -1,0 +1,8 @@
+<h1>{{ header_text }}</h1>
+<div class="users-form">
+    <form method="post" action="{% url 'urls:login' %}">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Log In">
+    </form>
+</div>

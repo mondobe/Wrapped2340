@@ -1,5 +1,8 @@
 import requests
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render,redirect
+from django.urls import reverse_lazy
+
 from . import spotifyAPI
 import os
 from dotenv import load_dotenv
@@ -31,3 +34,9 @@ def link(request):
         print(access_token)
 
     return render(request, "users/link.html", context=None)
+
+class WrappedLoginView(LoginView):
+    template_name = 'users/login.html'
+
+class WrappedLogoutView(LogoutView):
+    pass
