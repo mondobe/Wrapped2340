@@ -1,8 +1,12 @@
 <h1>{{ header_text }}</h1>
 <div class="users-form">
-    <form method="post" action="{% url 'urls:login' %}">
+    {% if next_page %}
+        <form method="post" action="{{ form_url }}?next={{ next_page }}">
+    {% else %}
+        <form method="post" action="{{ form_url }}">
+    {% endif %}
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Log In">
+        <input type="submit" value="{{ header_text }}">
     </form>
 </div>

@@ -3,5 +3,6 @@
 {% block title %}Log In{% endblock %}
 
 {% block content %}
+    {% url 'urls:login' as form_url %}
     {% include 'users/form.html' with header_text="Log In" %}
 {% endblock %}
