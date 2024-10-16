@@ -12,17 +12,17 @@
 <body>
     <div class="top-user-info">
         {% if user.is_authenticated %}
-            <form method="post" action="{% url 'urls:logout' %}">
+            <form method="post" action="{% url 'users:logout' %}">
                 {% csrf_token %}
                 Logged in as {{ user.username }}
                 <input type="submit" value="Log Out">
             </form>
         {% else %}
-            <form method="get" action="{% url 'urls:login' %}">
+            <form method="get" action="{% url 'users:login' %}">
                 Not logged in
                 <input type="submit" value="Log In">
             </form>
-            <form method="get" action="{% url 'urls:sign-up' %}">
+            <form method="get" action="{% url 'users:sign-up' %}">
                 <input type="submit" value="Sign Up">
             </form>
         {% endif %}

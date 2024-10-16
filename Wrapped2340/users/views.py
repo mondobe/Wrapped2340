@@ -53,33 +53,33 @@ class WrappedLoginView(LoginView):
         next_page = self.request.GET.get('next')
         if next_page:
             return next_page
-        return reverse('urls:account-settings')
+        return reverse('users:account-settings')
 
 class WrappedLogoutView(LoginRequiredMixin, LogoutView):
     def get_success_url(self):
         referrer = self.request.META.get('HTTP_REFERER')
         if referrer:
             return referrer
-        return reverse('urls:login')
+        return reverse('users:login')
 
 class AccountSettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'users/account-settings.html'
     model = User
     fields = ['username', 'email', 'first_name', 'last_name']
-    success_url = reverse_lazy('urls:account-settings')
+    success_url = reverse_lazy('users:account-settings')
 
     def get_object(self):
         return self.request.user
 
 class WrappedPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'users/password-change.html'
-    success_url = reverse_lazy('urls:account-settings')
+    success_url = reverse_lazy('users:account-settings')
 
 class SignUpView(CreateView):
     template_name = 'users/sign-up.html'
     form_class = SignUpForm
     model = User
-    success_url = reverse_lazy('urls:login')
+    success_url = reverse_lazy('users:login')
 
     def get_object(self):
         return self.request.user

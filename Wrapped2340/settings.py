@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-LOGIN_URL = reverse_lazy("urls:login")
+LOGIN_URL = reverse_lazy("users:login")
 
 # Application definition
 
@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Wrapped2340.common',
-    'Wrapped2340.SpotifyWrapped',
+    'Wrapped2340.home',
+    'Wrapped2340.slides',
     'Wrapped2340.users',
 ]
 
