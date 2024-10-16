@@ -1,7 +1,7 @@
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.shortcuts import render,redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import UpdateView
@@ -69,3 +69,7 @@ class AccountSettingsView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
+class WrappedPasswordChangeView(PasswordChangeView):
+    template_name = 'users/password-change.html'
+    success_url = reverse_lazy('urls:account-settings')
