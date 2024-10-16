@@ -71,7 +71,7 @@ class AccountSettingsView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return self.request.user
 
-class WrappedPasswordChangeView(PasswordChangeView):
+class WrappedPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'users/password-change.html'
     success_url = reverse_lazy('urls:account-settings')
 
