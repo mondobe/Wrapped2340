@@ -4,12 +4,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.shortcuts import render,redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, FormView, CreateView
 
 from . import spotifyAPI
 import os
 from dotenv import load_dotenv
 
+from .forms import SignUpForm
 from .spotifyAPI import client_id
 
 # Loads variables from .env
@@ -70,6 +71,15 @@ class AccountSettingsView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return self.request.user
 
-class WrappedPasswordChangeView(PasswordChangeView):
+class WrappedPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'users/password-change.html'
     success_url = reverse_lazy('urls:account-settings')
+
+class SignUpView(CreateView):
+    template_name = 'users/sign-up.html'
+    form_class = SignUpForm
+    model = User
+    success_url = reverse_lazy('urls:login')
+
+    def get_object(self):
+        return self.request.user
