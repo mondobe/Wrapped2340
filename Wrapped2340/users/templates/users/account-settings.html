@@ -3,7 +3,7 @@
 {% block title %}Update Account Settings{% endblock %}
 
 {% block content %}
-    {% url 'urls:account-settings' as form_url %}
+    {% url 'users:account-settings' as form_url %}
     {% include 'users/form.html' with header_text="Update Account Settings" %}
-    <a href="{% url 'urls:password-change' %}">Change Password</a>
+    <a href="{% url 'users:password-change' %}">Change Password</a>
 {% endblock %}
