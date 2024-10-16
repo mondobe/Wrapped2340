@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'common/styles.css' %}">
+
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <div class="top-user-info">
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'urls:logout' %}">
+                {% csrf_token %}
+                Logged in as {{ user.username }}
+                <input type="submit" value="Log Out">
+            </form>
+        {% else %}
+            <form method="get" action="{% url 'urls:login' %}">
+                Not logged in
+                <input type="submit" value="Log In">
+            </form>
+        {% endif %}
+    </div>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
