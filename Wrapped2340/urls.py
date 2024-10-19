@@ -19,9 +19,10 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('', RedirectView.as_view(pattern_name='home:home')),
+    path('', RedirectView.as_view(pattern_name='home:home'), name='home_redirect'),
     path('admin/', admin.site.urls),
     path('users/', include('Wrapped2340.users.urls')),
     path('home/', include('Wrapped2340.home.urls')),
+
     path('slides/', include('Wrapped2340.slides.urls')),
 ]
