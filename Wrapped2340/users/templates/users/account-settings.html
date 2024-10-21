@@ -6,4 +6,8 @@
     {% url 'users:account-settings' as form_url %}
     {% include 'users/form.html' with header_text="Update Account Settings" %}
     <a href="{% url 'users:password-change' %}">Change Password</a>
+    <form method="post" action="{% url 'users:link-spotify' %}">
+        {% csrf_token %}
+        <button type="submit" value="link" name="action">Link Spotify Account</button>
+    </form>
 {% endblock %}

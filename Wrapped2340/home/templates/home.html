@@ -2,4 +2,8 @@
 
 {% block content %}
     <h1>Hello, {{ user.username }}!</h1>
+    <form method="post" action="{% url 'home:home' %}">
+        {% csrf_token %}
+        <button type="submit" value="topArtists" name="action">Get Top Artists</button>
+    </form>
 {% endblock %}
