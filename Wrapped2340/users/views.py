@@ -1,44 +1,18 @@
-import requests
+from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
-from django.shortcuts import render,redirect
+from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import UpdateView, FormView, CreateView
-
-from . import spotifyAPI
-import os
+from django.views.generic import UpdateView, CreateView, View
+from .models import *
+from ..common import spotifyAPI
 from dotenv import load_dotenv
-
 from .forms import SignUpForm
-from .spotifyAPI import client_id
 
 # Loads variables from .env
 load_dotenv()
 
 # Create your views here.
-def link(request):
-    if request.POST.get('action') == 'link':
-        print('button clicked')
-        url = spotifyAPI.auth()
-        return redirect(url)
-
-    if 'code' in request.GET:
-        # Extract the code from the URL
-        authorization_code = request.GET['code']
-
-        # Grabs tokens
-        response_data = spotifyAPI.get_access_token(authorization_code)
-
-        # Gets specific data
-        access_token = response_data.get('access_token')
-        refresh_token = response_data.get('refresh_token')
-
-        print(response_data)
-        print(access_token)
-
-    return render(request, "users/link.html", context=None)
-
 class WrappedLoginView(LoginView):
     template_name = 'users/login.html'
 
@@ -70,6 +44,23 @@ class AccountSettingsView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
+    def get(self, request):
+        if 'code' in request.GET:
+            # Extract the code from the URL
+            authorization_code = request.GET['code']
+
+            # Grabs tokens
+            spotifyAPI.get_access_token(self, authorization_code)
+        return super().get(request)
+
+class LinkSpotify(LoginRequiredMixin, View):
+
+    def post(self, request):
+        if request.POST.get('action') == 'link':
+            url = spotifyAPI.auth()
+            return redirect(url)
+        return HttpResponse('Invalid action', status=400)
 
 class WrappedPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'users/password-change.html'
