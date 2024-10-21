@@ -1,0 +1,8 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Reset Password{% endblock %}
+
+{% block content %}
+    {% url 'users:password-reset' as form_url %}
+    {% include 'users/form.html' with header_text="Reset Password" %}
+{% endblock %}

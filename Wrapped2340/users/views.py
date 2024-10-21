@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, \
+    PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import UpdateView, CreateView, View
@@ -65,6 +66,22 @@ class LinkSpotify(LoginRequiredMixin, View):
 class WrappedPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'users/password-change.html'
     success_url = reverse_lazy('users:account-settings')
+
+class WrappedPasswordResetView(PasswordResetView):
+    template_name = 'users/password-reset/reset.html'
+    email_template_name = 'users/password-reset/email.html'
+    subject_template_name = 'users/password-reset/subject.txt'
+    success_url = reverse_lazy('users:password-reset-done')
+
+class WrappedPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'users/password-reset/done.html'
+
+class WrappedPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'users/password-reset/confirm.html'
+    success_url = reverse_lazy('users:password-reset-complete')
+
+class WrappedPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'users/password-reset/complete.html'
 
 class SignUpView(CreateView):
     template_name = 'users/sign-up.html'
