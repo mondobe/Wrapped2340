@@ -1,0 +1,4 @@
+You are receiving this email because we have received a password reset request.
+To reset your password, follow this link:
+{{ protocol }}://{{ domain }}{% url 'users:password-reset-confirm' uidb64=uid token=token %}
+If you didn't submit a password reset request, feel free to ignore this email.

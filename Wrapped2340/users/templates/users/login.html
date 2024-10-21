@@ -5,4 +5,9 @@
 {% block content %}
     {% url 'users:login' as form_url %}
     {% include 'users/form.html' with header_text="Log In" %}
+    <p>
+        Don't have an account? <a href="{% url 'users:sign-up' %}">Sign up</a>
+        <br>
+        <a href="{% url 'users:password-reset' %}">Forgot Password</a>
+    </p>
 {% endblock %}
