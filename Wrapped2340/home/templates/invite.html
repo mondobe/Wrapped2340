@@ -1,0 +1,15 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+    {% if same_user %}
+        <h1>Duo-Wrapped Invite Link</h1>
+        <p>
+            Send this to other people to create a Duo-Wrapped and share your music taste!
+        </p>
+    {% else %}
+        <h1>{{ duo1.username }} and {{ duo2.username }}'s Duo-Wrapped</h1>
+        <p>
+            You have been invited to participate in a Duo-Wrapped with {{ other.username }}!
+        </p>
+    {% endif %}
+{% endblock %}

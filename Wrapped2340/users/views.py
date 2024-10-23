@@ -4,11 +4,11 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView,
     PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import UpdateView, CreateView, View
+from django.views.generic import UpdateView, CreateView, View, FormView
 from .models import *
 from ..common import spotifyAPI
 from dotenv import load_dotenv
-from .forms import SignUpForm
+from .forms import SignUpForm, RotateInviteTokenForm
 
 # Loads variables from .env
 load_dotenv()
@@ -28,7 +28,7 @@ class WrappedLoginView(LoginView):
         next_page = self.request.GET.get('next')
         if next_page:
             return next_page
-        return reverse('users:account-settings')
+        return reverse('home:home')
 
 class WrappedLogoutView(LoginRequiredMixin, LogoutView):
     def get_success_url(self):
@@ -91,3 +91,12 @@ class SignUpView(CreateView):
 
     def get_object(self):
         return self.request.user
+
+class RotateInviteTokenView(FormView):
+    form_class = RotateInviteTokenForm
+    success_url = reverse_lazy('users:account-settings')
+
+    def form_valid(self, form):
+        self.request.user.userprofile.rotate_invite_token()
+        self.request.user.userprofile.save()
+        return super().form_valid(form)

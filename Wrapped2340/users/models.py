@@ -1,3 +1,5 @@
+import secrets
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -8,6 +10,7 @@ class UserProfile(models.Model):
     access_token = models.CharField(max_length=255, null=True)
     refresh_token = models.CharField(max_length=255, null=True)
     data_stash = models.JSONField(default=list)
+    invite_token = models.CharField(max_length=16)
 
     def __str__(self):
         return self.user.username
@@ -15,6 +18,7 @@ class UserProfile(models.Model):
     @classmethod
     def register(cls, user):
         profile = cls(user=user)
+        profile.rotate_invite_token()
         profile.save()
 
     def add_data_stash(self, data_set):
@@ -23,3 +27,10 @@ class UserProfile(models.Model):
 
     def get_data_stash(self):
         return self.data_stash
+
+    def rotate_invite_token(self):
+        self.invite_token = self.create_invite_token()
+
+    def create_invite_token(self):
+        long_username = "%suser" % self.user.username
+        return "%s%s" % (long_username[0:4], secrets.token_urlsafe(9))

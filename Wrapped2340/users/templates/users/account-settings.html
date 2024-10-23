@@ -10,4 +10,8 @@
         {% csrf_token %}
         <button type="submit" value="link" name="action">Link Spotify Account</button>
     </form>
+    <form method="post" action="{% url 'users:rotate-invite-token' %}">
+        {% csrf_token %}
+        <input type="submit" value="Rotate Invite Token">
+    </form>
 {% endblock %}
