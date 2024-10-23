@@ -1,9 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
 from ..common import spotifyAPI
+from ..common.models import Wrapped
 from ..users.models import *
 import os
 from dotenv import load_dotenv
@@ -20,6 +22,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
             reverse('home:invite',
                     kwargs={'invite_token': self.request.user.userprofile.invite_token})
         )
+        profile = self.request.user.userprofile
+        context['wraps'] = Wrapped.objects.filter(
+            Q(creator1=profile) | Q(creator2=profile)).order_by("time_created")
         return context
 
     def post(self, request):

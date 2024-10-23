@@ -34,3 +34,4 @@ class UserProfile(models.Model):
     def create_invite_token(self):
         long_username = "%suser" % self.user.username
         return "%s%s" % (long_username[0:4], secrets.token_urlsafe(9))
+
