@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import BaseUserCreationForm
-from django.forms import EmailField
+from django.forms import EmailField, forms
 
 from Wrapped2340.users.models import UserProfile
 
@@ -14,3 +14,6 @@ class SignUpForm(BaseUserCreationForm):
         user.save()
         profile = UserProfile.register(user)
         return user
+
+class RotateInviteTokenForm(forms.Form):
+    pass

@@ -3,7 +3,7 @@ import base64
 import requests
 import os
 import secrets
-from ..users.models import *
+from Wrapped2340.users.models import UserProfile
 from dotenv import load_dotenv
 
 # Loads variables from .env

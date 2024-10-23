@@ -2,6 +2,11 @@
 
 {% block content %}
     <h1>Hello, {{ user.username }}!</h1>
+    <p>
+        Duo-Wrapped invite link: <a href="{{ duo_invite_link }}">{{ duo_invite_link }}</a>
+        <br>
+        <a href="{% url 'users:account-settings' %}">Account Settings</a>
+    </p>
     <form method="post" action="{% url 'home:home' %}">
         {% csrf_token %}
         <button type="submit" value="topArtists" name="action">Get Top Artists</button>
