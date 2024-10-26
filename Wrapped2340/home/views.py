@@ -16,6 +16,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context['duo_invite_link'] = self.request.build_absolute_uri(
             reverse('home:invite',
                     kwargs={'invite_token': self.request.user.userprofile.invite_token})
