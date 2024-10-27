@@ -28,14 +28,44 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request):
-        if request.POST.get('action') == 'topArtists':
+        if request.POST.get('action') == 'topItems':
             access_token = UserProfile.objects.get(user=self.request.user).access_token
             if access_token:
-                response = spotifyAPI.get_top_artists(self, access_token, 'medium_term', 10)
-                artist_names = [artist.get('name') for artist in response.get('items', [])]
-                print(artist_names)
-                user = UserProfile.objects.get(user=self.request.user)
-                user.add_data_stash(artist_names)
+                artist_response = spotifyAPI.get_top_artists(self, access_token, 'medium_term', 10)
+                tracks_response = spotifyAPI.get_top_tracks(self, access_token, 'medium_term', 10)
+                artists = {
+                    idx: {
+                        'name': artist.get('name'),
+                        'genres': artist.get('genres',[]),
+                    }
+                    for idx, artist in enumerate(artist_response.get('items', []))
+                }
+                tracks = {
+                    idx: {
+                        'name': track.get('name'),
+                        'preview': track.get('preview_url'),
+                    }
+                    for idx, track in enumerate(tracks_response.get('items', []))
+                }
+                combined = {
+                    idx: {
+                        'artist': {
+                            'name': artists[idx].get('name'),
+                            'genres': artists[idx].get('genres', [])
+                        },
+                        'track': {
+                            'name': tracks[idx].get('name'),
+                            'preview_url': tracks[idx].get('preview')
+                        }
+                    }
+                    for idx in range(min(len(artists), len(tracks)))
+                }
+                print(combined)
+
+                Wrapped.objects.create(
+                    creator1=UserProfile.objects.get(user=self.request.user),
+                    content=combined,
+                )
             else:
                 return HttpResponse('Bad Access Token')
 

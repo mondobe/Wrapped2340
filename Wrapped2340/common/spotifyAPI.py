@@ -65,6 +65,29 @@ def get_top_artists(self, access_token, time_range, limit):
 
     return response.json()
 
+def get_top_tracks(self, access_token, time_range, limit):
+    url = 'https://api.spotify.com/v1/me/top/tracks'
+    params = {
+        'time_range': time_range,
+        'limit': limit,
+    }
+    headers = {
+        'content-type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer ' + access_token,
+    }
+    response = requests.get(url, params=params, headers=headers)
+
+    if response.status_code == 401:
+        refresh_token = UserProfile.objects.get(user=self.request.user).refresh_token
+        refresh_access_token(self, refresh_token)
+
+        headers['Authorization'] = 'Bearer ' + str(UserProfile.objects.get(user=self.request.user).access_token)
+        response = requests.get(url, params=params, headers=headers)
+
+        return response.json()
+
+    return response.json()
+
 def refresh_access_token(self, refresh_token):
     print('refreshed token')
     client_credentials = f"{os.getenv('client_id')}:{os.getenv('client_secret')}"

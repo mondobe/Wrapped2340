@@ -16,4 +16,4 @@ class Wrapped(models.Model):
                       if self.creator2 else
                       ("By %s" % self.creator1))
         caption_text = ("Caption: \"%s\"" % self.caption) if self.caption else "No caption"
-        return "%s\n%s\n%s\n%s\n%s" % (noun, created_by, time, caption_text, self.content)
+        return "%s\n%s\n%s\n%s" % (noun, created_by, time, caption_text)

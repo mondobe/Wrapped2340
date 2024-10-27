@@ -9,11 +9,28 @@
     </p>
     <form method="post" action="{% url 'home:home' %}">
         {% csrf_token %}
-        <button type="submit" value="topArtists" name="action">Get Top Artists</button>
+        <button type="submit" value="topItems" name="action">Get User Data</button>
     </form>
-    <pre>
+    <div>
         {% for wrap in wraps %}
-{{ wrap }}
+            <h2>{{ wrap.public|yesno:"Public Wrapped, Wrapped" }}</h2>
+            <p><strong>Created by:</strong> {{ wrap.creator1.user.username }}{% if wrap.creator2 %} and {{ wrap.creator2.user.username }}{% endif %}</p>
+            <p><strong>Created at:</strong> {{ wrap.time_created|date:"Y-m-d H:i:s" }}</p>
+            <p><strong>Caption:</strong> {% if wrap.caption %}"{{ wrap.caption }}"{% else %}No caption{% endif %}</p>
+
+            <strong>Content:</strong>
+            <ol>
+                {% for key, value in wrap.content.items %}
+                    <li>
+                        <strong>Artist:</strong> {{ value.artist.name }}<br>
+                        <strong>Genres:</strong> {{ value.artist.genres|join:", " }}<br>
+                        <strong>Track:</strong> {{ value.track.name }}<br>
+                        {% if value.track.preview_url %}
+                            <a href="{{ value.track.preview_url }}" target="_blank">Preview Track</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
         {% endfor %}
-    </pre>
+    </div>
 {% endblock %}
