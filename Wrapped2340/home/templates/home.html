@@ -1,4 +1,4 @@
-{% extends 'common/base.html' %}
+{% extends 'home/base.html' %}
 
 {% block content %}
     <h1>Hello, {{ user.username }}!</h1>
@@ -9,6 +9,11 @@
     </p>
     <form method="post" action="{% url 'home:home' %}">
         {% csrf_token %}
-        <button type="submit" value="topArtists" name="action">Get Top Artists</button>
+        <button type="submit" value="topItems" name="action">Get User Data</button>
     </form>
+    <div>
+        {% for wrap in wraps %}
+            {% include 'wrapped_thumbnail.html' %}
+        {% endfor %}
+    </div>
 {% endblock %}

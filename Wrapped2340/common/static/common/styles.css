@@ -7,3 +7,7 @@ body {
     display: inline-block;
     margin: 5px;
 }
+
+.top-user-info a {
+    margin: 0;
+}

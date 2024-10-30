@@ -1,4 +1,4 @@
-{% extends 'common/base.html' %}
+{% extends 'home/base.html' %}
 
 {% block content %}
     {% if same_user %}
@@ -11,5 +11,10 @@
         <p>
             You have been invited to participate in a Duo-Wrapped with {{ other.username }}!
         </p>
+        <form method="post" action="{% url 'home:create-duo-wrapped' %}">
+            {% csrf_token %}
+            <input id="invite_token" type="hidden" name="invite_token" value="{{ invite_token }}">
+            <input type="submit" value="Create Duo-Wrapped">
+        </form>
     {% endif %}
 {% endblock %}
