@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, \
     PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import UpdateView, CreateView, View, FormView
 from .models import *
@@ -100,3 +100,7 @@ class RotateInviteTokenView(FormView):
         self.request.user.userprofile.rotate_invite_token()
         self.request.user.userprofile.save()
         return super().form_valid(form)
+
+
+def login_register(request):
+    return render(request, 'users/login_register.html', context=None)

@@ -13,7 +13,9 @@
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "daisyui": "^4.12.13",
-    "postcss": "^8.4.47",
+    "postcss": "^8.4.47"
+  },
+  "devDependencies": {
     "tailwindcss": "^3.4.14"
   }
 }
