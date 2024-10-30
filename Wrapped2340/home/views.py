@@ -1,9 +1,13 @@
+from string import Formatter
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
+from django.views.generic import TemplateView, FormView, View
+
+from .forms import CreateDuoWrappedForm
 from ..common import spotifyAPI
 from ..common.models import Wrapped
 from ..users.models import *
@@ -24,47 +28,19 @@ class HomeView(LoginRequiredMixin, TemplateView):
         )
         profile = self.request.user.userprofile
         context['wraps'] = Wrapped.objects.filter(
-            Q(creator1=profile) | Q(creator2=profile)).order_by("time_created")
+            Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
         return context
 
     def post(self, request):
         if request.POST.get('action') == 'topItems':
-            access_token = UserProfile.objects.get(user=self.request.user).access_token
-            if access_token:
-                artist_response = spotifyAPI.get_top_artists(self, access_token, 'medium_term', 10)
-                tracks_response = spotifyAPI.get_top_tracks(self, access_token, 'medium_term', 10)
-                artists = {
-                    idx: {
-                        'name': artist.get('name'),
-                        'genres': artist.get('genres',[]),
-                    }
-                    for idx, artist in enumerate(artist_response.get('items', []))
-                }
-                tracks = {
-                    idx: {
-                        'name': track.get('name'),
-                        'preview': track.get('preview_url'),
-                    }
-                    for idx, track in enumerate(tracks_response.get('items', []))
-                }
-                combined = {
-                    idx: {
-                        'artist': {
-                            'name': artists[idx].get('name'),
-                            'genres': artists[idx].get('genres', [])
-                        },
-                        'track': {
-                            'name': tracks[idx].get('name'),
-                            'preview_url': tracks[idx].get('preview')
-                        }
-                    }
-                    for idx in range(min(len(artists), len(tracks)))
-                }
-                print(combined)
+            userprofile = self.request.user.userprofile
+            if userprofile.access_token:
+                wrapped_content = spotifyAPI.get_default_wrapped_content(userprofile)
 
                 Wrapped.objects.create(
-                    creator1=UserProfile.objects.get(user=self.request.user),
-                    content=combined,
+                    creator1=userprofile,
+                    version='aiden10-30',
+                    content=wrapped_content,
                 )
             else:
                 return HttpResponse('Bad Access Token')
@@ -76,22 +52,53 @@ class WrappedInviteView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        username = self.request.user.username
 
-        other_invite_token = kwargs.get('invite_token')
-        other = get_object_or_404(User, userprofile__invite_token=other_invite_token)
-
-        if other == self.request.user:
-            context['same_user'] = True
-            return context
-        else:
+        try:
+            duo1, duo2 = get_duo_users(self.request.user, kwargs['invite_token'])
+            context['duo1'] = duo1
+            context['duo2'] = duo2
+            context['other'] = get_object_or_404(User, userprofile__invite_token=kwargs['invite_token'])
+            context['invite_token'] = kwargs['invite_token']
             context['same_user'] = False
+        except ValueError:
+            context['same_user'] = True
+        finally:
+            return context
 
-        duo1, duo2 = (self.request.user, other) \
-            if username < other.username \
-            else (other, self.request.user)
+class CreateDuoWrappedView(FormView):
+    form_class = CreateDuoWrappedForm
+    success_url = reverse_lazy('home:home')
 
-        context['duo1'] = duo1
-        context['duo2'] = duo2
-        context['other'] = other
-        return context
+    def form_valid(self, form):
+        duo1, duo2 = get_duo_users(self.request.user, form.cleaned_data['invite_token'])
+        if duo1.userprofile.access_token and duo2.userprofile.access_token:
+            wrapped_content = {
+                'duo1': spotifyAPI.get_default_wrapped_content(duo1.userprofile),
+                'duo2': spotifyAPI.get_default_wrapped_content(duo2.userprofile),
+            }
+
+            Wrapped.objects.create(
+                creator1=duo1.userprofile,
+                creator2=duo2.userprofile,
+                version='aiden10-30duo',
+                content=wrapped_content,
+            )
+        else:
+            return HttpResponse('Bad Access Token')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect('home:invite', invite_token=form.cleaned_data['invite_token'])
+
+def get_duo_users(user, other_invite_token):
+    username = user.username
+    other = get_object_or_404(User, userprofile__invite_token=other_invite_token)
+
+    if other == user:
+        raise ValueError("Both users are the same")
+
+    duo1, duo2 = (user, other) \
+        if username < other.username \
+        else (other, user)
+
+    return duo1, duo2

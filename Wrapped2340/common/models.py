@@ -2,6 +2,7 @@ from django.db import models
 from Wrapped2340.users.models import UserProfile
 
 class Wrapped(models.Model):
+    version = models.CharField(max_length=20)
     creator1 = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='creator1')
     creator2 = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='creator2', null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)

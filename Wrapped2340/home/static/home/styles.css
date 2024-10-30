@@ -1,0 +1,10 @@
+div.unknown-content {
+    background-color: lightgray;
+    margin: 10px;
+    padding: 10px;
+    width: 500px;
+}
+
+div.unknown-content pre {
+    white-space: pre-wrap;
+}

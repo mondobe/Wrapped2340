@@ -27,7 +27,7 @@ def auth():
     # Construct the authorization URL
     return base_url + urllib.parse.urlencode(payload)
 
-def get_access_token(self, authorization_code):
+def get_access_token(userprofile, authorization_code):
     # Sends in the auth code to get access token and refresh token
     client_credentials = f"{os.getenv('client_id')}:{os.getenv('client_secret')}"
     data = {
@@ -40,55 +40,33 @@ def get_access_token(self, authorization_code):
         'Authorization': 'Basic ' + base64.b64encode(client_credentials.encode()).decode()
     }
     response = requests.post(token_url, data=data, headers=headers).json()
-    save_tokens(self, response.get('access_token'), response.get('refresh_token'))
+    save_tokens(userprofile, response.get('access_token'), response.get('refresh_token'))
 
-def get_top_artists(self, access_token, time_range, limit):
-    url = 'https://api.spotify.com/v1/me/top/artists'
+def get_api_data(userprofile, subdomain, time_range, limit):
+    url = 'https://api.spotify.com/v1/me/top/%s' % subdomain
     params = {
         'time_range': time_range,
         'limit': limit,
     }
     headers = {
         'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer ' + access_token,
+        'Authorization': 'Bearer %s' % userprofile.access_token,
     }
-    response = requests.get(url, params=params, headers=headers)
+    api_get = lambda: requests.get(url, params=params, headers=headers)
+    response = api_get()
 
     if response.status_code == 401:
-        refresh_token = UserProfile.objects.get(user=self.request.user).refresh_token
-        refresh_access_token(self, refresh_token)
+        refresh_token = userprofile.refresh_token
+        refresh_access_token(userprofile, refresh_token)
 
-        headers['Authorization'] = 'Bearer ' + str(UserProfile.objects.get(user=self.request.user).access_token)
-        response = requests.get(url, params=params, headers=headers)
+        headers['Authorization'] = 'Bearer %s' % userprofile.access_token
+        response = api_get()
 
         return response.json()
 
     return response.json()
 
-def get_top_tracks(self, access_token, time_range, limit):
-    url = 'https://api.spotify.com/v1/me/top/tracks'
-    params = {
-        'time_range': time_range,
-        'limit': limit,
-    }
-    headers = {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer ' + access_token,
-    }
-    response = requests.get(url, params=params, headers=headers)
-
-    if response.status_code == 401:
-        refresh_token = UserProfile.objects.get(user=self.request.user).refresh_token
-        refresh_access_token(self, refresh_token)
-
-        headers['Authorization'] = 'Bearer ' + str(UserProfile.objects.get(user=self.request.user).access_token)
-        response = requests.get(url, params=params, headers=headers)
-
-        return response.json()
-
-    return response.json()
-
-def refresh_access_token(self, refresh_token):
+def refresh_access_token(userprofile, refresh_token):
     print('refreshed token')
     client_credentials = f"{os.getenv('client_id')}:{os.getenv('client_secret')}"
     data = {
@@ -102,13 +80,51 @@ def refresh_access_token(self, refresh_token):
     }
     response = requests.post(token_url, data=data, headers=headers).json()
     print(response)
-    save_tokens(self, response.get('access_token'),None)
+    save_tokens(userprofile, response.get('access_token'),None)
 
-def save_tokens(self, access_token, refresh_token):
-    user = UserProfile.objects.get(user=self.request.user)
+def save_tokens(userprofile, access_token, refresh_token):
     if access_token:
-        user.access_token = access_token
+        userprofile.access_token = access_token
     if refresh_token:
-        user.refresh_token = refresh_token
-    user.save()
+        userprofile.refresh_token = refresh_token
+    userprofile.save()
     print("saved tokens")
+
+def get_default_wrapped_content(userprofile):
+    artist_response = get_api_data(
+        userprofile=userprofile,
+        subdomain='artists',
+        time_range='medium_term',
+        limit=10
+    )
+    tracks_response = get_api_data(
+        userprofile=userprofile,
+        subdomain='tracks',
+        time_range='medium_term',
+        limit=10
+    )
+    artists = load_artists(artist_response)
+    tracks = load_tracks(tracks_response)
+    combined = {
+        'artists': artists,
+        'tracks': tracks
+    }
+    return combined
+
+def load_artists(artists_json):
+    return [load_artist(artist) for artist in artists_json['items']]
+
+def load_artist(artist):
+    return {
+        'name': artist['name'],
+        'genres': artist.get('genres', []),
+    }
+
+def load_tracks(tracks_json):
+    return [load_track(track) for track in tracks_json['items']]
+
+def load_track(track):
+    return {
+        'name': track['name'],
+        'preview': track.get('preview_url', ''),
+    }
