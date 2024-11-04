@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+
+import praw
 from dotenv import load_dotenv
 from django.urls import reverse_lazy
 
@@ -40,6 +42,12 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = str(os.getenv('EMAIL_USER'))
 EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_PASSWORD'))
 
+reddit = praw.Reddit(
+    client_id=os.getenv('REDDIT_ID'),
+    client_secret=os.getenv('REDDIT_SECRET'),
+    user_agent='wrapped2340',
+)
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Wrapped2340.common',
+    'Wrapped2340.games',
     'Wrapped2340.home',
     'Wrapped2340.slides',
     'Wrapped2340.users',

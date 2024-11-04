@@ -90,41 +90,38 @@ def save_tokens(userprofile, access_token, refresh_token):
     userprofile.save()
     print("saved tokens")
 
-def get_default_wrapped_content(userprofile):
+def get_top_artists(userprofile):
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
         time_range='medium_term',
         limit=10
     )
+    return artist_response['items']
+
+def get_top_tracks(userprofile):
     tracks_response = get_api_data(
         userprofile=userprofile,
         subdomain='tracks',
         time_range='medium_term',
         limit=10
     )
-    artists = load_artists(artist_response)
-    tracks = load_tracks(tracks_response)
+    return tracks_response['items']
+
+def get_default_wrapped_content(userprofile):
     combined = {
-        'artists': artists,
-        'tracks': tracks
+        'artists': get_top_artists(userprofile),
+        'tracks': get_top_tracks(userprofile)
     }
     return combined
 
-def load_artists(artists_json):
-    return [load_artist(artist) for artist in artists_json['items']]
-
-def load_artist(artist):
-    return {
-        'name': artist['name'],
-        'genres': artist.get('genres', []),
+def get_albums(artist_id, userprofile):
+    params = {
+        'include-groups': ['album', 'single'],
     }
-
-def load_tracks(tracks_json):
-    return [load_track(track) for track in tracks_json['items']]
-
-def load_track(track):
-    return {
-        'name': track['name'],
-        'preview': track.get('preview_url', ''),
+    headers = {
+        'Authorization': 'Bearer %s' % userprofile.access_token,
     }
+    response = requests.get('https://api.spotify.com/v1/artists/%s/albums' % artist_id,
+                            params=params, headers=headers)
+    return response.json()['items']

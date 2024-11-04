@@ -1,0 +1,12 @@
+{% extends 'games/base.html' %}
+
+{% block content %}
+    <h1>What's the Buzz?</h1>
+    <p>
+        Given the Reddit post about an artist, guess which artist it's talking about.
+    </p>
+    <div class="post">
+        <h2>{{ post_title|safe }}</h2>
+        <p>{{ post_text|safe }}</p>
+    </div>
+{% endblock %}

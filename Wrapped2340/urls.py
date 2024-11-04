@@ -25,4 +25,5 @@ urlpatterns = [
     path('home/', include('Wrapped2340.home.urls')),
 
     path('slides/', include('Wrapped2340.slides.urls')),
+    path('games/', include('Wrapped2340.games.urls')),
 ]
