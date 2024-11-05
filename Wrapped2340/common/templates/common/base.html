@@ -27,7 +27,12 @@
             </form>
         {% endif %}
     </div>
-    {% block content %}
-    {% endblock %}
+
+    {% include 'common/navbar.html' %} <!-- Include navbar here -->
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
 </body>
 </html>

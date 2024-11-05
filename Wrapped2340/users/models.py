@@ -3,13 +3,11 @@ import secrets
 from django.contrib.auth.models import User
 from django.db import models
 
-
 # SpotifyUser
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=255, null=True)
     refresh_token = models.CharField(max_length=255, null=True)
-    data_stash = models.JSONField(default=list)
     invite_token = models.CharField(max_length=16)
 
     def __str__(self):
@@ -21,12 +19,6 @@ class UserProfile(models.Model):
         profile.rotate_invite_token()
         profile.save()
 
-    def add_data_stash(self, data_set):
-        self.data_stash.append(data_set)
-        self.save()
-
-    def get_data_stash(self):
-        return self.data_stash
 
     def rotate_invite_token(self):
         self.invite_token = self.create_invite_token()
@@ -34,3 +26,4 @@ class UserProfile(models.Model):
     def create_invite_token(self):
         long_username = "%suser" % self.user.username
         return "%s%s" % (long_username[0:4], secrets.token_urlsafe(9))
+

@@ -52,7 +52,7 @@ class AccountSettingsView(LoginRequiredMixin, UpdateView):
             authorization_code = request.GET['code']
 
             # Grabs tokens
-            spotifyAPI.get_access_token(self, authorization_code)
+            spotifyAPI.get_access_token(self.request.user.userprofile, authorization_code)
         return super().get(request)
 
 class LinkSpotify(LoginRequiredMixin, View):
