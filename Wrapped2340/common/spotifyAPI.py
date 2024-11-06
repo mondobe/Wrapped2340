@@ -90,12 +90,12 @@ def save_tokens(userprofile, access_token, refresh_token):
     userprofile.save()
     print("saved tokens")
 
-def get_top_artists(userprofile):
+def get_top_artists(userprofile, limit=10):
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
         time_range='medium_term',
-        limit=10
+        limit=limit
     )
     return artist_response['items']
 
@@ -114,6 +114,14 @@ def get_default_wrapped_content(userprofile):
         'tracks': get_top_tracks(userprofile)
     }
     return combined
+
+def get_related_artists(artist_id, userprofile):
+    headers = {
+        'Authorization': 'Bearer %s' % userprofile.access_token,
+    }
+    response = requests.get('https://api.spotify.com/v1/artists/%s/related-artists' % artist_id,
+                            headers=headers)
+    return response.json()['artists']
 
 def get_albums(artist_id, userprofile):
     params = {

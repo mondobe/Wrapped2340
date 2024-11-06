@@ -9,4 +9,12 @@
         <h2>{{ post_title|safe }}</h2>
         <p>{{ post_text|safe }}</p>
     </div>
+    {% for choice in choices %}
+        <form method="post" action="{% url 'games:whats-the-buzz' %}">
+            {% csrf_token %}
+            <input type="hidden" value="{{ choice }}" name="chosen_artist">
+            <input type="hidden" value="{{ correct_hash }}" name="correct_hash">
+            <input type="submit" value="{{ choice }}">
+        </form>
+    {% endfor %}
 {% endblock %}
