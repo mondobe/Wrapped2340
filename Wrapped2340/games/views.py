@@ -39,9 +39,13 @@ class WhatsTheBuzzView(FormView):
             try:
                 real_post_choices = search_reddit(get_search_term(artist), limit=7)
                 real_post = random.choice(real_post_choices)
+
                 post_text = real_post.selftext[:400]
-                post_text = redact_with_artist(post_text, artist, userprofile)
+                context['reveal_text'] = post_text
+                post_text = redact_with_artist(post_text, artist, userprofile).replace('\n', '<br>')
+
                 post_title = real_post.title
+                context['reveal_title'] = post_title
                 post_title = redact_with_artist(post_title, artist, userprofile)
 
                 if post_title == '':
@@ -54,9 +58,7 @@ class WhatsTheBuzzView(FormView):
                 correct_index = random.randrange(3)
                 choices.insert(correct_index, artist)
                 context['choices'] = [c['name'] for c in choices]
-                context['correct_hash'] = get_artist_hash(artist['name'], userprofile)
-                context['correct_index'] = correct_index
-                context['artist'] = artist
+                context['correct'] = artist
 
                 context['success'] = True
                 return context
@@ -65,13 +67,6 @@ class WhatsTheBuzzView(FormView):
                 continue
         context['success'] = False
         return context
-
-def get_artist_hash(artist_name, userprofile):
-    return base64.urlsafe_b64encode(
-        hashlib.md5(b"%s%s"
-                    % (bytes(artist_name, 'ascii'),
-                       bytes(userprofile.access_token, 'ascii'))).digest()
-    ).decode('ascii')
 
 def get_search_term(artist):
     return 'self:true title:"%s" (artist OR band OR album OR song OR topster OR rym) NOT sale' % (artist['name'])
@@ -112,12 +107,6 @@ def redact_with_artist(text, artist, userprofile):
             new_text = redact(new_text, word)
 
     return new_text
-
-class WhatsTheBuzzCorrectView(TemplateView):
-    template_name = 'games/whats-the-buzz/correct.html'
-
-class WhatsTheBuzzIncorrectView(TemplateView):
-    template_name = 'games/whats-the-buzz/incorrect.html'
 
 class GtaView(TemplateView):
     template_name = 'games/gta/game.html'

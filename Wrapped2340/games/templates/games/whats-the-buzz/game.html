@@ -1,20 +1,67 @@
 {% extends 'games/base.html' %}
 
+{% block game_head %}
+    <script>
+window.onload = start
+
+const choices = {{ choices|safe }}
+const correct = '{{ correct.name|safe }}'
+const reveal_title = `{{ reveal_title|safe }}`
+const reveal_text = `{{ reveal_text|safe }}`
+
+function start() {
+    for (let i = 0; i < 4; i++) {
+        let inputForm = document.getElementById('input-form' + i)
+        inputForm.addEventListener('submit', (event) => submitInput(event, i))
+    }
+}
+
+function submitInput(event, choice) {
+    event.preventDefault()
+    let choiceText = choices[choice]
+    if (choiceText === correct) {
+        reveal('You got it!')
+    } else {
+        reveal('Incorrect...')
+    }
+}
+
+function reveal(message) {
+    let titleElem = document.getElementById('title')
+    titleElem.innerText = reveal_title
+    let postElem = document.getElementById('selftext')
+    postElem.innerText = reveal_text
+    let statusElem = document.getElementById('status')
+    statusElem.innerText = message
+    let answerElem = document.getElementById('answer')
+    answerElem.innerText = `The answer was ${correct}!`
+    let choicesElem = document.getElementById('choices')
+    choicesElem.hidden = true
+    let tryAgain = document.getElementById('try-again')
+    tryAgain.innerText = 'Try again?'
+}
+    </script>
+{% endblock %}
+
 {% block content %}
     <h1>What's the Buzz?</h1>
     <p>
         Given the Reddit post about an artist, guess which artist it's talking about.
     </p>
     <div class="post">
-        <h2>{{ post_title|safe }}</h2>
-        <p>{{ post_text|safe }}</p>
+        <h2 id="title">{{ post_title|safe }}</h2>
+        <p id="selftext">{{ post_text|safe }}</p>
     </div>
-    {% for choice in choices %}
-        <form method="post" action="{% url 'games:whats-the-buzz' %}">
-            {% csrf_token %}
-            <input type="hidden" value="{{ choice }}" name="chosen_artist">
-            <input type="hidden" value="{{ correct_hash }}" name="correct_hash">
-            <input type="submit" value="{{ choice }}">
-        </form>
-    {% endfor %}
+    <h1 id="status"></h1>
+    <h1 id="answer"></h1>
+    <div id="choices">
+        {% for choice in choices %}
+            <form id="input-form{{ forloop.counter0 }}">
+                <input type="submit" value="{{ choice }}">
+            </form>
+        {% endfor %}
+    </div>
+    <p>
+        <a href="{% url 'games:whats-the-buzz' %}" id="try-again"></a>
+    </p>
 {% endblock %}

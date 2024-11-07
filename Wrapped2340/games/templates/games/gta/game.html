@@ -1,6 +1,6 @@
 {% extends 'games/base.html' %}
 
-{% block head %}
+{% block game_head %}
     <script>
 const artist = '{{ artist|safe }}'
 const acronyms = {{ acronyms|safe }}
@@ -18,7 +18,12 @@ function start() {
 }
 
 function process(name) {
-    return name.toLowerCase().replaceAll(/[,.-]/g, '').replaceAll('&', 'and')
+    return name
+        .toLowerCase()
+        .replaceAll(/[,.-]/g, '')
+        .replaceAll('&', 'and')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
 }
 
 function guess(event, skip) {
