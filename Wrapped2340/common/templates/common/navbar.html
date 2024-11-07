@@ -1,5 +1,7 @@
 <!-- navbar.html -->
-<nav style="background-color: #333; padding: 10px;">
+{% load static %}
+<link href="{% static 'css/output.css' %}" rel="stylesheet">
+<nav style="bg-base-100 : p-4 shadow-lg;">
     <ul style="display: flex; gap: 20px; list-style-type: none; margin: 0; padding: 0; color: white;">
         <li><a href="{% url 'home:home' %}" style="color: white; text-decoration: none;">Home</a></li>
         <li><a href="{% url 'home:invite' invite_token=user.userprofile.invite_token %}" style="color: white; text-decoration: none;">Invite</a></li>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="aqua">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and Register</title>
+    <title>Audioscape</title>
 
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
 </head>
@@ -13,8 +13,19 @@
 <div class="w-full max-w-md p-6 bg-base-100 rounded-lg shadow-lg">
     <!-- Toggle Buttons for Login and Register -->
     <div class="flex justify-center mb-4">
-        <button id="login-tab" class="tab tab-lg tab-bordered text-primary" onclick="showLogin()">Login</button>
-        <button id="register-tab" class="tab tab-lg tab-bordered text-secondary" onclick="showRegister()">Register</button>
+        <button
+                id="login-tab"
+                class="tab tab-lg border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200"
+                onclick="showLogin()">
+            Login
+        </button>
+
+        <button
+                id="register-tab"
+                class="tab tab-lg border border-secondary text-secondary hover:bg-secondary hover:text-white transition-all duration-200"
+                onclick="showRegister()">
+            Register
+        </button>
     </div>
 
     <!-- Login Form -->
@@ -177,16 +188,46 @@
 </div>
 
 <script>
+    // Track the active tab
+    let activeTab = 'login';
+
     // Toggle between login and register forms
     function showLogin() {
+        // Update active tab and apply styles
+        activeTab = 'login';
+        updateTabStyles();
         document.getElementById("login-form").classList.remove("hidden");
         document.getElementById("register-form").classList.add("hidden");
     }
 
     function showRegister() {
+        // Update active tab and apply styles
+        activeTab = 'register';
+        updateTabStyles();
         document.getElementById("login-form").classList.add("hidden");
         document.getElementById("register-form").classList.remove("hidden");
     }
+
+    function updateTabStyles() {
+        // Update button styles based on active tab
+        const loginTab = document.getElementById("login-tab");
+        const registerTab = document.getElementById("register-tab");
+
+        if (activeTab === 'login') {
+            loginTab.classList.add("bg-primary", "text-white", "border-primary-dark");
+            loginTab.classList.remove("text-primary", "hover:bg-primary");
+            registerTab.classList.add("text-secondary");
+            registerTab.classList.remove("bg-secondary", "text-white");
+        } else {
+            registerTab.classList.add("bg-secondary", "text-white", "border-secondary-dark");
+            registerTab.classList.remove("text-secondary", "hover:bg-secondary");
+            loginTab.classList.add("text-primary");
+            loginTab.classList.remove("bg-primary", "text-white");
+        }
+    }
+
+    // Initialize with the default tab
+    updateTabStyles();
 
     // Show and Close Modals
     function showModal(modalId) {

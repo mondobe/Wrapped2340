@@ -1,38 +1,38 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="aqua">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wrapped Up{% endblock %}</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
     {% block head %}
     {% endblock %}
 </head>
-<body>
-    <div class="top-user-info">
+<body class="bg-base-200 text-base-content">
+<div class="navbar bg-base-100 shadow-lg">
+    <div class="flex-1">
+        <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">Home</a>
+    </div>
+    <div class="flex-none">
         {% if user.is_authenticated %}
-            <form method="post" action="{% url 'users:logout' %}">
+            <form method="post" action="{% url 'users:logout' %}" class="inline">
                 {% csrf_token %}
-                Logged in as <a href="{% url 'home:home' %}">{{ user.username }}</a>
-                <input type="submit" value="Log Out">
+                Logged in as <span class="font-bold">{{ user.username }}</span>
+                <input type="submit" value="Log Out" class="btn btn-secondary ml-2">
             </form>
         {% else %}
-            <form method="get" action="{% url 'users:login' %}">
-                Not logged in
-                <input type="submit" value="Log In">
-            </form>
-            <form method="get" action="{% url 'users:sign-up' %}">
-                <input type="submit" value="Sign Up">
-            </form>
+            <a href="{% url 'users:login' %}" class="btn btn-primary">Log In</a>
+            <a href="{% url 'users:sign-up' %}" class="btn btn-secondary ml-2">Sign Up</a>
         {% endif %}
     </div>
+</div>
 
-    {% include 'common/navbar.html' %} <!-- Include navbar here -->
+{% include 'common/navbar.html' %}
 
-    <div class="content">
-        {% block content %}
-        {% endblock %}
-    </div>
+<div class="container mx-auto p-6">
+    {% block content %}
+    {% endblock %}
+</div>
 </body>
 </html>
