@@ -1,38 +1,58 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="aqua">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Wrapped Up{% endblock %}</title>
-    <link href="{% static 'css/output.css' %}" rel="stylesheet">
-    {% block head %}
-    {% endblock %}
-</head>
-<body class="bg-base-200 text-base-content">
-<div class="navbar bg-base-100 shadow-lg">
-    <div class="flex-1">
-        <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">Home</a>
-    </div>
-    <div class="flex-none">
-        {% if user.is_authenticated %}
-            <form method="post" action="{% url 'users:logout' %}" class="inline">
-                {% csrf_token %}
-                Logged in as <span class="font-bold">{{ user.username }}</span>
-                <input type="submit" value="Log Out" class="btn btn-secondary ml-2">
-            </form>
-        {% else %}
-            <a href="{% url 'users:login' %}" class="btn btn-primary">Log In</a>
-            <a href="{% url 'users:sign-up' %}" class="btn btn-secondary ml-2">Sign Up</a>
-        {% endif %}
-    </div>
-</div>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Wrapped Up{% endblock %}</title>
+        <link href="{% static 'css/output.css' %}" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body class="bg-base-200 text-base-content">
+        <div class="navbar bg-base-100 shadow-lg">
+            <div class="flex-1">
+                <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>
+            </div>
+            <div class="flex-none">
+                <div class="flex-none">
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'users:logout' %}" class="inline text-xl">
+                            {% csrf_token %}
+                            Hello <span class="font-bold">{{ user.username }}</span>!
+                        </form>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="btn btn-primary">Log In</a>
+                        <a href="{% url 'users:sign-up' %}" class="btn btn-secondary ml-2">Sign Up</a>
+                    {% endif %}
+                </div>
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-square btn-ghost">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="inline-block h-6 w-6 stroke-current">
+                            <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </div>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                        <!-- Users-related links -->
+                        <li><a href="{% url 'users:account-settings' %}">Account Settings</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-{% include 'common/navbar.html' %}
-
-<div class="container mx-auto p-6">
-    {% block content %}
-    {% endblock %}
-</div>
-</body>
+        <div class="container mx-auto p-6">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
 </html>

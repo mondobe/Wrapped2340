@@ -4,14 +4,85 @@
 
 {% block content %}
     {% url 'users:account-settings' as form_url %}
-    {% include 'users/form.html' with header_text="Update Account Settings" %}
-    <a href="{% url 'users:password-change' %}">Change Password</a>
-    <form method="post" action="{% url 'users:link-spotify' %}">
+    <h1 class="text-2xl">
+        Account Settings
+    </h1>
+    <div class="users-form">
+        {% if next_page %}
+            <form method="post" action="{{ form_url }}?next={{ next_page }}">
+        {% else %}
+            <form method="post" action="{{ form_url }}">
+        {% endif %}
+                {% csrf_token %}
+                {{ form }}
+                <input class="btn m-1" type="submit" value="Update Account Settings">
+            </form>
+    </div>
+    <a class="btn m-1" href="{% url 'users:password-change' %}">Change Password</a>
+
+
+    <form class="btn m-1" method="post" action="{% url 'users:link-spotify' %}">
         {% csrf_token %}
         <button type="submit" value="link" name="action">Link Spotify Account</button>
     </form>
-    <form method="post" action="{% url 'users:rotate-invite-token' %}">
+
+
+    <form class="btn m-1" method="post" action="{% url 'users:rotate-invite-token' %}">
         {% csrf_token %}
         <input type="submit" value="Rotate Invite Token">
     </form>
+
+    <form class="btn m-1" method="post" action="{% url 'users:logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="Log Out">
+    </form>
+
+    <div class="dropdown mb-72">
+        <div tabindex="0" role="button" class="btn m-1">
+            Theme
+            <svg
+                    width="12px"
+                    height="12px"
+                    class="inline-block h-2 w-2 fill-current opacity-60"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 2048 2048">
+                <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+            </svg>
+        </div>
+        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+            <li><button data-set-theme="light" data-act-class="active">Light</button></li>
+            <li><button data-set-theme="dark" data-act-class="active">Dark</button></li>
+            <li><button data-set-theme="cupcake" data-act-class="active">Cupcake</button></li>
+            <li><button data-set-theme="bumblebee" data-act-class="active">Bumblebee</button></li>
+            <li><button data-set-theme="emerald" data-act-class="active">Emerald</button></li>
+            <li><button data-set-theme="corporate" data-act-class="active">Corporate</button></li>
+            <li><button data-set-theme="synthwave" data-act-class="active">Synthwave</button></li>
+            <li><button data-set-theme="retro" data-act-class="active">Retro</button></li>
+            <li><button data-set-theme="cyberpunk" data-act-class="active">Cyberpunk</button></li>
+            <li><button data-set-theme="valentine" data-act-class="active">Valentine</button></li>
+            <li><button data-set-theme="halloween" data-act-class="active">Halloween</button></li>
+            <li><button data-set-theme="garden" data-act-class="active">Garden</button></li>
+            <li><button data-set-theme="forest" data-act-class="active">Forest</button></li>
+            <li><button data-set-theme="aqua" data-act-class="active">Aqua</button></li>
+            <li><button data-set-theme="lofi" data-act-class="active">Lo-fi</button></li>
+            <li><button data-set-theme="pastel" data-act-class="active">Pastel</button></li>
+            <li><button data-set-theme="fantasy" data-act-class="active">Fantasy</button></li>
+            <li><button data-set-theme="wireframe" data-act-class="active">Wireframe</button></li>
+            <li><button data-set-theme="black" data-act-class="active">Black</button></li>
+            <li><button data-set-theme="luxury" data-act-class="active">Luxury</button></li>
+            <li><button data-set-theme="dracula" data-act-class="active">Dracula</button></li>
+            <li><button data-set-theme="cmyk" data-act-class="active">CMYK</button></li>
+            <li><button data-set-theme="autumn" data-act-class="active">Autumn</button></li>
+            <li><button data-set-theme="business" data-act-class="active">Business</button></li>
+            <li><button data-set-theme="acid" data-act-class="active">Acid</button></li>
+            <li><button data-set-theme="lemonade" data-act-class="active">Lemonade</button></li>
+            <li><button data-set-theme="night" data-act-class="active">Night</button></li>
+            <li><button data-set-theme="coffee" data-act-class="active">Coffee</button></li>
+            <li><button data-set-theme="winter" data-act-class="active">Winter</button></li>
+            <li><button data-set-theme="dim" data-act-class="active">Dim</button></li>
+            <li><button data-set-theme="nord" data-act-class="active">Nord</button></li>
+            <li><button data-set-theme="sunset" data-act-class="active">Sunset</button></li>
+        </ul>
+    </div>
+
 {% endblock %}
