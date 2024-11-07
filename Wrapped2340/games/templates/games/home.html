@@ -1,0 +1,13 @@
+{% extends 'games/base.html' %}
+
+{% block content %}
+    <h1>Games</h1>
+    <h2><a href="{% url 'games:whats-the-buzz' %}">What's the Buzz</a></h2>
+    <p>
+        Guess what Redditors are raving about.
+    </p>
+    <h2><a href="{% url 'games:gta' %}">G.T.A.: Guess That Artist</a></h2>
+    <p>
+        Can you figure out artists from their top tracks' acronyms?
+    </p>
+{% endblock %}

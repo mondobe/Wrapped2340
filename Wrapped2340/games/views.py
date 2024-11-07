@@ -156,3 +156,6 @@ def acronym(track_name):
             if len(word) == 1:
                 result += ' %s ' % word
     return result
+
+class HomeView(TemplateView):
+    template_name = 'games/home.html'
