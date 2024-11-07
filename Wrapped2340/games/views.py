@@ -4,6 +4,7 @@ import random
 import itertools
 from datetime import datetime
 import re
+import hashlib
 
 import requests
 from django.shortcuts import redirect
@@ -55,16 +56,22 @@ class WhatsTheBuzzView(FormView):
                 context['choices'] = [c['name'] for c in choices]
                 context['correct_hash'] = get_artist_hash(artist['name'], userprofile)
                 context['correct_index'] = correct_index
+                context['artist'] = artist
 
                 context['success'] = True
                 return context
             except Exception as e:
+                print(e)
                 continue
         context['success'] = False
         return context
 
 def get_artist_hash(artist_name, userprofile):
-    return base64.urlsafe_b64encode(str(hash("%s%s" % (artist_name, userprofile.access_token))).encode('ascii')).decode()
+    return base64.urlsafe_b64encode(
+        hashlib.md5(b"%s%s"
+                    % (bytes(artist_name, 'ascii'),
+                       bytes(userprofile.access_token, 'ascii'))).digest()
+    ).decode('ascii')
 
 def get_search_term(artist):
     return 'self:true title:"%s" (artist OR band OR album OR song OR topster OR rym) NOT sale' % (artist['name'])
@@ -86,7 +93,7 @@ def redact(text, term):
     new_text = regex.sub(r'<span class="highlight">[...]</span>', new_text)
     return new_text
 
-allowed_words = ['the', 'a', 'an', 'of', 'my', 'I', 'you', 'your', 'in', 'is', 'back', 'if', 'to']
+allowed_words = ['the', 'a', 'an', 'of', 'my', 'I', 'you', 'your', 'in', 'is', 'back', 'if', 'to', 'remastered']
 
 def redact_with_artist(text, artist, userprofile):
     new_text = text
@@ -111,3 +118,41 @@ class WhatsTheBuzzCorrectView(TemplateView):
 
 class WhatsTheBuzzIncorrectView(TemplateView):
     template_name = 'games/whats-the-buzz/incorrect.html'
+
+class GtaView(TemplateView):
+    template_name = 'games/gta/game.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        userprofile = self.request.user.userprofile
+        random.seed(datetime.now().microsecond)
+        top_artists = spotifyAPI.get_top_artists(userprofile, limit=30)
+        artist = random.choice(top_artists)
+
+        top_tracks = spotifyAPI.get_top_artist_tracks(artist['id'], userprofile)[:5]
+        acronyms = [acronym(track['name']) for track in top_tracks]
+
+        context['acronyms'] = acronyms
+        context['songs'] = [track['name'] for track in top_tracks]
+        context['artist'] = artist['name']
+        context['success'] = True
+        return context
+
+def acronym(track_name):
+    words = track_name.split(' ')
+    result = ''
+    for word in words:
+        for i, c in enumerate(word):
+            if c == '(':
+                result += c
+            if c.isalnum():
+                result += c
+                for c in word[i+1:]:
+                    if c == ')':
+                        result += c
+                break
+        else:
+            if len(word) == 1:
+                result += ' %s ' % word
+    return result

@@ -133,3 +133,14 @@ def get_albums(artist_id, userprofile):
     response = requests.get('https://api.spotify.com/v1/artists/%s/albums' % artist_id,
                             params=params, headers=headers)
     return response.json()['items']
+
+def get_top_artist_tracks(artist_id, userprofile):
+    params = {
+        'market': 'US'
+    }
+    headers = {
+        'Authorization': 'Bearer %s' % userprofile.access_token,
+    }
+    response = requests.get('https://api.spotify.com/v1/artists/%s/top-tracks' % artist_id,
+                            params=params, headers=headers)
+    return response.json()['tracks']
