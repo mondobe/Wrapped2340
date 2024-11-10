@@ -1,0 +1,23 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-4">Feedback</h1>
+
+        {% if user.is_superuser %}
+            <p>As an admin, you can manage feedback on the <a href="{% url 'users:manage-feedback' %}" class="text-blue-500 hover:underline">Manage Feedback</a> page.</p>
+        {% else %}
+            <form method="post" class="max-w-lg">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-gray-700">Your Feedback</label>
+                    {{ form.message }}
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Submit Feedback
+                </button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

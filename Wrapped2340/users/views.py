@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, \
@@ -8,7 +9,7 @@ from django.views.generic import UpdateView, CreateView, View, FormView
 from .models import *
 from ..common import spotifyAPI
 from dotenv import load_dotenv
-from .forms import SignUpForm, RotateInviteTokenForm
+from .forms import SignUpForm, RotateInviteTokenForm, FeedbackForm
 
 # Loads variables from .env
 load_dotenv()
@@ -104,3 +105,36 @@ class RotateInviteTokenView(FormView):
 
 def login_register(request):
     return render(request, 'users/login_register.html', context=None)
+
+
+def dev_feedback(request):
+    # view logic here
+    return render(request, 'users/dev-feedback.html')
+
+
+def manage_feedback(request):
+    # view logic here
+    return render(request, 'users/manage-feedback.html')
+
+@login_required
+def feedback_view(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('feedback_success')
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'dev-feedback.html', {'form': form})
+
+@user_passes_test(lambda u: u.is_superuser)
+def manage_feedback(request):
+    if request.method == 'POST':
+        feedback_ids = request.POST.getlist('resolved')
+        Feedback.objects.filter(id__in=feedback_ids).update(resolved=True)
+        Feedback.objects.filter(resolved=True).delete()
+        return redirect('manage_feedback')
+
+    feedback_list = Feedback.objects.filter(resolved=False)
+    return render(request, 'manage_feedback.html', {'feedback_list': feedback_list})

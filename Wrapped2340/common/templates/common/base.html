@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ current_theme }}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,6 +45,7 @@
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                         <!-- Users-related links -->
                         <li><a href="{% url 'users:account-settings' %}">Account Settings</a></li>
+                        <li><a href="{% url 'users:dev-feedback' %}">Contact Us</a></li>
                     </ul>
                 </div>
             </div>

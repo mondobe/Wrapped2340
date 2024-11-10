@@ -1,0 +1,39 @@
+{% extends 'home/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-4">Manage Feedback</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                <tr>
+                    <th class="border border-gray-300 px-4 py-2">Message</th>
+                    <th class="border border-gray-300 px-4 py-2">Created At</th>
+                    <th class="border border-gray-300 px-4 py-2">Resolved</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for feedback in feedback_list %}
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">{{ feedback.message }}</td>
+                        <td class="border border-gray-300 px-4 py-2">{{ feedback.created_at }}</td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            <input type="checkbox" name="resolved" value="{{ feedback.id }}">
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="border border-gray-300 px-4 py-2 text-center">No feedback available.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="mt-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                Mark Selected as Resolved
+            </button>
+        </form>
+    </div>
+{% endblock %}
