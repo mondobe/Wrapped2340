@@ -69,6 +69,7 @@
             {% endfor %}
         {% endif %}
         <input type='submit' name="action" value="Login" class="btn btn-primary w-full">
+        <a href="{% url 'users:password-reset' %}">Forgot Password</a>
     </form>
 
     <!-- Register Form -->
