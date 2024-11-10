@@ -7,13 +7,58 @@
         <title>{% block title %}Wrapped Up{% endblock %}</title>
         <link href="{% static 'css/output.css' %}" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
-        {% block head %}
-        {% endblock %}
     </head>
-    <body class="bg-base-200 text-base-content">
+    <body class="bg-base-200 h-full">
         <div class="navbar bg-base-100 shadow-lg">
             <div class="flex-1">
                 <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>
+                <div class="dropdown ">
+                    <div  class="btn m-1" tabindex="0" role="button">
+                        Theme
+                        <svg
+                                width="12px"
+                                height="12px"
+                                class="inline-block h-2 w-2 fill-current opacity-60"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 2048 2048">
+                            <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
+                        </svg>
+                    </div >
+                    <ul tabindex="0" class="dropdown-content flex flex-col flex-nowrap menu basis-2/4 bg-base-100 rounded-box max-h-80 overflow-y-scroll shadow" style="scrollbar-width: none; -ms-overflow-style: none;">
+                        <li><button data-set-theme="light" data-act-class="active">Light</button></li>
+                        <li><button data-set-theme="dark" data-act-class="active">Dark</button></li>
+                        <li><button data-set-theme="cupcake" data-act-class="active">Cupcake</button></li>
+                        <li><button data-set-theme="bumblebee" data-act-class="active">Bumblebee</button></li>
+                        <li><button data-set-theme="emerald" data-act-class="active">Emerald</button></li>
+                        <li><button data-set-theme="corporate" data-act-class="active">Corporate</button></li>
+                        <li><button data-set-theme="synthwave" data-act-class="active">Synthwave</button></li>
+                        <li><button data-set-theme="retro" data-act-class="active">Retro</button></li>
+                        <li><button data-set-theme="cyberpunk" data-act-class="active">Cyberpunk</button></li>
+                        <li><button data-set-theme="valentine" data-act-class="active">Valentine</button></li>
+                        <li><button data-set-theme="halloween" data-act-class="active">Halloween</button></li>
+                        <li><button data-set-theme="garden" data-act-class="active">Garden</button></li>
+                        <li><button data-set-theme="forest" data-act-class="active">Forest</button></li>
+                        <li><button data-set-theme="aqua" data-act-class="active">Aqua</button></li>
+                        <li><button data-set-theme="lofi" data-act-class="active">Lo-fi</button></li>
+                        <li><button data-set-theme="pastel" data-act-class="active">Pastel</button></li>
+                        <li><button data-set-theme="fantasy" data-act-class="active">Fantasy</button></li>
+                        <li><button data-set-theme="wireframe" data-act-class="active">Wireframe</button></li>
+                        <li><button data-set-theme="black" data-act-class="active">Black</button></li>
+                        <li><button data-set-theme="luxury" data-act-class="active">Luxury</button></li>
+                        <li><button data-set-theme="dracula" data-act-class="active">Dracula</button></li>
+                        <li><button data-set-theme="cmyk" data-act-class="active">CMYK</button></li>
+                        <li><button data-set-theme="autumn" data-act-class="active">Autumn</button></li>
+                        <li><button data-set-theme="business" data-act-class="active">Business</button></li>
+                        <li><button data-set-theme="acid" data-act-class="active">Acid</button></li>
+                        <li><button data-set-theme="lemonade" data-act-class="active">Lemonade</button></li>
+                        <li><button data-set-theme="night" data-act-class="active">Night</button></li>
+                        <li><button data-set-theme="coffee" data-act-class="active">Coffee</button></li>
+                        <li><button data-set-theme="winter" data-act-class="active">Winter</button></li>
+                        <li><button data-set-theme="dim" data-act-class="active">Dim</button></li>
+                        <li><button data-set-theme="nord" data-act-class="active">Nord</button></li>
+                        <li><button data-set-theme="sunset" data-act-class="active">Sunset</button></li>
+                    </ul>
+                </div>
             </div>
             <div class="flex-none">
                 <div class="flex-none">
@@ -27,6 +72,7 @@
                         <a href="{% url 'users:sign-up' %}" class="btn btn-secondary ml-2">Sign Up</a>
                     {% endif %}
                 </div>
+
                 <div class="dropdown dropdown-end">
                     <div tabindex="0" role="button" class="btn btn-square btn-ghost">
                         <svg
@@ -51,7 +97,7 @@
             </div>
         </div>
 
-        <div class="container mx-auto p-6">
+        <div class="container mx-auto h-full p-6">
             {% block content %}
             {% endblock %}
         </div>

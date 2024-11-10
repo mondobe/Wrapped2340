@@ -5,15 +5,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audioscape</title>
+    <title>AudioScape</title>
 
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
 </head>
 <body class="bg-base-200 flex items-center justify-center min-h-screen">
 
 <div class="w-full max-w-md p-6 bg-base-100 rounded-lg shadow-lg">
+    <input type="hidden" name="current_tab" id="current_tab" value="login">
+
+    <div class="font-bold text-5xl text-center m-4">AudioScape</div>
     <!-- Toggle Buttons for Login and Register -->
-    <div class="flex justify-center mb-4">
+    <div class="tabs tabs-lifted" role="tablist">
         <button
                 id="login-tab"
                 class="tab tab-lg border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-200"
@@ -30,20 +33,25 @@
     </div>
 
     <!-- Login Form -->
-    <form id="login-form" class="space-y-4">
-        <div class="form-control">
-            <label class="label">Username</label>
-            <input type="text" placeholder="Enter username" class="input input-bordered input-primary w-full" required>
-        </div>
+    <form method="post" id="login-form" class="space-y-2">
+        {% csrf_token %}
+        <label class="form-control">
+            <div class="label">
+                <span class="label-text">Username</span>
+            </div>
+            <input id="login-username" name="login-username" type="text" placeholder="Enter username" class="input input-bordered input-primary w-full" required>
+        </label>
 
         <!-- Login Password Field -->
-        <div class="form-control relative">
-            <label class="label">Password</label>
-            <input id="login-password" type="password" placeholder="Enter password" class="input input-bordered w-full pr-10" required>
+        <label class="form-control relative">
+            <div class="label">
+                <span class="label-text">Password</span>
+            </div>
+            <input id="login-password" name="login-password" type="password" placeholder="Enter password" class="input input-bordered w-full pr-10" required>
+
             <!-- Button with SVG Eye Icons -->
             <button type="button" onclick="togglePassword('login-password', 'login-eye-icon')"
-                    class="absolute right-2 text-gray-500 focus:outline-none"
-                    style="top: 52px;">
+                    class="absolute right-2 text-gray-500 focus:outline-none">
                 <span id="login-eye-icon" class="w-6 h-6">
             <!-- Default to closed eye icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -54,35 +62,54 @@
                     </svg>
                 </span>
             </button>
-        </div>
-
-        <button class="btn btn-primary w-full">Login</button>
+        </label>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-error has-text-centered">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <input type='submit' name="action" value="Login" class="btn btn-primary w-full">
     </form>
 
     <!-- Register Form -->
-    <form id="register-form" class="space-y-4 hidden">
-        <div class="form-control">
-            <label class="label">Username</label>
-            <input id="register-username" type="text" placeholder="Enter username" class="input input-bordered w-full" required>
-        </div>
+    <form id="register-form" method="post" class="space-y-2 hidden">
+        <input type="hidden" name="current_tab" id="current_tab" value="register">
+
+        {% csrf_token %}
+        <label class="form-control">
+            <div class="label">
+                <span class="label-text">Username</span>
+            </div>
+            <input id="register-username" name="register-username" type="text" placeholder="Enter username" class="input input-bordered w-full" required>
+        </label>
+
+        <label class="form-control">
+            <div class="label">
+                <span class="label-text">Email</span>
+            </div>
+            <input id="register-email" name="register-email" type="email" placeholder="Enter email" class="input input-bordered w-full" required>
+        </label>
 
         <!-- Register Password Field -->
-        <div class="form-control relative">
-            <label class="label">Password</label>
-            <input id="register-password" type="password" placeholder="Create password" class="input input-bordered w-full pr-10" required>
-            <button type="button" onclick="togglePassword('register-password', 'register-eye-icon')" class="absolute right-2 text-gray-500 focus:outline-none"
-                    style="top: 52px;">
+        <label class="form-control relative">
+            <div class="label">
+                <span class="label-text">Password</span>
+            </div>
+            <input id="register-password" name="password1" type="password" placeholder="Create password" class="input input-bordered w-full pr-10" required>
+            <button type="button" onclick="togglePassword('register-password', 'register-eye-icon')" class="absolute right-2 text-gray-500 focus:outline-none">
                 <span id="register-eye-icon" class="w-6 h-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
                     </svg>
                 </span>
             </button>
-        </div>
+        </label>
 
-        <div class="form-control relative">
-            <label class="label">Confirm Password</label>
-            <input id="confirm-password" type="password" placeholder="Confirm password" class="input input-bordered w-full pr-10" required>
+        <label class="form-control relative">
+            <div class="label">
+                <span class="label-text">Confirm Password</span>
+            </div>
+            <input id="confirm-password" name="password2" type="password" placeholder="Confirm password" class="input input-bordered w-full pr-10" required>
             <!-- Button with SVG Eye Icons -->
             <button type="button" onclick="togglePassword('confirm-password', 'confirm-eye-icon')" class="absolute right-2 text-gray-500 focus:outline-none"
                     style="top: 52px;">
@@ -92,7 +119,7 @@
                     </svg>
                 </span>
             </button>
-        </div>
+        </label>
 
         <!-- Modal for Success -->
         <div id="success-modal" class="modal hidden">
@@ -105,8 +132,12 @@
             </div>
         </div>
 
-
-        <button type="submit" class="btn btn-secondary w-full">Register</button>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-error has-text-centered">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <button type="submit" name="action" value="register" class="btn btn-secondary m-1 w-full">Register</button>
     </form>
 
     <script>
@@ -131,34 +162,6 @@
                 </svg>
             `;
                 }
-            }
-        }
-
-        function validateRegister() {
-            const username = document.getElementById('register-username').value.trim();
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
-            let isValid = true;
-            let errorMessage = '';
-
-            if (username === '') {
-                errorMessage += 'Username cannot be empty.\n';
-                isValid = false;
-            }
-
-            if (password !== confirmPassword) {
-                errorMessage += 'Passwords do not match.\n';
-                isValid = false;
-            } else if (password.length < 8) {
-                errorMessage += 'Password must be at least 8 characters long.\n';
-                isValid = false;
-            }
-
-            if (isValid) {
-                document.getElementById('success-modal').classList.remove('hidden');
-            } else {
-                alert(errorMessage);
             }
         }
 
@@ -239,26 +242,22 @@
         document.getElementById(modalId).classList.add("hidden");
     }
 
-    // Register form validation
-    document.getElementById("register-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const password = document.getElementById("register-password").value;
-        const confirmPassword = document.getElementById("confirm-password").value;
+    function switchTab(tab) {
+        document.getElementById("current_tab").value = tab;
 
-        // Check if passwords match
-        if (password !== confirmPassword) {
-            showModal("password-modal");
+        if (tab === "login") {
+            showLogin();
         } else {
-            // Check if username is taken (mocked)
-            const username = document.getElementById("register-username").value;
-            if (username.toLowerCase() === "takenusername") {
-                showModal("username-modal");
-            } else {
-                alert("Registration successful!");
-            }
+            showRegister();
         }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        switchTab(tab);
     });
 </script>
-
+</div>
 </body>
 </html>
