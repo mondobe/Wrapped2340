@@ -245,10 +245,10 @@
     function switchTab(tab) {
         document.getElementById("current_tab").value = tab;
 
-        if (tab === "login") {
-            showLogin();
-        } else {
+        if (tab === "register") {
             showRegister();
+        } else {
+            showLogin();
         }
     }
 
