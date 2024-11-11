@@ -1,4 +1,6 @@
-<h1>{{ header_text }}</h1>
+{% load static %}
+<link href="{% static 'css/output.css' %}" rel="stylesheet">
+<h6 class="text-2xl">{{ header_text }}</h6>
 <div class="users-form">
     {% if next_page %}
         <form method="post" action="{{ form_url }}?next={{ next_page }}">
@@ -7,6 +9,6 @@
     {% endif %}
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="{{ header_text }}">
+        <input class="btn btn-primary m-1" type="submit" value="{{ header_text }}">
     </form>
 </div>

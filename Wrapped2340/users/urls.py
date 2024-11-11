@@ -4,7 +4,6 @@ from . import views
 
 app_name = "users"
 urlpatterns = [
-    path("sign-up/", views.SignUpView.as_view(), name="sign-up"),
     path("login/", views.WrappedLoginView.as_view(), name="login"),
     path("logout/", views.WrappedLogoutView.as_view(), name="logout"),
     path("account-settings/", views.AccountSettingsView.as_view(), name="account-settings"),
@@ -15,4 +14,6 @@ urlpatterns = [
     path("reset-password-complete/", views.WrappedPasswordResetCompleteView.as_view(), name="password-reset-complete"),
     path('link-spotify/', views.LinkSpotify.as_view(), name='link-spotify'),
     path('rotate-invite-token/', views.RotateInviteTokenView.as_view(), name='rotate-invite-token'),
+    path('dev-feedback/', views.dev_feedback, name='dev-feedback'),
+    path('manage-feedback/', views.manage_feedback, name='manage-feedback'),
 ]

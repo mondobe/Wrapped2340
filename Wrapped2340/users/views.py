@@ -1,21 +1,67 @@
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, \
     PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse, reverse_lazy
 from django.views.generic import UpdateView, CreateView, View, FormView
 from .models import *
 from ..common import spotifyAPI
 from dotenv import load_dotenv
-from .forms import SignUpForm, RotateInviteTokenForm
+from .forms import RotateInviteTokenForm, FeedbackForm, UserForm
 
 # Loads variables from .env
 load_dotenv()
 
 # Create your views here.
 class WrappedLoginView(LoginView):
-    template_name = 'users/login.html'
+    template_name = 'users/login_register.html'
+
+    def post(self, request, **kwargs):
+        current_tab = request.POST.get('current_tab')
+        if request.POST.get('action') == 'Login':
+            user = authenticate(request, username=request.POST.get('login-username'), password=request.POST.get('login-password'))
+
+            if user is None:
+                # Display an error message if authentication fails (invalid password)
+                messages.error(request, "Invalid username or password")
+                print("Bad Login")
+                return redirect('/users/login')
+            else:
+                # Log in the user and redirect to the home page upon successful login
+                print("Good Login")
+                login(request, user)
+                return redirect('/home')
+
+        elif request.POST.get('action') == 'register':
+            username = request.POST['register-username']
+            email = request.POST['register-email']
+            password = request.POST['password1']
+            password2 = request.POST['password2']
+            if password == password2:
+                if User.objects.filter(username=username).exists():
+                    messages.error(request, 'Username is already taken')
+                    print('same username')
+
+                else:
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password,
+                    )
+
+
+                    print("completed register")
+                    return redirect('/users/login')
+            else:
+                messages.error(request, 'Passwords do not match.')
+                print('password no correct')
+
+            return redirect(f'/users/login?tab={current_tab}')
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -40,11 +86,16 @@ class WrappedLogoutView(LoginRequiredMixin, LogoutView):
 class AccountSettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'users/account-settings.html'
     model = User
-    fields = ['username', 'email', 'first_name', 'last_name']
+    form_class = UserForm
     success_url = reverse_lazy('users:account-settings')
 
     def get_object(self):
         return self.request.user
+
+    def form_valid(self, form):
+        # Form is valid, so save the user instance
+        form.save()
+        return super().form_valid(form)
 
     def get(self, request):
         if 'code' in request.GET:
@@ -83,15 +134,6 @@ class WrappedPasswordResetConfirmView(PasswordResetConfirmView):
 class WrappedPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'users/password-reset/complete.html'
 
-class SignUpView(CreateView):
-    template_name = 'users/sign-up.html'
-    form_class = SignUpForm
-    model = User
-    success_url = reverse_lazy('users:login')
-
-    def get_object(self):
-        return self.request.user
-
 class RotateInviteTokenView(FormView):
     form_class = RotateInviteTokenForm
     success_url = reverse_lazy('users:account-settings')
@@ -100,3 +142,35 @@ class RotateInviteTokenView(FormView):
         self.request.user.userprofile.rotate_invite_token()
         self.request.user.userprofile.save()
         return super().form_valid(form)
+
+def dev_feedback(request):
+    # view logic here
+    return render(request, 'users/dev-feedback.html')
+
+
+def manage_feedback(request):
+    # view logic here
+    return render(request, 'users/manage-feedback.html')
+
+@login_required
+def feedback_view(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('feedback_success')
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'dev-feedback.html', {'form': form})
+
+@user_passes_test(lambda u: u.is_superuser)
+def manage_feedback(request):
+    if request.method == 'POST':
+        feedback_ids = request.POST.getlist('resolved')
+        Feedback.objects.filter(id__in=feedback_ids).update(resolved=True)
+        Feedback.objects.filter(resolved=True).delete()
+        return redirect('manage_feedback')
+
+    feedback_list = Feedback.objects.filter(resolved=False)
+    return render(request, 'manage_feedback.html', {'feedback_list': feedback_list})

@@ -1,19 +1,159 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-    <h1>Hello, {{ user.username }}!</h1>
-    <p>
-        Duo-Wrapped invite link: <a href="{{ duo_invite_link }}">{{ duo_invite_link }}</a>
-        <br>
-        <a href="{% url 'users:account-settings' %}">Account Settings</a>
-    </p>
-    <form method="post" action="{% url 'home:home' %}">
-        {% csrf_token %}
-        <button type="submit" value="topItems" name="action">Get User Data</button>
-    </form>
-    <div>
-        {% for wrap in wraps %}
-            {% include 'wrapped_thumbnail.html' %}
-        {% endfor %}
-    </div>
+    <div class="container mx-auto p-6">
+        <div class="grid grid-cols-3 gap-6">
+            <!-- Trigger Button for Modal -->
+            <div class="card bg-base-100 shadow-lg">
+                <div class="card-body items-center text-center">
+                    <h2 class="card-title mt-4">Create New Wrapped</h2>
+                    <button onclick="toggleModal('createModal')" class="btn btn-primary relative">
+                        <span class="w-6 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="createModal" class="modal fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="modal-box bg-base-100 text-base-content p-6 rounded-lg shadow-lg">
+                <button onclick="toggleModal('createModal')" class="absolute top-2 right-2 btn btn-circle btn-sm">✕</button>
+                <h2 class="font-bold text-lg mb-4">Create New Wrapped</h2>
+                <p>Select the length of time for music data taken (note: buttons don't determine the amount of slides, just time music data is taken)</p>
+                <div class="flex justify-around my-4">
+                    <button class="btn btn-outline btn-accent" data-size="sm" onclick="selectSize('sm')">SM</button>
+                    <button class="btn btn-outline btn-accent" data-size="m" onclick="selectSize('m')">M</button>
+                    <button class="btn btn-outline btn-accent" data-size="l" onclick="selectSize('l')">L</button>
+                </div>
+                <div class="flex justify-between items-center my-4">
+                    <span>Public/Private</span>
+                    <input type="checkbox" id="publicPrivateToggle" class="toggle toggle-primary">
+                </div>
+
+                <div class="flex justify-between items-center my-4">
+                    <span>Duo Wrapped?</span>
+                    <input type="checkbox" id="duoWrappedToggle" class="toggle toggle-secondary">
+                </div>
+                <div class="flex justify-end space-x-4 mt-4">
+                    <button onclick="submitForm()" class="btn btn-success">Create</button>
+                </div>
+            </div>
+        </div>
+
+    <!-- JavaScript code for opening the modal -->
+    <script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                if (modal.classList.contains('show')) {
+                    modal.classList.remove('show');
+                } else {
+                    modal.classList.add('show');
+                }
+            } else {
+                console.error("Modal element not found");
+            }
+        }
+
+        // Keep DOMContentLoaded for other logic if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Any other initialization logic can go here
+        });
+
+        function submitForm() {
+            // Logic to handle form submission
+            toggleModal('createModal');
+        }
+
+        // javascript code to handle the selection only one SM M L button
+        document.addEventListener('DOMContentLoaded', function() {
+            const sizeButtons = document.querySelectorAll('.btn-outline');
+
+            sizeButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    const size = event.target.textContent;
+                    // Add logic to handle size selection
+                });
+            });
+        });
+
+        // Select Size Button Script
+        function selectSize(selectedSize) {
+            // Get all size buttons
+            const sizeButtons = document.querySelectorAll('[data-size]');
+
+            // Loop through each button and remove the 'active' class
+            sizeButtons.forEach(button => {
+                if (button.getAttribute('data-size') === selectedSize) {
+                    // Add 'active' class to the clicked button
+                    button.classList.add('btn-primary'); // Change color when active
+                    button.classList.remove('btn-outline'); // Remove outline when active
+                } else {
+                    // Remove 'active' class from other buttons
+                    button.classList.remove('btn-primary');
+                    button.classList.add('btn-outline');
+                }
+            });
+        }
+
+        // toggle sliders for duo wrapped and public wrappeds
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to both toggle switches
+            const publicPrivateToggle = document.getElementById('publicPrivateToggle');
+            const duoWrappedToggle = document.getElementById('duoWrappedToggle');
+
+            // Check if elements exist before adding event listeners
+            if (publicPrivateToggle) {
+                // Add event listener for Public/Private toggle
+                publicPrivateToggle.addEventListener('change', function() {
+                    if (publicPrivateToggle.checked) {
+                        // Perform actions when Public is selected
+                    } else {
+                        // Perform actions when Private is selected
+                    }
+                });
+            }
+
+            if (duoWrappedToggle) {
+                // Add event listener for Duo Wrapped toggle
+                duoWrappedToggle.addEventListener('change', function() {
+                    if (duoWrappedToggle.checked) {
+                        // Perform actions when Duo Wrapped is enabled
+                    } else {
+                        // Perform actions when Duo Wrapped is disabled
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+        }
+
+        .modal.show {
+            display: flex !important; /* Ensure it's displayed */
+            opacity: 1 !important;    /* Ensure full visibility */
+            visibility: visible !important; /* Ensure it's visible */
+        }
+
+        .btn-circle {
+            z-index: 60; /* Ensure it's on top */
+            cursor: pointer; /* Ensure it looks clickable */
+        }
+
+        button {
+            pointer-events: auto; /* Ensure button is clickable */
+        }
+
+        .toggle {
+            pointer-events: auto !important;
+        }
+    </style>
+
 {% endblock %}
