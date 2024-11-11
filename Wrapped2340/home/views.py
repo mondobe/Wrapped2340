@@ -33,7 +33,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request):
-        if request.POST.get('action') == 'topItems':
+        if request.POST.get('action') == 'newWrap':
+            public = False
+            timeframe = request.POST.get('timeframe')
+            public = request.POST.get('public')
+            duo = request.POST.get('duo')
             userprofile = self.request.user.userprofile
             if userprofile.access_token:
                 wrapped_content = spotifyAPI.get_default_wrapped_content(userprofile)
@@ -41,6 +45,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 Wrapped.objects.create(
                     creator1=userprofile,
                     version='aiden10-30',
+                    public=public,
                     content=wrapped_content,
                 )
             else:
