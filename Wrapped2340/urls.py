@@ -20,9 +20,8 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='home:home'), name='home_redirect'),
-    path('admin/', admin.site.urls),
-    path('users/', include('Wrapped2340.users.urls')),
-    path('home/', include('Wrapped2340.home.urls')),
-
-    path('slides/', include('Wrapped2340.slides.urls')),
+    path('admin/', admin.site.urls), # admin webpage url
+    path('users/', include('Wrapped2340.users.urls')), # users app url
+    path('home/', include('Wrapped2340.home.urls')), # home app url
+    path('slides/', include('Wrapped2340.slides.urls')),  # 'Wrapped2340.slides.urls' app url here
 ]
