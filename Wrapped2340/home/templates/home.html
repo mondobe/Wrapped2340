@@ -28,18 +28,21 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="flex justify-around my-4">
-                        <button class="btn btn-outline btn-accent" name="timeframe" value="short_term" type="button" data-size="sm" onclick="selectSize('sm')">Short</button>
-                        <button class="btn btn-outline btn-accent" name="timeframe" value="medium_term" type="button" data-size="m" onclick="selectSize('m')">Medium</button>
-                        <button class="btn btn-outline btn-accent" name="timeframe" value="long_term" type="button" data-size="l" onclick="selectSize('l')">Long</button>
+                        <button class="btn btn-outline btn-accent" type="button" data-size="sm" onclick="selectSize('sm', 'short_term')">Short</button>
+                        <button class="btn btn-outline btn-accent" type="button" data-size="m" onclick="selectSize('m', 'medium_term')">Medium</button>
+                        <button class="btn btn-outline btn-accent" type="button" data-size="l" onclick="selectSize('l', 'long_term')">Long</button>
                     </div>
+                    <input type="hidden" name="timeframe" id="selectedTimeframe" value="short_term">
                     <div class="flex justify-between items-center my-4">
                         <span>Public/Private</span>
-                        <input type="checkbox" name="public" id="publicPrivateToggle" class="toggle toggle-primary">
+                        <input type="hidden" name="public" value="false">
+                        <input type="checkbox" name="public" id="publicPrivateToggle" value="true" class="toggle toggle-primary">
                     </div>
 
                     <div class="flex justify-between items-center my-4">
                         <span>Duo Wrapped?</span>
-                        <input type="checkbox" name="duo" id="duoWrappedToggle" class="toggle toggle-secondary">
+                        <input type="hidden" name="duo" value="false">
+                        <input type="checkbox" name="duo" id="duoWrappedToggle" value="true" class="toggle toggle-secondary">
                     </div>
                     <div class="flex justify-end space-x-4 mt-4">
                         <button class="btn btn-success" type="submit" value="newWrap" name="action">Create</button>
@@ -86,7 +89,7 @@
         });
 
         // Select Size Button Script
-        function selectSize(selectedSize) {
+        function selectSize(selectedSize, value) {
             // Get all size buttons
             const sizeButtons = document.querySelectorAll('[data-size]');
 
@@ -94,6 +97,7 @@
             sizeButtons.forEach(button => {
                 if (button.getAttribute('data-size') === selectedSize) {
                     // Add 'active' class to the clicked button
+                    document.getElementById('selectedTimeframe').value = value;
                     button.classList.add('btn-primary'); // Change color when active
                     button.classList.remove('btn-outline'); // Remove outline when active
                 } else {

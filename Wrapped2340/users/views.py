@@ -52,8 +52,8 @@ class WrappedLoginView(LoginView):
                         email=email,
                         password=password,
                     )
-
-
+                    user.userprofile.rotate_invite_token()
+                    user.save()
                     print("completed register")
                     return redirect('/users/login')
             else:

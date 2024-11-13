@@ -1,3 +1,5 @@
+from os import times
+from plistlib import dumps
 from string import Formatter
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -34,13 +36,12 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def post(self, request):
         if request.POST.get('action') == 'newWrap':
-            public = False
             timeframe = request.POST.get('timeframe')
-            public = request.POST.get('public')
-            duo = request.POST.get('duo')
+            public = request.POST.get('public') == "true"
+            duo = request.POST.get('duo') == "true"
             userprofile = self.request.user.userprofile
             if userprofile.access_token:
-                wrapped_content = spotifyAPI.get_default_wrapped_content(userprofile)
+                wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
 
                 Wrapped.objects.create(
                     creator1=userprofile,

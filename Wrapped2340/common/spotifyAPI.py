@@ -3,7 +3,6 @@ import base64
 import requests
 import os
 import secrets
-from Wrapped2340.users.models import UserProfile
 from dotenv import load_dotenv
 
 # Loads variables from .env
@@ -90,28 +89,28 @@ def save_tokens(userprofile, access_token, refresh_token):
     userprofile.save()
     print("saved tokens")
 
-def get_top_artists(userprofile, limit=10):
+def get_top_artists(userprofile, timeframe):
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
-        time_range='medium_term',
-        limit=limit
+        time_range=timeframe,
+        limit=10
     )
-    return artist_response['items']
+    return [{'name': artist['name'], 'id': artist['id']} for artist in artist_response['items']]
 
-def get_top_tracks(userprofile):
+def get_top_tracks(userprofile, timeframe):
     tracks_response = get_api_data(
         userprofile=userprofile,
         subdomain='tracks',
-        time_range='medium_term',
+        time_range=timeframe,
         limit=10
     )
-    return tracks_response['items']
+    return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
 
-def get_default_wrapped_content(userprofile):
+def get_wrapped_content(userprofile, timeframe):
     combined = {
-        'artists': get_top_artists(userprofile),
-        'tracks': get_top_tracks(userprofile)
+        'artists': get_top_artists(userprofile, timeframe),
+        'tracks': get_top_tracks(userprofile, timeframe)
     }
     return combined
 
