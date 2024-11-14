@@ -21,7 +21,7 @@
                         <td class="border border-gray-300 px-4 py-2">{{ feedback.message }}</td>
                         <td class="border border-gray-300 px-4 py-2">{{ feedback.created_at }}</td>
                         <td class="border border-gray-300 px-4 py-2">
-                            <input type="checkbox" name="resolved" value="{{ feedback.id }}">
+                            <input type="checkbox" name="resolved" value="{{ feedback.id }}" {% if feedback.resolved %}checked{% endif %}>
                         </td>
                     </tr>
                 {% empty %}
