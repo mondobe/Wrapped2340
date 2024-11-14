@@ -1,0 +1,91 @@
+{% extends 'games/base.html' %}
+
+{% block game_head %}
+    <script>
+const artist = '{{ artist|safe }}'
+const acronyms = {{ acronyms|safe }}
+const songs = {{ songs|safe }}
+let guesses = []
+let guessNum = 0
+
+window.onload = start
+
+function start() {
+    let first_acronym = document.getElementById('acronym0')
+    first_acronym.innerText = acronyms[0]
+    let inputForm = document.getElementById('input-form')
+    inputForm.addEventListener('submit', guess)
+}
+
+function process(name) {
+    return name
+        .toLowerCase()
+        .replaceAll(/[,.-]/g, '')
+        .replaceAll('&', 'and')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+}
+
+function guess(event, skip) {
+    event.preventDefault()
+    let inputElement = document.getElementById('input')
+    let rawInput = inputElement.value
+    let input = process(rawInput)
+
+    if (input === process(artist)) {
+        if (guessNum === 0) {
+            revealAnswer(`You got it on the first guess! Outstanding!`)
+        } else {
+            revealAnswer(`You got it in ${guessNum + 1} guesses!`)
+        }
+        return
+    }
+
+    if (guesses.includes(input) && input !== '') {
+        return
+    }
+
+    guesses.push(input.toLowerCase())
+
+    guessNum += 1
+    if (guessNum >= 5) {
+        revealAnswer('Sorry, you ran out of guesses.')
+    } else {
+        let nextAcronym = document.getElementById('acronym' + guessNum)
+        nextAcronym.innerText = acronyms[guessNum]
+    }
+}
+
+function revealAnswer(message) {
+    for (let i = 0; i < 5; i++) {
+        let nextAcronym = document.getElementById('acronym' + i)
+        nextAcronym.innerText = songs[i]
+    }
+    let answer = document.getElementById('answer')
+    answer.innerText = `The answer was ${artist}!`
+    let status = document.getElementById('status')
+    status.innerText = message
+    let tryAgain = document.getElementById('try-again')
+    tryAgain.innerText = 'Try again?'
+    let inputForm = document.getElementById('input-form')
+    inputForm.hidden = true
+}
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>G.T.A.: Guess That Artist</h1>
+    <p>You get 5 acronyms for an artist's top 5 songs, and you have 5 chances to guess the artist.</p>
+    <h1 id="status"></h1>
+    {% for acronym in acronyms %}
+        <h2 id="acronym{{ forloop.counter0 }}"> </h2>
+    {% endfor %}
+    <form id="input-form">
+        <input type="text" id="input" autocomplete="off" placeholder="Input your guess...">
+        <button>Guess</button>
+    </form>
+    <h2 id="answer"></h2>
+    <p>
+        <a href="{% url 'games:gta' %}" id="try-again"></a>
+    </p>
+{% endblock %}

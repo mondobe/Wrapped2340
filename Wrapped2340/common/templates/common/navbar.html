@@ -5,7 +5,8 @@
     <ul style="display: flex; gap: 20px; list-style-type: none; margin: 0; padding: 0; color: white;">
         <li><a href="{% url 'home:home' %}" style="color: white; text-decoration: none;">Home</a></li>
         <li><a href="{% url 'home:invite' invite_token=user.userprofile.invite_token %}" style="color: white; text-decoration: none;">Invite</a></li>
-        
+        <li><a href="{% url 'games:home' %}" style="color: white; text-decoration: none;">Games</a></li>
+
         <!-- Links to specific slide pages -->
         <li><a href="{% url 'slides:slide' page_id=1 %}" style="color: white; text-decoration: none;">Top Artists</a></li>
         <li><a href="{% url 'slides:slide' page_id=2 %}" style="color: white; text-decoration: none;">Top Songs</a></li>

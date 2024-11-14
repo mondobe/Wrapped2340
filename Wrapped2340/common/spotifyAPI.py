@@ -3,7 +3,6 @@ import base64
 import requests
 import os
 import secrets
-from Wrapped2340.users.models import UserProfile
 from dotenv import load_dotenv
 
 # Loads variables from .env
@@ -90,41 +89,57 @@ def save_tokens(userprofile, access_token, refresh_token):
     userprofile.save()
     print("saved tokens")
 
-def get_default_wrapped_content(userprofile):
+def get_top_artists(userprofile, timeframe):
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
-        time_range='medium_term',
+        time_range=timeframe,
         limit=10
     )
+    return [{'name': artist['name'], 'id': artist['id']} for artist in artist_response['items']]
+
+def get_top_tracks(userprofile, timeframe):
     tracks_response = get_api_data(
         userprofile=userprofile,
         subdomain='tracks',
-        time_range='medium_term',
+        time_range=timeframe,
         limit=10
     )
-    artists = load_artists(artist_response)
-    tracks = load_tracks(tracks_response)
+    return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
+
+def get_wrapped_content(userprofile, timeframe):
     combined = {
-        'artists': artists,
-        'tracks': tracks
+        'artists': get_top_artists(userprofile, timeframe),
+        'tracks': get_top_tracks(userprofile, timeframe)
     }
     return combined
 
-def load_artists(artists_json):
-    return [load_artist(artist) for artist in artists_json['items']]
-
-def load_artist(artist):
-    return {
-        'name': artist['name'],
-        'genres': artist.get('genres', []),
+def get_related_artists(artist_id, userprofile):
+    headers = {
+        'Authorization': 'Bearer %s' % userprofile.access_token,
     }
+    response = requests.get('https://api.spotify.com/v1/artists/%s/related-artists' % artist_id,
+                            headers=headers)
+    return response.json()['artists']
 
-def load_tracks(tracks_json):
-    return [load_track(track) for track in tracks_json['items']]
-
-def load_track(track):
-    return {
-        'name': track['name'],
-        'preview': track.get('preview_url', ''),
+def get_albums(artist_id, userprofile):
+    params = {
+        'include-groups': ['album', 'single'],
     }
+    headers = {
+        'Authorization': 'Bearer %s' % userprofile.access_token,
+    }
+    response = requests.get('https://api.spotify.com/v1/artists/%s/albums' % artist_id,
+                            params=params, headers=headers)
+    return response.json()['items']
+
+def get_top_artist_tracks(artist_id, userprofile):
+    params = {
+        'market': 'US'
+    }
+    headers = {
+        'Authorization': 'Bearer %s' % userprofile.access_token,
+    }
+    response = requests.get('https://api.spotify.com/v1/artists/%s/top-tracks' % artist_id,
+                            params=params, headers=headers)
+    return response.json()['tracks']
