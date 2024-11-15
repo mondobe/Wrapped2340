@@ -890,6 +890,7 @@ html {
   --btn-focus-scale: 1;
 }
 
+
 [data-theme=synthwave] {
   color-scheme: dark;
   --b2: 20.2941% 0.076211 287.835609;
@@ -922,6 +923,7 @@ html {
   --er: 73.7005% 0.121339 32.639257;
   --erc: 23.5017% 0.096418 290.329844;
 }
+
 
 [data-theme=retro] {
   color-scheme: light;
@@ -5782,3 +5784,32 @@ details.collapse summary::-webkit-details-marker {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+
+@keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-25%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  .animate-bounce {
+    animation: bounce 1s infinite;
+  }
+  
