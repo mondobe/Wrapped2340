@@ -30,10 +30,12 @@
         <button onclick="nextSlide()" class="btn btn-success bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg">Next</button>
     </div>
 </div>
-
+<input type="hidden" id="page-id" value="{{ page_id }}">
 <script>
     // Initialize page ID and timer
-    let pageId = 1;;
+
+    
+    let pageId = document.getElementById('page-id').value;;
     let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
 
     // Function to load content based on page ID
