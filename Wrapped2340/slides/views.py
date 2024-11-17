@@ -18,20 +18,19 @@ class SlidesView(LoginRequiredMixin, TemplateView):
             1: 'Get Ready to Travel the World with Audioscape 🌎',
             2: 'Regions Your Favorite Songs are From',
             3: 'Genre-ous Moments Ahead 🎶',
-            4: 'Top Artists',  # Slide 4 will display top artists
+            4: 'Top Artists',
             5: 'Counting Down the Beats 🔟',
             6: 'Top 10 Songs',
             7: 'Artist Appreciation Time 🎤',
             8: 'Top Genres',
         }
 
-        # Set the page title based on page ID
         context['page_title'] = slide_titles.get(page_id, 'Unknown Slide')
         context['page_id'] = page_id
 
-        # Fetch top artists if we are on slide 8
+        # Fetch top artists if on slide 8
         if page_id == 8:
-            user_profile = self.request.user.profile  # Assuming you have a profile linked to the user
-            context['top_artists'] = get_top_artists(user_profile, 'medium_term')  # Fetch top artists for medium term
+            user_profile = self.request.user.profile
+            context['top_artists'] = get_top_artists(user_profile, 'medium_term')
 
         return context
