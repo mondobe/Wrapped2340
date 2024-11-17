@@ -109,7 +109,7 @@ def get_top_tracks(userprofile, timeframe):
 
 def get_wrapped_content(userprofile, timeframe):
     combined = {
-        'artists': get_top_artists(userprofile,10, timeframe),
+        'artists': get_top_artists(userprofile, 10, timeframe),
         'tracks': get_top_tracks(userprofile, timeframe)
     }
     return combined
