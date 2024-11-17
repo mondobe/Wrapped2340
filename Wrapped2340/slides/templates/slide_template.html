@@ -11,8 +11,18 @@
 
 <div id="slide-container" class="w-full max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
     <!-- Dynamic Slide Content -->
-    <h1 id="slide-title" class="text-2xl font-bold">Slide Title</h1>
-    <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+    <h1 id="slide-title" class="text-2xl font-bold">{{ page_title }}</h1>
+
+    {% if page_id == 8 %}
+        <!-- Display Top Artists for Slide 8 -->
+        <ul id="top-artists-list" class="text-lg text-gray-300 space-y-2">
+            {% for artist in top_artists %}
+                <li>{{ artist.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+    {% endif %}
 
     <!-- Slide Navigation Buttons -->
     <div class="flex justify-between mt-8">
@@ -23,13 +33,26 @@
 
 <script>
     // Initialize page ID and timer
-    let pageId = 1;
+    let pageId = 1;;
     let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
 
     // Function to load content based on page ID
     function loadSlideContent() {
         const slideTitle = document.getElementById("slide-title");
         const slideContent = document.getElementById("slide-content");
+        const topArtistsList = document.getElementById("top-artists-list");
+        const slideContainer = document.getElementById("slide-container");
+
+// Clear previous dynamic content
+        if (topArtistsList) {
+            topArtistsList.innerHTML = '';  // Clear list of top artists
+        }
+
+        // Remove any dynamically added "No top artists available" message
+        const noArtistsMessage = slideContainer.querySelector('.no-artists-message');
+        if (noArtistsMessage) {
+            noArtistsMessage.remove();
+        }
 
         // Change content based on `pageId`
         switch (pageId) {
@@ -62,8 +85,17 @@
                 slideContent.innerText = "placeholder";
                 break;
             case 8:
+                // Slide title and content for Top Artists
                 slideTitle.innerText = "Top Artists";
-                slideContent.innerText = "placeholder";
+                
+                // If there are no artists, show a placeholder message
+                if (!topArtistsList || topArtistsList.children.length === 0) {
+                const noArtistsMessageElement = document.createElement('p');
+                noArtistsMessageElement.className = 'text-lg text-gray-300 no-artists-message';
+                noArtistsMessageElement.innerText = 'No top artists available.';
+                document.getElementById('slide-container').appendChild(noArtistsMessageElement);
+            }
+                
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";

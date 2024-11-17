@@ -12,7 +12,7 @@ class SlidesView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         page_id = self.kwargs.get('page_id')
-        
+
         # Map page IDs to slide titles or any other data specific to each slide
         slide_titles = {
             1: 'Get Ready to Travel the World with Audioscape 🌎',
@@ -28,5 +28,10 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         # Set the page title based on page ID
         context['page_title'] = slide_titles.get(page_id, 'Unknown Slide')
         context['page_id'] = page_id
-        return context
 
+        # Fetch top artists if we are on slide 8
+        if page_id == 8:
+            user_profile = self.request.user.profile  # Assuming you have a profile linked to the user
+            context['top_artists'] = get_top_artists(user_profile, 'medium_term')  # Fetch top artists for medium term
+
+        return context
