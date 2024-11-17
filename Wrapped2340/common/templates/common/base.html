@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="{{ current_theme }}">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +9,10 @@
         <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
         {% block head %}{% endblock %}
     </head>
-    <body class="bg-base-200 h-full">
+    <body class="bg-base-200 h-dvh">
         <div class="navbar bg-base-100 shadow-lg">
             <div class="flex-1">
-                <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>
+                <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl text- ">AudioScape</a>
                 <div class="dropdown ">
                     <div  class="btn m-1" tabindex="0" role="button">
                         Theme
@@ -25,7 +25,7 @@
                             <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
                         </svg>
                     </div >
-                    <ul tabindex="0" class="dropdown-content flex flex-col flex-nowrap menu basis-2/4 bg-base-100 rounded-box max-h-80 overflow-y-scroll shadow" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    <ul tabindex="0" class="dropdown-content z-[1] flex flex-col flex-nowrap menu basis-2/4 bg-base-100 rounded-box max-h-80 overflow-y-scroll shadow" style="scrollbar-width: none; -ms-overflow-style: none;">
                         <li><button data-set-theme="light" data-act-class="active">Light</button></li>
                         <li><button data-set-theme="dark" data-act-class="active">Dark</button></li>
                         <li><button data-set-theme="cupcake" data-act-class="active">Cupcake</button></li>
@@ -60,6 +60,8 @@
                         <li><button data-set-theme="sunset" data-act-class="active">Sunset</button></li>
                     </ul>
                 </div>
+                <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">Discover</a>
+                <a href="{% url 'games:home' %}" class="btn btn-ghost normal-case text-xl">Games</a>
             </div>
             <div class="flex-none">
                 <div class="flex-none">
@@ -97,7 +99,7 @@
             </div>
         </div>
 
-        <div class="container mx-auto h-full p-6">
+        <div class="container mx-auto p-6">
             {% block content %}
             {% endblock %}
         </div>
