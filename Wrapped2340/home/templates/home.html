@@ -89,18 +89,16 @@
 
         // Select Size Button Script
         function selectSize(selectedSize, value) {
-            // Get all size buttons
-            const sizeButtons = document.querySelectorAll('[data-size]');
+            // Set selected timeframe value in hidden input
+            document.getElementById('selectedTimeframe').value = value;
 
-            // Loop through each button and remove the 'active' class
+            // Update button styles (visual feedback)
+            const sizeButtons = document.querySelectorAll('[data-size]');
             sizeButtons.forEach(button => {
                 if (button.getAttribute('data-size') === selectedSize) {
-                    // Add 'active' class to the clicked button
-                    document.getElementById('selectedTimeframe').value = value;
-                    button.classList.add('btn-primary'); // Change color when active
-                    button.classList.remove('btn-outline'); // Remove outline when active
+                    button.classList.add('btn-primary');
+                    button.classList.remove('btn-outline');
                 } else {
-                    // Remove 'active' class from other buttons
                     button.classList.remove('btn-primary');
                     button.classList.add('btn-outline');
                 }

@@ -24,11 +24,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['duo_invite_link'] = self.request.build_absolute_uri(
-            reverse('home:invite',
-                    kwargs={'invite_token': self.request.user.userprofile.invite_token})
-        )
         profile = self.request.user.userprofile
         context['wraps'] = Wrapped.objects.filter(
             Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
@@ -43,12 +38,16 @@ class HomeView(LoginRequiredMixin, TemplateView):
             if userprofile.access_token:
                 wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
 
-                Wrapped.objects.create(
+                # Create a new Wrapped instance
+                new_wrap = Wrapped.objects.create(
                     creator1=userprofile,
                     version='aiden10-30',
                     public=public,
                     content=wrapped_content,
                 )
+                
+                # Redirect to the first slide (page_id 1)
+                return redirect('slides:slide', page_id=1)
             else:
                 return HttpResponse('Bad Access Token')
 
