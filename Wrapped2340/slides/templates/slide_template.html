@@ -85,10 +85,7 @@
                 slideContent.innerText = "placeholder";
                 break;
             case 8:
-                // Slide title and content for Top Artists
                 slideTitle.innerText = "Top Artists";
-                
-                // If there are no artists, show a placeholder message
                 if (!topArtistsList || topArtistsList.children.length === 0) {
                 const noArtistsMessageElement = document.createElement('p');
                 noArtistsMessageElement.className = 'text-lg text-gray-300 no-artists-message';
