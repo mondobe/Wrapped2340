@@ -16,13 +16,19 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         # Map page IDs to slide titles or any other data specific to each slide
         slide_titles = {
             1: 'Get Ready to Travel the World with Audioscape 🌎',
-            2: 'Regions Your Favorite Songs are From',
+            2: 'Regions Your Favorite Songs Are From',
             3: 'Genre-ous Moments Ahead 🎶',
-            4: 'Top Artists',
+            4: 'Top Genres',
             5: 'Counting Down the Beats 🔟',
-            6: 'Top 10 Songs',
+            6: 'Your Top 10 Songs',
             7: 'Artist Appreciation Time 🎤',
-            8: 'Top Genres',
+            8: 'Top Artists',
+            9: 'Pack Your Vibes with Audioscape.AI 🌴',
+            10: 'Your AI Travel Suggestion',
+            11: 'Buzzing With Excitement 🐝',
+            12: 'What’s the Buzz?',
+            13: '2nd Game intro',
+            14: 'Game 2',
         }
 
         context['page_title'] = slide_titles.get(page_id, 'Unknown Slide')
