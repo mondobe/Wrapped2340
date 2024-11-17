@@ -37,6 +37,6 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         # Fetch top artists if on slide 8
         if page_id == 8:
             user_profile = self.request.user.profile
-            context['top_artists'] = get_top_artists(user_profile, 'medium_term')
+            context['Top Artists'] = get_top_artists(user_profile, 'medium_term')
 
         return context
