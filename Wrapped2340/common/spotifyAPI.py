@@ -51,19 +51,23 @@ def get_api_data(userprofile, subdomain, time_range, limit):
         'content-type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer %s' % userprofile.access_token,
     }
-    api_get = lambda: requests.get(url, params=params, headers=headers)
-    response = api_get()
 
-    if response.status_code == 401:
-        refresh_token = userprofile.refresh_token
-        refresh_access_token(userprofile, refresh_token)
+    response = requests.get(url, params=params, headers=headers)
 
-        headers['Authorization'] = 'Bearer %s' % userprofile.access_token
-        response = api_get()
+    # Check if the response is empty or invalid
+    if response.status_code != 200:
+        print(f"Error: Received status code {response.status_code}")
+        return None
 
+    if not response.content:
+        print("Error: Empty response from Spotify API")
+        return None
+
+    try:
         return response.json()
-
-    return response.json()
+    except requests.exceptions.JSONDecodeError:
+        print("Error: Failed to decode JSON from Spotify API")
+        return None
 
 def refresh_access_token(userprofile, refresh_token):
     print('refreshed token')
