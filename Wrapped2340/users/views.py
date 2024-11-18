@@ -97,14 +97,19 @@ class AccountSettingsView(LoginRequiredMixin, UpdateView):
         form.save()
         return super().form_valid(form)
 
-    def get(self, request):
-        if 'code' in request.GET:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if 'code' in self.request.GET:
             # Extract the code from the URL
-            authorization_code = request.GET['code']
+            authorization_code = self.request.GET['code']
 
             # Grabs tokens
             spotifyAPI.get_access_token(self.request.user.userprofile, authorization_code)
-        return super().get(request)
+        context['duo_invite_link'] = self.request.build_absolute_uri(
+            reverse('home:invite',
+                    kwargs={'invite_token': self.request.user.userprofile.invite_token})
+        )
+        return context
 
 class LinkSpotify(LoginRequiredMixin, View):
 
