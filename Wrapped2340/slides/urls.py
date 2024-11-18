@@ -4,5 +4,5 @@ from . import views
 app_name = "slides"
 
 urlpatterns = [
-    path('<int:page_id>/', views.SlidesView.as_view(), name='slide'),
+    path('<int:wrapped_id>/<int:page_id>/', views.SlidesView.as_view(), name='slide'),  # For any slide by page_id
 ]

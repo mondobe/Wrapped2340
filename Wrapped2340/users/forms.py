@@ -1,7 +1,9 @@
 from django.contrib.auth.forms import BaseUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
-from django.forms import EmailField, forms, ModelForm
+from django.forms import EmailField, ModelForm
+from django import forms
+from .models import Feedback
 
 from Wrapped2340.users.models import UserProfile, Feedback
 
@@ -20,10 +22,14 @@ class SignUpForm(BaseUserCreationForm):
 class RotateInviteTokenForm(forms.Form):
     pass
 
-class FeedbackForm(ModelForm):
+class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['message']
+        widgets = {
+            'message': forms.Textarea(attrs={'class': 'w-full px-3 py-2 border rounded', 'rows': 4}),
+        }
+        labels = {'message': 'Your Feedback'}
 class UserForm(ModelForm):
     class Meta:
         model = User

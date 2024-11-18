@@ -18,3 +18,12 @@ class Wrapped(models.Model):
                       ("By %s" % self.creator1))
         caption_text = ("Caption: \"%s\"" % self.caption) if self.caption else "No caption"
         return "%s\n%s\n%s\n%s" % (noun, created_by, time, caption_text)
+
+
+class CommonFeedback(models.Model):
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Feedback: {self.message[:20]}"

@@ -10,10 +10,7 @@
         {% else %}
             <form method="post" class="max-w-lg">
                 {% csrf_token %}
-                <div class="mb-4">
-                    <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-gray-700">Your Feedback</label>
-                    {{ form.message }}
-                </div>
+                {{ form.as_p }}
                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                     Submit Feedback
                 </button>

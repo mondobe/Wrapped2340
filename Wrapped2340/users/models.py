@@ -1,7 +1,10 @@
 import secrets
 
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
+
+
 
 # SpotifyUser
 class UserProfile(models.Model):
@@ -29,9 +32,10 @@ class UserProfile(models.Model):
 
 
 class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     resolved = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Feedback {self.id}"
+        return f"{self.user.username}: {self.message[:20]}"

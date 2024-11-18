@@ -38,16 +38,19 @@ class HomeView(LoginRequiredMixin, TemplateView):
         if request.POST.get('action') == 'newWrap':
             timeframe = request.POST.get('timeframe')
             public = request.POST.get('public') == "true"
-            duo = request.POST.get('duo') == "true"
             userprofile = self.request.user.userprofile
             if userprofile.access_token:
                 wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
 
-                Wrapped.objects.create(
+                wrapped = Wrapped.objects.create(
                     creator1=userprofile,
                     version='aiden10-30',
                     public=public,
                     content=wrapped_content,
+                )
+
+                return redirect(
+                    reverse('slides:slide', kwargs={'page_id': 1, 'wrapped_id': wrapped.id})
                 )
             else:
                 return HttpResponse('Bad Access Token')

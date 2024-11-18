@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Wrapped Slides</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+
+<div id="slide-container" class="w-full max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
+    <!-- Dynamic Slide Content -->
+    <h1 id="slide-title" class="text-2xl font-bold">Slide Title</h1>
+    <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+
+    <!-- Slide Navigation Buttons -->
+    <div class="flex justify-between mt-8">
+        <button onclick="prevSlide()" class="btn btn-primary bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg">Previous</button>
+        <button onclick="nextSlide()" class="btn btn-success bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg">Next</button>
+    </div>
+</div>
+
+<div id="artists-data" style="display: none;">
+    {% for artist in wrapped_object.content.artists %}
+        <div class="artist" data-id="{{ artist.id }}">
+            <strong>{{ artist.name }}</strong>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    // Initialize page ID and timer
+    let pageId = 1;
+    let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
+
+    // Function to load content based on page ID
+    function loadSlideContent() {
+        const slideTitle = document.getElementById("slide-title");
+        const slideContent = document.getElementById("slide-content");
+
+        // Change content based on `pageId`
+        switch (pageId) {
+            case 1:
+                slideTitle.innerText = "Get Ready to Travel the World with Audioscape 🌎";
+                slideContent.innerText = "Take a journey through music from across the globe!";
+                break;
+            case 2:
+                slideTitle.innerText = "Regions Your Favorite Songs Are From";
+                slideContent.innerText = "Explore the places your favorite artists are from.";
+                break;
+            case 3:
+                slideTitle.innerText = "Genre-ous Moments Ahead 🎶";
+                slideContent.innerText = "These are the genres you've been loving this year.";
+                break;
+            case 4:
+                slideTitle.innerText = "Top Genres";
+                slideContent.innerText = "placeholder";
+                break;
+            case 5:
+                slideTitle.innerText = "Counting Down the Beats 🔟";
+                slideContent.innerText = "placeholder";
+                break;
+            case 6:
+                slideTitle.innerText = "Your Top 10 Songs";
+                slideContent.innerText = "placeholder";
+                break;
+            case 7:
+                slideTitle.innerText = "Artist Appreciation Time 🎤";
+                slideContent.innerText = "placeholder";
+                break;
+            case 8:
+                const artistsData = document.getElementById("artists-data");
+                const artists = artistsData.getElementsByClassName("artist");
+                let artistListHTML = '<ol type="1">'; // Start an unordered list for artists
+                for (let i = 0; i < artists.length; i++) {
+                    const artist = artists[i];
+                    const artistName = artist.querySelector("strong").innerText;
+
+                    artistListHTML += `<li><strong>${artistName}</strong></li>`;
+                }
+                artistListHTML += "</ol>"; // Close the unordered list
+
+                slideTitle.innerText = "Top Artists";
+                slideContent.innerHTML = artistListHTML;
+                break;
+            case 9:
+                slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
+                slideContent.innerText = "placeholder";
+                break;
+            case 10:
+                slideTitle.innerText = "Your AI Travel Suggestion";
+                slideContent.innerText = "placeholder";
+                break;
+            case 11:
+                slideTitle.innerText = "Buzzing With Excitement 🐝";
+                slideContent.innerText = "placeholder";
+                break;
+            case 12:
+                slideTitle.innerText = "What’s the Buzz?";
+                slideContent.innerText = "placeholder";
+                break;
+            case 13:
+                slideTitle.innerText = "2nd Game intro";
+                slideContent.innerText = "placeholder";
+                break;
+            case 14:
+                slideTitle.innerText = "Game 2";
+                slideContent.innerText = "placeholder";
+                break;
+            default:
+                slideTitle.innerText = "Summary";
+                slideContent.innerText = "Your music journey at a glance!";
+                break;
+        }
+    }
+
+    // Function to go to the next slide
+    function nextSlide() {
+        if (pageId < 16) {
+            pageId++;
+            loadSlideContent();
+            resetTimer();
+        }
+    }
+
+    // Function to go to the previous slide
+    function prevSlide() {
+        if (pageId > 1) {
+            pageId--;
+            loadSlideContent();
+            resetTimer();
+        }
+    }
+
+    // Reset the timer whenever the user navigates manually
+    function resetTimer() {
+        clearInterval(slideTimer);
+        slideTimer = setInterval(nextSlide, 30000);
+    }
+
+    // Load the first slide when the page loads
+    window.onload = loadSlideContent;
+</script>
+
+</body>
+</html>
