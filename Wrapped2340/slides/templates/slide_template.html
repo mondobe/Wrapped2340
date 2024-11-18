@@ -29,6 +29,14 @@
     {% endfor %}
 </div>
 
+<div id="songs-data" style="display: none;">
+    {% for track in wrapped_object.content.tracks %}
+        <div class="song" data-id="{{ track.id }}">
+            <strong>{{ track.name }}</strong>
+        </div>
+    {% endfor %}
+</div>
+
 <script>
     // Initialize page ID and timer
     let pageId = 1;
@@ -62,8 +70,21 @@
                 slideContent.innerText = "placeholder";
                 break;
             case 6:
+                const songsData = document.getElementById("songs-data");
+                const songs = songsData.getElementsByClassName("song");
+                let songListHTML = '<ol type="1">'; // Start an ordered list for songs
+
+                for (let i = 0; i < songs.length; i++) {
+                    const song = songs[i];
+                    const songName = song.querySelector("strong").innerText;
+
+                    songListHTML += `<li><strong>${songName}</strong></li>`;
+                }
+
+                songListHTML += "</ol>"; // Close the ordered list
+
                 slideTitle.innerText = "Your Top 10 Songs";
-                slideContent.innerText = "placeholder";
+                slideContent.innerHTML = songListHTML;
                 break;
             case 7:
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
@@ -72,7 +93,7 @@
             case 8:
                 const artistsData = document.getElementById("artists-data");
                 const artists = artistsData.getElementsByClassName("artist");
-                let artistListHTML = '<ol type="1">'; // Start an unordered list for artists
+                let artistListHTML = '<ol type="1">'; // Start an ordered list for artists
                 for (let i = 0; i < artists.length; i++) {
                     const artist = artists[i];
                     const artistName = artist.querySelector("strong").innerText;

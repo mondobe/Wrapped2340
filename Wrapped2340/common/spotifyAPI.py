@@ -14,6 +14,7 @@ scope = 'user-top-read'
 state = secrets.token_urlsafe(16)
 token_url = 'https://accounts.spotify.com/api/token'
 
+
 def auth():
     base_url = 'https://accounts.spotify.com/authorize?'
     payload = {
@@ -25,6 +26,7 @@ def auth():
     }
     # Construct the authorization URL
     return base_url + urllib.parse.urlencode(payload)
+
 
 def get_access_token(userprofile, authorization_code):
     # Sends in the auth code to get access token and refresh token
@@ -40,6 +42,7 @@ def get_access_token(userprofile, authorization_code):
     }
     response = requests.post(token_url, data=data, headers=headers).json()
     save_tokens(userprofile, response.get('access_token'), response.get('refresh_token'))
+
 
 def get_api_data(userprofile, subdomain, time_range, limit):
     url = 'https://api.spotify.com/v1/me/top/%s' % subdomain
@@ -64,6 +67,7 @@ def get_api_data(userprofile, subdomain, time_range, limit):
 
     return response.json()
 
+
 def refresh_access_token(userprofile, refresh_token):
     print('refreshed token')
     client_credentials = f"{os.getenv('CLIENT_ID')}:{os.getenv('CLIENT_SECRET')}"
@@ -80,6 +84,7 @@ def refresh_access_token(userprofile, refresh_token):
     print(response)
     save_tokens(userprofile, response.get('access_token'),None)
 
+
 def save_tokens(userprofile, access_token, refresh_token):
     if access_token:
         userprofile.access_token = access_token
@@ -87,6 +92,7 @@ def save_tokens(userprofile, access_token, refresh_token):
         userprofile.refresh_token = refresh_token
     userprofile.save()
     print("saved tokens")
+
 
 def get_top_artists(userprofile, limit, timeframe):
     artist_response = get_api_data(
@@ -97,6 +103,7 @@ def get_top_artists(userprofile, limit, timeframe):
     )
     return [{'name': artist['name'], 'id': artist['id']} for artist in artist_response['items']]
 
+
 def get_top_tracks(userprofile, timeframe):
     tracks_response = get_api_data(
         userprofile=userprofile,
@@ -106,12 +113,14 @@ def get_top_tracks(userprofile, timeframe):
     )
     return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
 
+
 def get_wrapped_content(userprofile, timeframe):
     combined = {
         'artists': get_top_artists(userprofile, 10, timeframe),
         'tracks': get_top_tracks(userprofile, timeframe)
     }
     return combined
+
 
 def get_related_artists(artist_id, userprofile):
     headers = {
@@ -120,6 +129,7 @@ def get_related_artists(artist_id, userprofile):
     response = requests.get('https://api.spotify.com/v1/artists/%s/related-artists' % artist_id,
                             headers=headers)
     return response.json()['artists']
+
 
 def get_albums(artist_id, userprofile):
     params = {
@@ -131,6 +141,7 @@ def get_albums(artist_id, userprofile):
     response = requests.get('https://api.spotify.com/v1/artists/%s/albums' % artist_id,
                             params=params, headers=headers)
     return response.json()['items']
+
 
 def get_top_artist_tracks(artist_id, userprofile):
     params = {
