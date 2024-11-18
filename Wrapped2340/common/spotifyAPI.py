@@ -28,11 +28,11 @@ def auth():
 
 def get_access_token(userprofile, authorization_code):
     # Sends in the auth code to get access token and refresh token
-    client_credentials = f"{os.getenv('client_id')}:{os.getenv('client_secret')}"
+    client_credentials = f"{os.getenv('CLIENT_ID')}:{os.getenv('CLIENT_SECRET')}"
     data = {
         'grant_type': 'authorization_code',
         'code': authorization_code,
-        'redirect_uri': os.getenv('redirect_uri'),
+        'redirect_uri': redirect_uri,
     }
     headers = {
         'content-type': 'application/x-www-form-urlencoded',
