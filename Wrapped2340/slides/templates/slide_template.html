@@ -6,32 +6,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Slides</title>
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
-</head>
-<body class="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0077FF, #9B2DFF, #000000);
+            background-size: 300% 300%;
+            animation: gradientAnimation 10s ease infinite;
+        }
 
-<div id="slide-container" class="w-full max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #slide-container {
+            animation: slideIn 1s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) rotate(-1deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeInText 1s ease forwards;
+        }
+
+        @keyframes fadeInText {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Nav zones to go right left */
+        .slide-navigation-zone {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 30%;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .slide-navigation-zone.left {
+            left: 0;
+        }
+        .slide-navigation-zone.right {
+            right: 0;
+        }
+        .slide-navigation-zone:hover {
+            background-color: hwb(0 0% 100% / 0.040);
+        }
+    </style>
+
+    
+</head>
+<body class="flex items-center justify-center min-h-screen text-white">
+
+<div id="slide-container" class="w-full max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-2xl">
+
+
+    <div id="slide-icon" class="flex justify-center mb-4 fade-in">
+        <img id="slide-icon-img" src="" alt="Slide Icon" style="width: 100px; height: 100px;" class="animate-bounce">
+    </div>
+
     <!-- Dynamic Slide Content -->
     <h1 id="slide-title" class="text-2xl font-bold">Slide Title</h1>
     <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
-
-    <!-- Slide Navigation Buttons -->
-    <div class="flex justify-between mt-8">
-        <button onclick="prevSlide()" class="btn btn-primary bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg">Previous</button>
-        <button onclick="nextSlide()" class="btn btn-success bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg">Next</button>
-    </div>
 </div>
 
-<script>
-    // Initialize page ID and timer
-    let pageId = 1;
-    let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
+<div class="slide-navigation-zone left" onclick="prevSlide()"></div>
+<div class="slide-navigation-zone right" onclick="nextSlide()"></div>
 
-    // Function to load content based on page ID
+<script>
+    let pageId = 1;
+    let slideTimer = setInterval(nextSlide, 30000);
+
+    const slideIcons = {
+        1: "{% static 'css/images/globe.png' %}",
+    };
+
     function loadSlideContent() {
         const slideTitle = document.getElementById("slide-title");
         const slideContent = document.getElementById("slide-content");
+        const slideIcon = document.getElementById("slide-icon");
 
-        // Change content based on `pageId`
+        slideTitle.classList.remove("fade-in");
+        slideContent.classList.remove("fade-in");
+        slideIcon.classList.remove("fade-in");
+
+        setTimeout(() => {
+            slideTitle.classList.add("fade-in");
+            slideContent.classList.add("fade-in");
+            slideIcon.classList.add("fade-in");
+        }, 100);
+
+
         switch (pageId) {
             case 1:
                 slideTitle.innerText = "Get Ready to Travel the World with Audioscape 🌎";
@@ -94,6 +172,7 @@
                 slideContent.innerText = "Your music journey at a glance!";
                 break;
         }
+        document.getElementById("slide-icon-img").src = slideIcons[pageId];
     }
 
     // Function to go to the next slide
