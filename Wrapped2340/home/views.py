@@ -38,7 +38,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
         if request.POST.get('action') == 'newWrap':
             timeframe = request.POST.get('timeframe')
             public = request.POST.get('public') == "true"
-            duo = request.POST.get('duo') == "true"
             userprofile = self.request.user.userprofile
             if userprofile.access_token:
                 wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
@@ -49,6 +48,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
                     public=public,
                     content=wrapped_content,
                 )
+
+
             else:
                 return HttpResponse('Bad Access Token')
 
