@@ -89,12 +89,12 @@ def save_tokens(userprofile, access_token, refresh_token):
     userprofile.save()
     print("saved tokens")
 
-def get_top_artists(userprofile, timeframe):
+def get_top_artists(userprofile, limit, timeframe):
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
         time_range=timeframe,
-        limit=10
+        limit=limit,
     )
     return [{'name': artist['name'], 'id': artist['id']} for artist in artist_response['items']]
 
@@ -109,7 +109,7 @@ def get_top_tracks(userprofile, timeframe):
 
 def get_wrapped_content(userprofile, timeframe):
     combined = {
-        'artists': get_top_artists(userprofile, timeframe),
+        'artists': get_top_artists(userprofile, 10, timeframe),
         'tracks': get_top_tracks(userprofile, timeframe)
     }
     return combined

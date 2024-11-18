@@ -33,7 +33,7 @@ class WhatsTheBuzzView(FormView):
         context = super().get_context_data(**kwargs)
         userprofile = self.request.user.userprofile
         random.seed(datetime.now().microsecond)
-        top_artists = spotifyAPI.get_top_artists(userprofile, limit=20)
+        top_artists = spotifyAPI.get_top_artists(userprofile, limit=20, timeframe='medium_term')
         for i in range(10):
             artist = random.choice(top_artists)
             try:
@@ -116,7 +116,7 @@ class GtaView(TemplateView):
 
         userprofile = self.request.user.userprofile
         random.seed(datetime.now().microsecond)
-        top_artists = spotifyAPI.get_top_artists(userprofile, limit=30)
+        top_artists = spotifyAPI.get_top_artists(userprofile, limit=30, timeframe='medium_term')
         artist = random.choice(top_artists)
 
         top_tracks = spotifyAPI.get_top_artist_tracks(artist['id'], userprofile)[:5]

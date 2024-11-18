@@ -111,6 +111,7 @@ class LinkSpotify(LoginRequiredMixin, View):
     def post(self, request):
         if request.POST.get('action') == 'link':
             url = spotifyAPI.auth()
+            messages.success(request, 'Account Linked')
             return redirect(url)
         return HttpResponse('Invalid action', status=400)
 

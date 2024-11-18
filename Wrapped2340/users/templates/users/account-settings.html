@@ -4,6 +4,11 @@
 
 {% block content %}
 {% url 'users:account-settings' as form_url %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success shadow-lg"><span>{{ message }}</span></div>
+        {% endfor %}
+    {% endif %}
     <h6 class="text-2xl font-bold m-1">
         Account Settings
     </h6>
