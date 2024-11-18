@@ -4,7 +4,7 @@ import requests
 import os
 import secrets
 from dotenv import load_dotenv
-from Wrapped2340.common.gemini import get_top_artists_locations
+from ..common import gemini
 
 # Loads variables from .env
 load_dotenv()
@@ -108,11 +108,14 @@ def get_top_tracks(userprofile, timeframe):
     return [{'name': track['name'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
 
 def get_wrapped_content(userprofile, timeframe):
-    top_artists = get_top_artists(userprofile, timeframe)
-    top_artists_locations = get_top_artists_locations(top_artists)
+    top_artists = get_top_artists(userprofile, 10, timeframe)
+    top_artists_locations = gemini.get_top_artists_locations(top_artists)
+    top_tracks = get_top_tracks(userprofile, timeframe)
+    gemini.place_to_visit(top_tracks)
     combined = {
         'artists': top_artists,
-        'tracks': get_top_tracks(userprofile, timeframe)
+        'tracks': top_tracks,
+        'locations': top_artists_locations,
     }
     return combined
 
