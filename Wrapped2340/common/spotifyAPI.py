@@ -60,14 +60,13 @@ def get_api_data(userprofile, subdomain, time_range, limit):
 
         headers['Authorization'] = 'Bearer %s' % userprofile.access_token
         response = api_get()
-
         return response.json()
 
     return response.json()
 
 def refresh_access_token(userprofile, refresh_token):
     print('refreshed token')
-    client_credentials = f"{os.getenv('client_id')}:{os.getenv('client_secret')}"
+    client_credentials = f"{os.getenv('CLIENT_ID')}:{os.getenv('CLIENT_SECRET')}"
     data = {
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,

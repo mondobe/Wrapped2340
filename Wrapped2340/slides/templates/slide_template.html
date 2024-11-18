@@ -21,6 +21,14 @@
     </div>
 </div>
 
+<div id="artists-data" style="display: none;">
+    {% for artist in wrapped_object.content.artists %}
+        <div class="artist" data-id="{{ artist.id }}">
+            <strong>{{ artist.name }}</strong>
+        </div>
+    {% endfor %}
+</div>
+
 <script>
     // Initialize page ID and timer
     let pageId = 1;
@@ -62,8 +70,19 @@
                 slideContent.innerText = "placeholder";
                 break;
             case 8:
+                const artistsData = document.getElementById("artists-data");
+                const artists = artistsData.getElementsByClassName("artist");
+                let artistListHTML = '<ol type="1">'; // Start an unordered list for artists
+                for (let i = 0; i < artists.length; i++) {
+                    const artist = artists[i];
+                    const artistName = artist.querySelector("strong").innerText;
+
+                    artistListHTML += `<li><strong>${artistName}</strong></li>`;
+                }
+                artistListHTML += "</ol>"; // Close the unordered list
+
                 slideTitle.innerText = "Top Artists";
-                slideContent.innerText = "placeholder";
+                slideContent.innerHTML = artistListHTML;
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";

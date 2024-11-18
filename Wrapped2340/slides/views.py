@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-
+from ..common.models import Wrapped
 
 # Class-based view for slides, with login required
 class SlidesView(LoginRequiredMixin, TemplateView):
@@ -10,7 +10,11 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         page_id = self.kwargs.get('page_id')
 
-        # Map page IDs to slide titles or any other data specific to each slide
+        # Imports wrapped object from id
+        wrapped_id = self.kwargs.get('wrapped_id')
+        wrapped_object = Wrapped.objects.get(id=wrapped_id)
+
+    # Map page IDs to slide titles or any other data specific to each slide
         slide_titles = {
             1: 'Get Ready to Travel the World with Audioscape 🌎',      # Transition slide
             2: 'Regions Your Favorite Songs are From',                # Info slide
@@ -31,5 +35,6 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         # Set the page title or other context variables based on the page ID
         context['page_title'] = slide_titles.get(page_id, 'Unknown Slide')
         context['page_id'] = page_id  # Pass page_id for navigation
+        context['wrapped_object'] = wrapped_object
 
         return context
