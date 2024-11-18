@@ -4,7 +4,6 @@
     <div class="container mx-auto p-6">
         <div class="grid grid-cols-3 gap-6">
             <!-- Trigger Button for Modal -->
-            <div></div>
             <div class="card bg-base-100 shadow-lg">
                 <div class="card-body items-center text-center">
                     <h2 class="card-title mt-4">Create New Wrapped</h2>
@@ -17,6 +16,14 @@
                     </button>
                 </div>
             </div>
+            {% for wrap in wraps %}
+                <div class="card bg-base-100 items-center shadow-lg text-center">
+                    <h2 class="card-title mt-4"><strong>Created at: {{ wrap.time_created }}</strong></h2>
+                    Public: {% if wrap.public %} Yes {% else %} No {% endif %}
+                </div>
+            {% empty %}
+                <div>You have no wraps yet.</div>
+            {% endfor %}
         </div>
 
         <!-- Modal -->
