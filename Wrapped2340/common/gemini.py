@@ -29,10 +29,16 @@ def get_top_artists_locations(content):
     return country_array
 
 def place_to_visit(content) :
-    request = ("Given these songs, where should I visit? Give me the city, country. Make a outlandish, funny, rarely known place."
+    request = ("Given these songs, where should I visit? Give me the one interesting place, landmark, or city and country. Make a outlandish, funny, rarely known place."
                "Do not add anything else.").join([str(item) for item in content])
     response = model.generate_content(request,
                                       generation_config=genai.types.GenerationConfig(
                                           temperature=1.5,
                                       )).text
-    print(response)
+    remove_list = ["`", "json", "[", "]", '"', "\n",]
+
+    # Loop through each item and replace it in the string
+    for item in remove_list:
+        response = response.replace(item, "")
+
+    return response

@@ -78,7 +78,7 @@ function revealAnswer(message) {
     <p>You get 5 acronyms for an artist's top 5 songs, and you have 5 chances to guess the artist.</p>
     <h1 id="status"></h1>
     {% for acronym in acronyms %}
-        <h2 id="acronym{{ forloop.counter0 }}"> </h2>
+        <h2 class="text-5xl font-bold m-2" id="acronym{{ forloop.counter0 }}"> </h2>
     {% endfor %}
     <form id="input-form">
         <input type="text" id="input" autocomplete="off" placeholder="Input your guess...">
