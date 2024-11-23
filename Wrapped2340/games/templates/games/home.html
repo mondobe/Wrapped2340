@@ -1,26 +1,28 @@
 {% extends 'games/base.html' %}
 
 {% block content %}
-    <div class="card bg-base-100 w-96 shadow-xl">
-        <div class="card-body">
-            <div class="card-title">
-                What's the Buzz
+    <div class="grid grid-cols-2 justify-items-center">
+        <div class="card bg-base-100 w-3/4 m-2 shadow-xl">
+            <div class="card-body ">
+                <div class="card-title">
+                    What's the Buzz
+                </div>
+                Guess what Redditors are raving about.
             </div>
-            Guess what Redditors are raving about.
-        </div>
-        <div class="card-actions justify-end">
-            <h2><a class="btn btn-primary" href="{% url 'games:whats-the-buzz' %}">Play</a></h2>
-        </div>
-    </div>
-    <div class="card bg-base-100 w-96 shadow-xl">
-        <div class="card-body">
-            <div class="card-title">
-                G.T.A.: Guess That Artist
+            <div class="card-actions justify-end">
+                <h2><a class="btn btn-primary m-2" href="{% url 'games:whats-the-buzz' %}">Play</a></h2>
             </div>
-            Can you figure out artists from their top tracks' acronyms?
         </div>
-        <div class="card-actions justify-end">
-            <h2><a class="btn btn-primary" href="{% url 'games:gta' %}">Play</a></h2>
+        <div class="card bg-base-100 w-3/4 m-2 shadow-xl">
+            <div class="card-body">
+                <div class="card-title">
+                    G.T.A.: Guess That Artist
+                </div>
+                Can you figure out artists from their top tracks' acronyms?
+            </div>
+            <div class="card-actions justify-end">
+                <h2><a class="btn btn-primary m-2" href="{% url 'games:gta' %}">Play</a></h2>
+            </div>
         </div>
     </div>
 {% endblock %}
