@@ -1,84 +1,12 @@
 {% comment %}
-    Basic Wrapped data (same for all versions)
+    wrap = Wrap whose thumbnail is being displayed
 {% endcomment %}
 
-<h2>{{ wrap.public|yesno:"Public Wrapped, Wrapped" }}</h2>
-<p><strong>Created by:</strong> {{ wrap.creator1.user.username }}{% if wrap.creator2 %} and {{ wrap.creator2.user.username }}{% endif %}</p>
-<p><strong>Created at:</strong> {{ wrap.time_created|date:"Y-m-d H:i:s" }}</p>
-<p><strong>Caption:</strong> {% if wrap.caption %}"{{ wrap.caption }}"{% else %}No caption{% endif %}</p>
-<strong>Content:</strong>
-
-{% comment %}
-    Different versions of Wraps have different organizations for content.
-    For backwards compatibility, we use the `version` field to figure out
-    the organization of the content.
-{% endcomment %}
-
-{% if wrap.version == 'pre-sprint2' %}
-    <ol>
-        {% for key, value in wrap.content.items %}
-            <li>
-                <strong>Artist:</strong> {{ value.artist.name }}<br>
-                <strong>Genres:</strong> {{ value.artist.genres|join:", " }}<br>
-                <strong>Track:</strong> {{ value.track.name }}<br>
-                {% if value.track.preview_url %}
-                    <a href="{{ value.track.preview_url }}" target="_blank">Preview Track</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ol>
-{% elif wrap.version == 'aiden10-30' %}
-    <h3>Top Artists</h3>
-    <ol>
-        {% for artist in wrap.content.artists %}
-            <li>
-                <b>{{ artist.name }}</b> ({{ artist.genres|join:', ' }})
-            </li>
-        {% endfor %}
-    </ol>
-    <h3>Top Tracks</h3>
-    <ol>
-        {% for track in wrap.content.tracks %}
-            <li>
-                <b>{{ track.name }}</b> (<a href="{{ track.preview }}" target="_blank">Preview</a>)
-            </li>
-        {% endfor %}
-    </ol>
-{% elif wrap.version == 'aiden10-30duo' %}
-    <h3>{{ wrap.creator1.user.username }}'s Top Artists</h3>
-    <ol>
-        {% for artist in wrap.content.duo1.artists %}
-            <li>
-                <b>{{ artist.name }}</b> ({{ artist.genres|join:', ' }})
-            </li>
-        {% endfor %}
-    </ol>
-    <h3>{{ wrap.creator1.user.username }}'s Top Tracks</h3>
-    <ol>
-        {% for track in wrap.content.duo1.tracks %}
-            <li>
-                <b>{{ track.name }}</b> (<a href="{{ track.preview }}" target="_blank">Preview</a>)
-            </li>
-        {% endfor %}
-    </ol>
-    <h3>{{ wrap.creator2.user.username }}'s Top Artists</h3>
-    <ol>
-        {% for artist in wrap.content.duo1.artists %}
-            <li>
-                <b>{{ artist.name }}</b> ({{ artist.genres|join:', ' }})
-            </li>
-        {% endfor %}
-    </ol>
-    <h3>{{ wrap.creator2.user.username }}'s Top Tracks</h3>
-    <ol>
-        {% for track in wrap.content.duo1.tracks %}
-            <li>
-                <b>{{ track.name }}</b> (<a href="{{ track.preview }}" target="_blank">Preview</a>)
-            </li>
-        {% endfor %}
-    </ol>
-{% else %}
-    <div class="unknown-content">
-        <pre>{{ wrap.content }}</pre>
-    </div>
-{% endif %}
+<div class="card bg-base-100 items-center shadow-lg text-center">
+    <h2 class="card-title mt-4"><strong>Created at: {{ wrap.time_created }}</strong></h2>
+    {% if wrap.creator2 %}
+        Duo-Wrapped
+    {% endif %}
+    <br>
+    Public: {% if wrap.public %} Yes {% else %} No {% endif %}
+</div>

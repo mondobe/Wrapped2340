@@ -19,19 +19,11 @@ from dotenv import load_dotenv
 # Loads variables from .env
 load_dotenv()
 
-class HomeView(LoginRequiredMixin, TemplateView):
+class WrappedListView(TemplateView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['duo_invite_link'] = self.request.build_absolute_uri(
-            reverse('home:invite',
-                    kwargs={'invite_token': self.request.user.userprofile.invite_token})
-        )
-        profile = self.request.user.userprofile
-        context['wraps'] = Wrapped.objects.filter(
-            Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
         return context
 
     def post(self, request):
@@ -56,6 +48,20 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 return HttpResponse('Bad Access Token')
 
         return super().get(request)
+
+class HomeView(LoginRequiredMixin, WrappedListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.request.user.userprofile
+        context['wraps'] = Wrapped.objects.filter(
+            Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
+        return context
+
+class DiscoverView(LoginRequiredMixin, WrappedListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['wraps'] = Wrapped.objects.filter(public=True).order_by("-time_created")
+        return context
 
 class WrappedInviteView(LoginRequiredMixin, TemplateView):
     template_name = 'invite.html'
