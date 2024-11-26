@@ -23,38 +23,38 @@ function copyUrl() {
         Account Settings
     </h6>
 <div class="flex flex-row">
-    <div class="basis-1/2">
+    <div class="basis-1/2 m-1">
         {% if next_page %}
             <form method="post" action="{{ form_url }}?next={{ next_page }}">
         {% else %}
             <form method="post" action="{{ form_url }}">
         {% endif %}
         {% csrf_token %}
-        <div class="m-1">
+        <div class="mb-2">
             <label class="input input-bordered flex items-center gap-2">
                 Email:
                 {{ form.email }}
             </label>
         </div>
-        <div class="m-1">
+        <div class="mb-2">
             <label class="input input-bordered flex items-center gap-2">
                 Username:
                 {{ form.username }}
             </label>
         </div>
-        <div class="m-1">
+        <div class="mb-2">
             <label class="input input-bordered flex items-center gap-2">
                 First Name:
                 {{ form.first_name }}
             </label>
         </div>
-        <div class="m-1">
+        <div class="mb-2">
             <label class="input input-bordered flex items-center gap-2">
                 Last Name:
                 {{ form.last_name }}
             </label>
         </div>
-        <input class="btn m-1 btn-neutral" type="submit" value="Update Account Settings">
+        <input class="btn btn-neutral" type="submit" value="Update Account Settings">
         </form>
     </div>
     <div class="flex flex-col basis-1/2">

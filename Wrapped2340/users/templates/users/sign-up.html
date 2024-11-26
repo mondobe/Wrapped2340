@@ -1,8 +1,0 @@
-{% extends 'users/base.html' %}
-
-{% block title %}Sign Up{% endblock %}
-
-{% block content %}
-    {% url 'users:sign-up' as form_url %}
-    {% include 'users/form.html' with header_text="Create Account" %}
-{% endblock %}
