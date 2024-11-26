@@ -44,6 +44,5 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         context['page_title'] = slide_titles.get(page_id, 'Unknown Slide')
         context['page_id'] = page_id  # Pass page_id for navigation
         context['wrapped_object'] = wrapped_object
-        context['songs'] = wrapped_object.content.get('tracks', [])
 
         return context

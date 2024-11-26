@@ -9,7 +9,7 @@
         <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
         {% block head %}{% endblock %}
     </head>
-    <body class="bg-base-200 h-dvh">
+    <body class="bg-base-200 flex flex-col max-h-dvh">
         <div class="navbar bg-base-100 shadow-lg">
             <div class="flex-1">
                 <a href="{% url 'home:home-redirect' %}" class="btn btn-ghost normal-case text-xl text- ">AudioScape</a>
@@ -99,7 +99,7 @@
             </div>
         </div>
 
-        <div class="container mx-auto p-6">
+        <div class="container mx-auto p-6 overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
             {% block content %}
             {% endblock %}
         </div>
