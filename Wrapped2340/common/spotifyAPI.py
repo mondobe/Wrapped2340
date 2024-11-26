@@ -4,6 +4,7 @@ import requests
 import os
 import secrets
 from dotenv import load_dotenv
+from ..common import gemini
 
 # Loads variables from .env
 load_dotenv()
@@ -45,31 +46,30 @@ def get_access_token(userprofile, authorization_code):
 
 
 def get_api_data(userprofile, subdomain, time_range, limit):
-    url = 'https://api.spotify.com/v1/me/top/%s' % subdomain
-    params = {
-        'time_range': time_range,
-        'limit': limit,
-    }
+    url = f'https://api.spotify.com/v1/me/top/{subdomain}'
+    params = {'time_range': time_range, 'limit': limit}
     headers = {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer %s' % userprofile.access_token,
+        'Authorization': f'Bearer {userprofile.access_token}',
     }
-    api_get = lambda: requests.get(url, params=params, headers=headers)
+
+    def api_get():
+        return requests.get(url, params=params, headers=headers)
+
     response = api_get()
 
-    if response.status_code == 401:
-        refresh_token = userprofile.refresh_token
-        refresh_access_token(userprofile, refresh_token)
-
-        headers['Authorization'] = 'Bearer %s' % userprofile.access_token
+    if response.status_code == 401:  # Unauthorized, refresh token
+        refresh_access_token(userprofile, userprofile.refresh_token)
+        headers['Authorization'] = f'Bearer {userprofile.access_token}'
         response = api_get()
-        return response.json()
 
-    return response.json()
+    try:
+        return response.json()
+    except ValueError:
+        print(f"Invalid JSON response: {response.text}")
+        return {"error": "Invalid response from Spotify API"}
 
 
 def refresh_access_token(userprofile, refresh_token):
-    print('refreshed token')
     client_credentials = f"{os.getenv('CLIENT_ID')}:{os.getenv('CLIENT_SECRET')}"
     data = {
         'grant_type': 'refresh_token',
@@ -77,12 +77,20 @@ def refresh_access_token(userprofile, refresh_token):
         'client_id': client_id,
     }
     headers = {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + base64.b64encode(client_credentials.encode()).decode()
+        'Authorization': 'Basic ' + base64.b64encode(client_credentials.encode()).decode(),
     }
-    response = requests.post(token_url, data=data, headers=headers).json()
-    print(response)
-    save_tokens(userprofile, response.get('access_token'),None)
+    response = requests.post(token_url, data=data, headers=headers)
+
+    try:
+        response_data = response.json()
+    except ValueError:
+        print(f"Invalid JSON while refreshing token: {response.text}")
+        return
+
+    if "access_token" in response_data:
+        save_tokens(userprofile, response_data.get('access_token'), None)
+    else:
+        print(f"Token refresh failed: {response_data}")
 
 
 def save_tokens(userprofile, access_token, refresh_token):
@@ -111,15 +119,27 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
+    return [{'name': track['name'], 'preview_url': track['preview_url'], 'id': track['id']} for track in tracks_response['items']]
 
 
 def get_wrapped_content(userprofile, timeframe):
-    combined = {
-        'artists': get_top_artists(userprofile, 10, timeframe),
-        'tracks': get_top_tracks(userprofile, timeframe)
-    }
-    return combined
+    try:
+        top_artists = get_top_artists(userprofile, 10, timeframe)
+        top_artists_locations = gemini.get_top_artists_locations(top_artists)
+        top_tracks = get_top_tracks(userprofile, timeframe)
+        vacation_spot = gemini.place_to_visit(top_tracks)
+        combined = {
+            'artists': top_artists,
+            'tracks': top_tracks,
+            'locations': top_artists_locations,
+            'vacation': vacation_spot,
+            'timeframe': timeframe,
+        }
+        return combined
+    except Exception as e:
+        print(f"Error fetching wrapped content: {e}")
+        return {"error": "Failed to fetch wrapped content"}
+    
 
 
 def get_related_artists(artist_id, userprofile):

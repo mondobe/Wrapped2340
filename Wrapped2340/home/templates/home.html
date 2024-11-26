@@ -1,10 +1,10 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
+    <h1>{{ header }}</h1>
     <div class="container mx-auto p-6">
         <div class="grid grid-cols-3 gap-6">
             <!-- Trigger Button for Modal -->
-            <div></div>
             <div class="card bg-base-100 shadow-lg">
                 <div class="card-body items-center text-center">
                     <h2 class="card-title mt-4">Create New Wrapped</h2>
@@ -17,6 +17,11 @@
                     </button>
                 </div>
             </div>
+            {% for wrap in wraps %}
+                {% include 'wrapped_thumbnail.html' %}
+            {% empty %}
+                <div>You have no wraps yet.</div>
+            {% endfor %}
         </div>
 
         <!-- Modal -->
