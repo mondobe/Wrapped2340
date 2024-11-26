@@ -21,6 +21,11 @@
     </div>
 </div>
 
+<!-- Hidden Audio Player -->
+<audio id="audio-player" hidden autoplay loop data-wrapped="{{ wrapped_object.content.tracks }}">
+    <source src="" type="audio/mpeg">
+</audio>
+
 <div id="artists-data" style="display: none;">
     {% for artist in wrapped_object.content.artists %}
         <div class="artist">
@@ -34,6 +39,41 @@
     let pageId = 1;
     let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
 
+    const audioPlayer = document.getElementById("audio-player");
+    audioPlayer.volume = 0.3;
+
+    // Parse music links from Django context
+    let musicLinks = [];
+    try {
+        musicLinks = audioPlayer.dataset.wrapped.replace(/'/g, '"');
+        musicLinks = JSON.parse(musicLinks)
+        musicLinks = musicLinks.map(track => track.preview_url)
+        //console.log("Music Links:", musicLinks);
+    } catch (e) {
+        console.error('Failed to parse music links:', e);
+        musicLinks = [];
+    }
+
+    // Function to play a specific track
+    function playTrack(trackUrl) {
+        const sourceElement = audioPlayer.querySelector('source');
+
+        // Set the new audio source
+        sourceElement.src = trackUrl;
+        audioPlayer.load(); // Reload the audio player with the new source
+        audioPlayer.play(); // Start playback
+    }
+
+    // Function to play music based on slide
+    function playMusic() {
+        try {
+            const randomNumber = Math.floor(Math.random() * 10);
+            playTrack(musicLinks[randomNumber])
+        } catch {
+            console.warn(`No music available`);
+        }
+    }
+
     // Function to load content based on page ID
     function loadSlideContent() {
         const slideTitle = document.getElementById("slide-title");
@@ -44,6 +84,7 @@
             case 1:
                 slideTitle.innerText = "Get Ready to Travel the World with Audioscape 🌎";
                 slideContent.innerText = "Take a journey through music from across the globe!";
+                playMusic();
                 break;
             case 2:
                 slideTitle.innerText = "Regions Your Favorite Songs Are From";
@@ -52,6 +93,7 @@
             case 3:
                 slideTitle.innerText = "Genre-ous Moments Ahead 🎶";
                 slideContent.innerText = "These are the genres you've been loving this year.";
+                playMusic();
                 break;
             case 4:
                 slideTitle.innerText = "Top Genres";
@@ -60,6 +102,7 @@
             case 5:
                 slideTitle.innerText = "Counting Down the Beats 🔟";
                 slideContent.innerText = "placeholder";
+                playMusic();
                 break;
             case 6:
                 slideTitle.innerText = "Your Top 10 Songs";
@@ -68,6 +111,7 @@
             case 7:
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
                 slideContent.innerText = "placeholder";
+                playMusic();
                 break;
             case 8:
                 const artistsData = document.getElementById("artists-data");
@@ -87,6 +131,7 @@
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
                 slideContent.innerText = "placeholder";
+                playMusic();
                 break;
             case 10:
                 slideTitle.innerText = "Your AI Travel Suggestion";
@@ -95,6 +140,7 @@
             case 11:
                 slideTitle.innerText = "Buzzing With Excitement 🐝";
                 slideContent.innerText = "placeholder";
+                playMusic();
                 break;
             case 12:
                 slideTitle.innerText = "What’s the Buzz?";
@@ -103,6 +149,7 @@
             case 13:
                 slideTitle.innerText = "2nd Game intro";
                 slideContent.innerText = "placeholder";
+                playMusic();
                 break;
             case 14:
                 slideTitle.innerText = "Game 2";
@@ -111,6 +158,7 @@
             default:
                 slideTitle.innerText = "Summary";
                 slideContent.innerText = "Your music journey at a glance!";
+                playMusic();
                 break;
         }
     }

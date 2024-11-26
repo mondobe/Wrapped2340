@@ -32,7 +32,12 @@ class WrappedListView(TemplateView):
             public = request.POST.get('public') == "true"
             userprofile = self.request.user.userprofile
             if userprofile.access_token:
-                wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
+                try:
+                    wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
+                    if not wrapped_content:
+                        return HttpResponse('Failed to fetch wrapped content', status=400)
+                except Exception as e:
+                    return HttpResponse(f'Error fetching wrapped content: {e}', status=500)
 
                 wrapped = Wrapped.objects.create(
                     creator1=userprofile,
@@ -45,7 +50,7 @@ class WrappedListView(TemplateView):
                     reverse('slides:slide', kwargs={'page_id': 1, 'wrapped_id': wrapped.id})
                 )
             else:
-                return HttpResponse('Bad Access Token')
+                return HttpResponse('Bad Access Token', status=401)
 
         return super().get(request)
 
