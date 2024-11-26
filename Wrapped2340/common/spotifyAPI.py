@@ -109,7 +109,7 @@ def get_top_artists(userprofile, limit, timeframe):
         time_range=timeframe,
         limit=limit,
     )
-    return [{'name': artist['name'], 'id': artist['id']} for artist in artist_response['items']]
+    return [{'name': artist['name'], 'id': artist['id'], "genres": artist["genres"]} for artist in artist_response['items']]
 
 
 def get_top_tracks(userprofile, timeframe):
