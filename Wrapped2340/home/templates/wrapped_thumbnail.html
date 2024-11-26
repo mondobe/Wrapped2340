@@ -16,25 +16,26 @@
             </h2>
         </div>
 
-        <div class="w-full">
-            <strong>Top Artists:</strong>
+        <div class="w-full my-1.5">
+            <strong class="text-lg">Top Artists:</strong>
             <ol>
             {% for artist in wrap.content.artists|slice:":3" %}
                 <li>{{ artist.name }}</li>
             {% endfor %}
             </ol>
-
-            <strong>Top Tracks:</strong>
+        <br>
+            <strong class="text-lg">Top Tracks:</strong>
             <ol>
             {% for track in wrap.content.tracks|slice:":3" %}
                 <li>{{ track.name }}</li>
             {% endfor %}
             </ol>
+        <br>
         </div>
 
         <div class="flex-grow"></div>
 
-        <div class="bg-amber-500 justify-self-end">
+        <div class="justify-self-end pt-1">
             <p class="text-sm text-gray-500">
                 {{ wrap.time_created|naturaltime }}
                 {% if show_public %}
