@@ -20,46 +20,68 @@ function submitInput(event, choice) {
     event.preventDefault()
     let choiceText = choices[choice]
     if (choiceText === correct) {
-        reveal('You got it!')
+        reveal('You got it!', true)
     } else {
-        reveal('Incorrect...')
+        reveal('Incorrect...', false)
     }
 }
 
-function reveal(message) {
+function reveal(message, status) {
     let titleElem = document.getElementById('title')
     titleElem.innerText = reveal_title
     let postElem = document.getElementById('selftext')
     postElem.innerText = reveal_text
     let statusElem = document.getElementById('status')
     statusElem.innerText = message
+    let alertElem = document.getElementById('alert')
+    if (status) {
+        alertElem.className = "alert alert-success"
+    } else {
+        alertElem.className = "alert alert-error"
+    }
     let answerElem = document.getElementById('answer')
     answerElem.innerText = `The answer was ${correct}!`
     let choicesElem = document.getElementById('choices')
     choicesElem.hidden = true
     let tryAgain = document.getElementById('try-again')
     tryAgain.innerText = 'Try again?'
+    tryAgain.className = "btn btn-secondary m-2"
 }
     </script>
 {% endblock %}
 
 {% block content %}
-    <h1>What's the Buzz?</h1>
-    <p>
-        Given the Reddit post about an artist, guess which artist it's talking about.
-    </p>
-    <div class="post">
-        <h2 id="title">{{ post_title|safe }}</h2>
-        <p id="selftext">{{ post_text|safe }}</p>
+    <div class="text-5xl font-bold m-2">
+        What's the Buzz?
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-xs text-info">
+                How To?
+            </div>
+            <div
+                    tabindex="0"
+                    class="card compact dropdown-content bg-base-100 rounded-box z-[1] w-80 shadow">
+                <div tabindex="0" class="card-body">
+                    Given the Reddit post about an artist, guess which artist it's talking about.
+                </div>
+            </div>
+        </div>
     </div>
-    <h1 id="status"></h1>
-    <h1 id="answer"></h1>
-    <div id="choices">
+    <div class="card bg-base-100 w-3/4 shadow-xl justify-self-center m-2">
+        <div class="card-body">
+            <h2 class="card-title" id="title">{{ post_title|safe }}</h2>
+            <div id="selftext">{{ post_text|safe }}</div>
+        </div>
+    </div>
+    <div class="grid grid-cols-4 justify-items-center m-2" id="choices">
         {% for choice in choices %}
             <form id="input-form{{ forloop.counter0 }}">
-                <input type="submit" value="{{ choice }}">
+                <input class="btn btn-primary sm:btn-sm md:btn-md lg:btn-lg m-2" type="submit" value="{{ choice }}">
             </form>
         {% endfor %}
+    </div>
+    <div id="alert">
+        <h1 id="status"></h1>
+        <h1 id="answer"></h1>
     </div>
     <p>
         <a href="{% url 'games:whats-the-buzz' %}" id="try-again"></a>

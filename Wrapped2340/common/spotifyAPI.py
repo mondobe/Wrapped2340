@@ -4,6 +4,7 @@ import requests
 import os
 import secrets
 from dotenv import load_dotenv
+from ..common import gemini
 
 # Loads variables from .env
 load_dotenv()
@@ -111,20 +112,25 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
+    return [{'name': track['name'], 'preview_url': track['preview_url'], 'id': track['id']} for track in tracks_response['items']]
 
 def get_wrapped_content(userprofile, timeframe):
     try:
-        artists = get_top_artists(userprofile, 10, timeframe)
-        tracks = get_top_tracks(userprofile, timeframe)
+        top_artists = get_top_artists(userprofile, 10, timeframe)
+        top_artists_locations = gemini.get_top_artists_locations(top_artists)
+        top_tracks = get_top_tracks(userprofile, timeframe)
+        vacation_spot = gemini.place_to_visit(top_tracks)
+        combined = {
+            'artists': top_artists or [],
+            'tracks': top_tracks or [],
+            'locations': top_artists_locations or [],
+            'vacation': vacation_spot or [],
+            'timeframe': timeframe or [],
+        }
     except Exception as e:
         logging.error(f"Error fetching wrapped content: {e}")
         return {"error": "Failed to fetch wrapped content"}
-
-    return {
-        "artists": artists or [],
-        "tracks": tracks or []
-    }
+    
 
 def get_related_artists(artist_id, userprofile):
     headers = {

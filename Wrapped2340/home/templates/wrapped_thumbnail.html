@@ -1,12 +1,47 @@
+{% load humanize %}
 {% comment %}
     wrap = Wrap whose thumbnail is being displayed
+    show_public = Whether private wraps will be displayed
 {% endcomment %}
 
-<div class="card bg-base-100 items-center shadow-lg text-center">
-    <h2 class="card-title mt-4"><strong>Created at: {{ wrap.time_created }}</strong></h2>
-    {% if wrap.creator2 %}
-        Duo-Wrapped
-    {% endif %}
-    <br>
-    Public: {% if wrap.public %} Yes {% else %} No {% endif %}
-</div>
+<a href="{% url 'slides:slide' wrap.id 0 %}">
+    <div class="card bg-base-100 flex flex-col items-center" style="padding: 15px">
+        <div>
+            <h2 class="card-title">
+                {% if wrap.creator2 %}
+                    {{ wrap.creator1 }} + {{ wrap.creator2 }}
+                {% else %}
+                    {{ wrap.creator1 }}
+                {% endif %}
+            </h2>
+        </div>
+
+        <div class="w-full my-1.5">
+            <strong class="text-lg">Top Artists:</strong>
+            <ol>
+            {% for artist in wrap.content.artists|slice:":3" %}
+                <li>{{ artist.name }}</li>
+            {% endfor %}
+            </ol>
+        <br>
+            <strong class="text-lg">Top Tracks:</strong>
+            <ol>
+            {% for track in wrap.content.tracks|slice:":3" %}
+                <li>{{ track.name }}</li>
+            {% endfor %}
+            </ol>
+        <br>
+        </div>
+
+        <div class="flex-grow"></div>
+
+        <div class="justify-self-end pt-1">
+            <p class="text-sm text-gray-500">
+                {{ wrap.time_created|naturaltime }}
+                {% if show_public %}
+                    - {% if wrap.public %} Public {% else %} Private {% endif %}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</a>
