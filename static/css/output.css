@@ -5314,6 +5314,18 @@ details.collapse summary::-webkit-details-marker {
   max-height: 20rem;
 }
 
+.max-h-dvh {
+  max-height: 100dvh;
+}
+
+.max-h-lvh {
+  max-height: 100lvh;
+}
+
+.max-h-svh {
+  max-height: 100svh;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -5477,6 +5489,10 @@ details.collapse summary::-webkit-details-marker {
   flex-wrap: nowrap;
 }
 
+.content-center {
+  align-content: center;
+}
+
 .content-start {
   align-content: flex-start;
 }
@@ -5551,6 +5567,14 @@ details.collapse summary::-webkit-details-marker {
 
 .overflow-y-auto {
   overflow-y: auto;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
+}
+
+.overflow-x-scroll {
+  overflow-x: scroll;
 }
 
 .overflow-y-scroll {
@@ -5689,6 +5713,10 @@ details.collapse summary::-webkit-details-marker {
 
 .text-center {
   text-align: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }
 
 .text-2xl {

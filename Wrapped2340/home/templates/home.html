@@ -1,54 +1,52 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
-    <h1>{{ header }}</h1>
-    <div class="container mx-auto p-6">
-        <div class="grid grid-cols-3 gap-6">
-            <!-- Trigger Button for Modal -->
-            <div class="card bg-base-100 shadow-lg">
-                <div class="card-body items-center text-center">
-                    <h2 class="card-title mt-4">Create New Wrapped</h2>
-                    <button onclick="toggleModal('createModal')" class="btn btn-primary relative">
-                        <span class="w-6 h-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                            </svg>
-                        </span>
-                    </button>
-                </div>
+    <div class="grid grid-cols-3 gap-6">
+        <!-- Trigger Button for Modal -->
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body items-center text-center justify-center ">
+                <h2 class="card-title m-4">Create New Wrapped</h2>
+                <button onclick="toggleModal('createModal')" class="btn btn-primary relative">
+                    <span class="w-6 h-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                    </span>
+                </button>
             </div>
-            {% for wrap in wraps %}
-                {% include 'wrapped_thumbnail.html' %}
-            {% empty %}
-                <div>You have no wraps yet.</div>
-            {% endfor %}
         </div>
+        {% for wrap in wraps %}
+            {% include 'wrapped_thumbnail.html' %}
+        {% empty %}
+            <div>You have no wraps yet.</div>
+        {% endfor %}
+    </div>
 
-        <!-- Modal -->
-        <div id="createModal" class="modal fixed inset-0 flex items-center justify-center z-50 hidden">
-            <div class="modal-box bg-base-100 text-base-content p-6 rounded-lg shadow-lg">
-                <button onclick="toggleModal('createModal')" class="absolute top-2 right-2 btn btn-circle btn-sm">✕</button>
-                <h2 class="font-bold text-lg mb-4">Create New Wrapped</h2>
-                <p>Time Frame:</p>
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="flex justify-around my-4">
-                        <button class="btn btn-outline btn-accent" type="button" data-size="sm" onclick="selectSize('sm', 'short_term')">Short</button>
-                        <button class="btn btn-outline btn-accent" type="button" data-size="m" onclick="selectSize('m', 'medium_term')">Medium</button>
-                        <button class="btn btn-outline btn-accent" type="button" data-size="l" onclick="selectSize('l', 'long_term')">Long</button>
-                    </div>
-                    <input type="hidden" name="timeframe" id="selectedTimeframe" value="short_term">
-                    <div class="flex justify-between items-center my-4">
-                        <span>Public/Private</span>
-                        <input type="hidden" name="public" value="false">
-                        <input type="checkbox" name="public" id="publicPrivateToggle" value="true" class="toggle toggle-primary">
-                    </div>
-                    <div class="flex justify-end space-x-4 mt-4">
-                        <button class="btn btn-success" type="submit" value="newWrap" name="action">Create</button>
-                    </div>
-                </form>
-            </div>
+    <!-- Modal -->
+    <div id="createModal" class="modal fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="modal-box bg-base-100 text-base-content p-6 rounded-lg shadow-lg">
+            <button onclick="toggleModal('createModal')" class="absolute top-2 right-2 btn btn-circle btn-sm">✕</button>
+            <h2 class="font-bold text-lg mb-4">Create New Wrapped</h2>
+            <p>Time Frame:</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex justify-around my-4">
+                    <button class="btn btn-outline btn-accent" type="button" data-size="sm" onclick="selectSize('sm', 'short_term')">Short</button>
+                    <button class="btn btn-outline btn-accent" type="button" data-size="m" onclick="selectSize('m', 'medium_term')">Medium</button>
+                    <button class="btn btn-outline btn-accent" type="button" data-size="l" onclick="selectSize('l', 'long_term')">Long</button>
+                </div>
+                <input type="hidden" name="timeframe" id="selectedTimeframe" value="short_term">
+                <div class="flex justify-between items-center my-4">
+                    <span>Public/Private</span>
+                    <input type="hidden" name="public" value="false">
+                    <input type="checkbox" name="public" id="publicPrivateToggle" value="true" class="toggle toggle-primary">
+                </div>
+                <div class="flex justify-end space-x-4 mt-4">
+                    <button class="btn btn-success" type="submit" value="newWrap" name="action">Create</button>
+                </div>
+            </form>
         </div>
+    </div>
 
     <!-- JavaScript code for opening the modal -->
     <script>
