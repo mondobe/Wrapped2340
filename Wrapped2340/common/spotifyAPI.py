@@ -62,7 +62,7 @@ def get_api_data(userprofile, subdomain, time_range, limit):
     try:
         return response.json()
     except ValueError:
-        logging.error(f"Invalid JSON response: {response.text}")
+        print(f"Invalid JSON response: {response.text}")
         return {"error": "Invalid response from Spotify API"}
 
 def refresh_access_token(userprofile, refresh_token):
@@ -80,13 +80,13 @@ def refresh_access_token(userprofile, refresh_token):
     try:
         response_data = response.json()
     except ValueError:
-        logging.error(f"Invalid JSON while refreshing token: {response.text}")
+        print(f"Invalid JSON while refreshing token: {response.text}")
         return
 
     if "access_token" in response_data:
         save_tokens(userprofile, response_data.get('access_token'), None)
     else:
-        logging.error(f"Token refresh failed: {response_data}")
+        print(f"Token refresh failed: {response_data}")
 
 def save_tokens(userprofile, access_token, refresh_token):
     if access_token:
@@ -121,14 +121,15 @@ def get_wrapped_content(userprofile, timeframe):
         top_tracks = get_top_tracks(userprofile, timeframe)
         vacation_spot = gemini.place_to_visit(top_tracks)
         combined = {
-            'artists': top_artists or [],
-            'tracks': top_tracks or [],
-            'locations': top_artists_locations or [],
-            'vacation': vacation_spot or [],
-            'timeframe': timeframe or [],
+            'artists': top_artists,
+            'tracks': top_tracks,
+            'locations': top_artists_locations,
+            'vacation': vacation_spot,
+            'timeframe': timeframe,
         }
+        return combined
     except Exception as e:
-        logging.error(f"Error fetching wrapped content: {e}")
+        print(f"Error fetching wrapped content: {e}")
         return {"error": "Failed to fetch wrapped content"}
     
 
