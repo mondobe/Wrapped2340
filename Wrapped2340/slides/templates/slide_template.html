@@ -8,12 +8,14 @@
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-base-200 text-white">
+<body class="flex items-center w-full justify-center min-h-screen bg-base-200 text-white">
 
-<div id="slide-container" class="w-full max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
+<div id="slide-container" class="card max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
     <!-- Dynamic Slide Content -->
-    <h1 id="slide-title" class="text-2xl font-bold">Slide Title</h1>
-    <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+    <div class="card-body">
+        <h1 id="slide-title" class="card-title text-2xl font-bold">Slide Title</h1>
+        <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+    </div>
 
     <!-- Slide Navigation Buttons -->
     <div class="flex justify-between mt-8">
@@ -28,19 +30,19 @@
 </audio>
 
 <!-- Make sure the data is rendering properly in your HTML -->
-<div id="genres-data">
+<div id="genres-data" hidden>
     {% if wrapped_object.content.genres %}
-        <div class="genre">
-            {% for genre in wrapped_object.content.genres %}
-                <strong>{{ genre.genre }}</strong> ({{ genre.count }} plays)
-            {% endfor %}
-        </div>
+        {% for genre in wrapped_object.content.genres|slice:":5" %}
+            <div class="genre">
+                <div>{{ genre.genre }}</div>
+            </div>
+        {% endfor %}
     {% else %}
         <p>No genres available.</p>
     {% endif %}
 </div>
 
-<div id="songs-data">
+<div id="songs-data" hidden>
     {% if wrapped_object.content.tracks %}
         {% for song in wrapped_object.content.tracks %}
             <div class="song">
@@ -53,7 +55,7 @@
     {% endif %}
 </div>
 
-<div id="artists-data">
+<div id="artists-data" hidden>
     {% if wrapped_object.content.artists %}
         {% for artist in wrapped_object.content.artists %}
             <div class="artist">
@@ -103,9 +105,13 @@
     }
 
     // Function to play music based on slide
+    let lastPlayedIndex = -1;
     function playMusic() {
         try {
-            const randomNumber = Math.floor(Math.random() * 10);
+            let randomNumber;
+            do {
+                randomNumber = Math.floor(Math.random() * musicLinks.length); // Get a random index
+            } while (randomNumber === lastPlayedIndex);
             playTrack(musicLinks[randomNumber].url)
         } catch {
             console.warn(`No music available`);
@@ -145,15 +151,14 @@
                 playMusic();
                 break;
             case 4:
+                const genres = Array.from(document.getElementById("genres-data").getElementsByClassName("genre"));
+
                 let genresListHTML = '<ol type="1">';
 
-                if (topGenres && topGenres.length > 0) {
-                    topGenres.forEach(genre => {
-                        genresListHTML += `<li><strong>${genre.genre}</strong> (${genre.count} artists)</li>`;
-                    });
-                } else {
-                    genresListHTML = "<p>No genres available.</p>";
-                }
+                genres.forEach(genre => {
+                    const genreName = genre.querySelector("div").innerText;
+                    genresListHTML += `<li><strong>${genreName}</strong></li>`;
+                });
 
                 genresListHTML += "</ol>";
 
@@ -166,8 +171,17 @@
                 playMusic();
                 break;
             case 6:
+                const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
+
+                let songListHTML = '<ol type="1">';
+                songs.forEach((song) => {
+                    const songName = song.querySelector("div").innerText;
+                    songListHTML += `<li><strong>${songName}</strong></li>`;
+                })
+                songListHTML += "</ol>"
+
                 slideTitle.innerText = "Top 10 Songs";
-                slideContent.innerHTML = topSongs.map(song => <div><img src="${song.image_url}" alt="${song.name}"/><div>${song.name}</div></div>).join('');
+                slideContent.innerHTML = songListHTML
                 break;
             case 7:
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
@@ -175,8 +189,21 @@
                 playMusic();
                 break;
             case 8:
+                const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
+
+                let artistListHTML = '<ol type="1">'; // Start an ordered list for artists
+
+                artists.forEach((artist) => {
+                    // Fetch artist name from the inner <div>
+                    const artistName = artist.querySelector("div").innerText;
+
+                    // Add the artist name to the list
+                    artistListHTML += `<li><strong>${artistName}</strong></li>`;
+                });
+
+                artistListHTML += "</ol>"; // Close the ordered list
                 slideTitle.innerText = "Top Artists";
-                slideContent.innerHTML = topArtists.map(artist => <div><img src="${artist.image_url}" alt="${artist.name}"/><div>${artist.name}</div></div>).join('');
+                slideContent.innerHTML = artistListHTML
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";

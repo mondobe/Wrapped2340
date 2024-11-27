@@ -27,7 +27,9 @@ class WrappedListView(TemplateView):
         return context
 
     def post(self, request):
+        print("POST request received")
         if request.POST.get('action') == 'newWrap':
+            print("Created new Wrap")
             timeframe = request.POST.get('timeframe')
             public = request.POST.get('public') == "true"
             userprofile = self.request.user.userprofile
