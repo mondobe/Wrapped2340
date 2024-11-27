@@ -6,14 +6,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Wrapped Up{% endblock %}</title>
         <link href="{% static 'css/output.css' %}" rel="stylesheet">
+        <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
         <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
         {% block head %}{% endblock %}
     </head>
     <body class="bg-base-200 flex flex-col max-h-dvh">
-        <div class="navbar bg-base-100 shadow-lg">
+        <div class="navbar bg-base-200 shadow-lg">
             <div class="flex-1">
                 <a href="{% url 'home:home-redirect' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>
-                <div class="dropdown ">
+                <div class="dropdown flex-nowrap">
                     <div  class="btn m-1" tabindex="0" role="button">
                         Theme
                         <svg
@@ -25,7 +26,7 @@
                             <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
                         </svg>
                     </div >
-                    <ul tabindex="0" class="dropdown-content z-[1] flex flex-col flex-nowrap menu basis-2/4 bg-base-100 rounded-box max-h-80 overflow-y-scroll shadow" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    <ul tabindex="0" class="dropdown-content z-[1] flex flex-col flex-nowrap menu basis-2/4 bg-base-300 rounded-box max-h-80 overflow-y-scroll shadow" style="scrollbar-width: none; -ms-overflow-style: none;">
                         <li><button data-set-theme="light" data-act-class="active">Light</button></li>
                         <li><button data-set-theme="dark" data-act-class="active">Dark</button></li>
                         <li><button data-set-theme="cupcake" data-act-class="active">Cupcake</button></li>
@@ -94,7 +95,7 @@
                                     d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </div>
-                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <ul tabindex="0" class="dropdown-content menu bg-base-300 rounded-box z-[1] w-52 p-2 shadow">
                         <!-- Users-related links -->
                         <li class="md:hidden"><a class="md:hidden" href="{% url 'home:discover' %}">Discover</a></li>
                         <li class="md:hidden"><a class="md:hidden" href="{% url 'home:home' %}">My Wraps</a></li>
