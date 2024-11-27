@@ -57,6 +57,7 @@ class WrappedListView(TemplateView):
             wrap = get_object_or_404(Wrapped, id=wrap_id)
             wrap.delete()
             print(request, "Wrap deleted successfully!")
+
         elif request.POST.get('action') == 'publish':
             wrap_id = request.POST.get('wrap_id')
             wrap = get_object_or_404(Wrapped, id=wrap_id)

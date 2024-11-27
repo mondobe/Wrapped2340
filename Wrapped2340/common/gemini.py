@@ -9,7 +9,7 @@ genai.configure(api_key=os.getenv('AI_KEY'))
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 def get_top_artists_locations(content):
-    request = ("Can you give me list in json format of these artists countries of origin? It should be the top 5 entries, no repeats. Only the countries should be in the json. "
+    request = ("Can you give me list in json format of these artists countries of origin? It has to be the top 5 entries, no repeats. Only the countries should be in the json. "
                "Ignore unknown countries. Do not add anything else.").join([str(item) for item in content])
     response = model.generate_content(request,
                                       generation_config=genai.types.GenerationConfig(

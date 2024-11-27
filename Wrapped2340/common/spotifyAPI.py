@@ -109,7 +109,7 @@ def get_top_artists(userprofile, limit, timeframe):
         time_range=timeframe,
         limit=limit,
     )
-    return [{'name': artist['name'], 'id': artist['id'], "genres": artist["genres"]} for artist in artist_response['items']]
+    return [{"name": artist["name"], "id": artist["id"], "genres": artist["genres"]} for artist in artist_response['items']]
 
 
 def get_top_tracks(userprofile, timeframe):
@@ -119,7 +119,7 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{'name': track['name'], 'preview_url': track['preview_url'], 'id': track['id']} for track in tracks_response['items']]
+    return [{"name": track["name"], "preview_url": track["preview_url"], "id": track["id"]} for track in tracks_response['items']]
 
 
 def get_wrapped_content(userprofile, timeframe):
@@ -127,13 +127,20 @@ def get_wrapped_content(userprofile, timeframe):
         top_artists = get_top_artists(userprofile, 10, timeframe)
         top_artists_locations = gemini.get_top_artists_locations(top_artists)
         top_tracks = get_top_tracks(userprofile, timeframe)
+        preview_urls = []
+        for track in top_tracks:
+            if "preview_url" in track:
+                preview_urls.append({"url": track["preview_url"]})
+                del track["preview_url"]  # Remove the preview_url field
         vacation_spot = gemini.place_to_visit(top_tracks)
+
         combined = {
-            'artists': top_artists,
-            'tracks': top_tracks,
-            'locations': top_artists_locations,
-            'vacation': vacation_spot,
-            'timeframe': timeframe,
+            "artists": top_artists,
+            "tracks": top_tracks,
+            "preview_urls": preview_urls,
+            "locations": top_artists_locations,
+            "vacation": vacation_spot,
+            "timeframe": timeframe,
         }
         return combined
     except Exception as e:
