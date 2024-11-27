@@ -23,7 +23,7 @@
 </div>
 
 <!-- Hidden Audio Player -->
-<audio id="audio-player" hidden autoplay loop data-wrapped="{{ wrapped_object.content.tracks }}">
+<audio id="audio-player" hidden autoplay loop data-wrapped="{{ wrapped_object.content.tracks.preview_url }}">
     <source src="" type="audio/mpeg">
 </audio>
 
@@ -31,6 +31,8 @@
     {% for artist in wrapped_object.content.artists %}
         <div class="artist">
             <strong>{{ artist.name }}</strong>
+            
+
 <!-- Make sure the data is rendering properly in your HTML -->
 <div id="genres-data">
     {% if top_genres %}
@@ -72,6 +74,13 @@
 
 
 <script>
+    // Function to decode HTML entities
+    function decodeHTML(html) {
+        const txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
     // Initialize page ID and timer
     let pageId = 1;
     let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
@@ -82,13 +91,11 @@
     // Parse music links from Django context
     let musicLinks = [];
     try {
-        musicLinks = audioPlayer.dataset.wrapped.replace(/'/g, '"');
+        musicLinks = decodeHTML("{{ wrapped_object.content.preview_urls|escapejs }}").replace(/'/g,'"')
         musicLinks = JSON.parse(musicLinks)
-        musicLinks = musicLinks.map(track => track.preview_url)
         //console.log("Music Links:", musicLinks);
     } catch (e) {
         console.error('Failed to parse music links:', e);
-        musicLinks = [];
     }
 
     // Function to play a specific track
@@ -105,7 +112,7 @@
     function playMusic() {
         try {
             const randomNumber = Math.floor(Math.random() * 10);
-            playTrack(musicLinks[randomNumber])
+            playTrack(musicLinks[randomNumber].url)
         } catch {
             console.warn(`No music available`);
         }
@@ -127,8 +134,19 @@
                 playMusic();
                 break;
             case 2:
+                const locations = JSON.parse("{{ wrapped_object.content.locations|escapejs }}".replace(/'/g, '"'))
+
+                let locationListHTML = '<ol type="1">'; // Start an ordered list
+                locations.forEach(location => {
+                    const locationName = location.country;
+
+                    // Add each location to the list as a <li> item
+                    locationListHTML += `<li><strong>${locationName}</strong></li>`;
+                });
+                locationListHTML += "</ol>"; // Close the ordered list
+
                 slideTitle.innerText = "Regions Your Favorite Artists Are From";
-                slideContent.innerText = "Explore the places your favorite artists are from.";
+                slideContent.innerHTML = locationListHTML;
                 break;
             case 3:
                 slideTitle.innerText = "Genre-ous Moments Ahead 🎶";
@@ -171,12 +189,14 @@
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
-                slideContent.innerText = "placeholder";
+                slideContent.innerText = "Let's see where your music tastes take you!";
                 playMusic();
                 break;
             case 10:
                 slideTitle.innerText = "Your AI Travel Suggestion";
-                slideContent.innerText = "placeholder";
+                const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
+                console.log(vacation)
+                slideContent.innerText = vacation;
                 break;
             case 11:
                 slideTitle.innerText = "Buzzing With Excitement 🐝";
@@ -193,7 +213,7 @@
                 playMusic();
                 break;
             case 14:
-                slideTitle.innerText = "Game 2";
+                slideTitle.innerText = "Guess the Artist";
                 slideContent.innerText = "placeholder";
                 break;
             default:

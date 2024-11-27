@@ -55,5 +55,6 @@ class SlidesView(LoginRequiredMixin, TemplateView):
         # Set the page title or other context variables based on the page ID
         context['page_title'] = slide_titles.get(page_id, 'Unknown Slide')
         context['page_id'] = page_id  # Pass page_id for navigation
+        context['wrapped_object'] = wrapped_object
 
         return context

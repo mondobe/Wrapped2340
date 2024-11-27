@@ -9,10 +9,10 @@
         <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
         {% block head %}{% endblock %}
     </head>
-    <body class="bg-base-200 h-dvh">
+    <body class="bg-base-200 flex flex-col max-h-dvh">
         <div class="navbar bg-base-100 shadow-lg">
             <div class="flex-1">
-                <a href="{% url 'home:home-redirect' %}" class="btn btn-ghost normal-case text-xl text- ">AudioScape</a>
+                <a href="{% url 'home:home-redirect' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>
                 <div class="dropdown ">
                     <div  class="btn m-1" tabindex="0" role="button">
                         Theme
@@ -60,9 +60,13 @@
                         <li><button data-set-theme="sunset" data-act-class="active">Sunset</button></li>
                     </ul>
                 </div>
-                <a href="{% url 'home:discover' %}" class="btn btn-ghost normal-case text-xl">Discover</a>
-                <a href="{% url 'home:home' %}" class="btn btn-ghost normal-case text-xl">My Wraps</a>
-                <a href="{% url 'games:home' %}" class="btn btn-ghost normal-case text-xl">Games</a>
+
+                <div class="hidden md:flex space-x-4">
+                    <a href="{% url 'home:discover' %}" class="btn btn-ghost text-xl">Discover</a>
+                    <a href="{% url 'home:home' %}" class="btn btn-ghost text-xl">My Wraps</a>
+                    <a href="{% url 'games:home' %}" class="btn btn-ghost text-xl">Games</a>
+                </div>
+
             </div>
             <div class="flex-none">
                 <div class="flex-none">
@@ -92,6 +96,9 @@
                     </div>
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                         <!-- Users-related links -->
+                        <li class="md:hidden"><a class="md:hidden" href="{% url 'home:discover' %}">Discover</a></li>
+                        <li class="md:hidden"><a class="md:hidden" href="{% url 'home:home' %}">My Wraps</a></li>
+                        <li class="md:hidden"><a class="md:hidden" href="{% url 'games:home' %}">Games</a></li>
                         <li><a href="{% url 'users:account-settings' %}">Account Settings</a></li>
                         <li><a href="{% url 'users:dev-feedback' %}">Contact Us</a></li>
                     </ul>
@@ -99,7 +106,7 @@
             </div>
         </div>
 
-        <div class="container mx-auto p-6">
+        <div class="container mx-auto p-6 overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
             {% block content %}
             {% endblock %}
         </div>
