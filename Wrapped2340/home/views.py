@@ -19,40 +19,68 @@ from dotenv import load_dotenv
 # Loads variables from .env
 load_dotenv()
 
-class HomeView(LoginRequiredMixin, TemplateView):
+class WrappedListView(TemplateView):
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['duo_invite_link'] = self.request.build_absolute_uri(
-            reverse('home:invite',
-                    kwargs={'invite_token': self.request.user.userprofile.invite_token})
-        )
-        profile = self.request.user.userprofile
-        context['wraps'] = Wrapped.objects.filter(
-            Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
         return context
 
     def post(self, request):
         if request.POST.get('action') == 'newWrap':
             timeframe = request.POST.get('timeframe')
             public = request.POST.get('public') == "true"
-            duo = request.POST.get('duo') == "true"
             userprofile = self.request.user.userprofile
             if userprofile.access_token:
-                wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
+                try:
+                    wrapped_content = spotifyAPI.get_wrapped_content(userprofile, timeframe)
+                    if not wrapped_content:
+                        return HttpResponse('Failed to fetch wrapped content', status=400)
+                except Exception as e:
+                    return HttpResponse(f'Error fetching wrapped content: {e}', status=500)
 
-                Wrapped.objects.create(
+                wrapped = Wrapped.objects.create(
                     creator1=userprofile,
                     version='aiden10-30',
                     public=public,
                     content=wrapped_content,
                 )
-            else:
-                return HttpResponse('Bad Access Token')
 
+                return redirect(
+                    reverse('slides:slide', kwargs={'page_id': 1, 'wrapped_id': wrapped.id})
+                )
+            else:
+                return HttpResponse('Bad Access Token', status=401)
+
+        elif request.POST.get('action') == 'delete':
+            wrap_id = request.POST.get('wrap_id')
+            wrap = get_object_or_404(Wrapped, id=wrap_id)
+            wrap.delete()
+            print(request, "Wrap deleted successfully!")
+
+        elif request.POST.get('action') == 'publish':
+            wrap_id = request.POST.get('wrap_id')
+            wrap = get_object_or_404(Wrapped, id=wrap_id)
+            wrap.public = not wrap.public  # Toggle publish status
+            wrap.save()
+            print("Wrap publish status updated!")
         return super().get(request)
+
+class HomeView(LoginRequiredMixin, WrappedListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.request.user.userprofile
+        context['wraps'] = Wrapped.objects.filter(
+            Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
+        context['show_public'] = True
+        return context
+
+class DiscoverView(LoginRequiredMixin, WrappedListView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['wraps'] = Wrapped.objects.filter(public=True).order_by("-time_created")
+        context['show_public'] = False
+        return context
 
 class WrappedInviteView(LoginRequiredMixin, TemplateView):
     template_name = 'invite.html'

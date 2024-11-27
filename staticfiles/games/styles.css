@@ -1,0 +1,12 @@
+.post {
+    background-color: lightgray;
+    outline: gray solid 5px;
+    padding: 10px;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.highlight {
+    color: blue;
+}
