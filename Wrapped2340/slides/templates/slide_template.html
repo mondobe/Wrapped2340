@@ -8,19 +8,19 @@
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
 </head>
-<body class="flex items-center w-full justify-center min-h-screen bg-base-200 text-white">
+<body class="flex items-center w-screen justify-center h-dvh bg-base-200 text-white">
 
-<div id="slide-container" class="card max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
+<div id="slide-container" class="card md:max-h-[3/4] md:max-w-[3/4] p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
     <!-- Dynamic Slide Content -->
     <div class="card-body">
-        <h1 id="slide-title" class="card-title text-2xl font-bold">Slide Title</h1>
+        <h1 id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold">Slide Title</h1>
         <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
     </div>
 
     <!-- Slide Navigation Buttons -->
     <div class="flex justify-between mt-8">
-        <button onclick="prevSlide()" class="btn btn-primary bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg">Previous</button>
-        <button onclick="nextSlide()" class="btn btn-success bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg">Next</button>
+        <button onclick="prevSlide()" class="btn btn-primary px-4 py-2 rounded-lg">Previous</button>
+        <button onclick="nextSlide()" class="btn btn-success px-4 py-2 rounded-lg">Next</button>
     </div>
 </div>
 
@@ -162,6 +162,7 @@
                 });
 
                 genresListHTML += "</ol>";
+                slideTitle.innerText = "Top Genres"
                 slideContent.innerHTML = genresListHTML;
                 break;
             case 5:
@@ -172,34 +173,15 @@
             case 6:
                 const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
 
-                let songListHTML = '<ol type="1">';
+                let songListHTML = '<div class="flex flex-col">';
                 songs.forEach((song) => {
                     const songName = song.querySelector("div").innerText;
-                    songListHTML += `<li><strong>${songName}</strong></li>`;
-                })
-                songListHTML += "</ol>"
+                    const songImg = song.querySelector("img").src;
+                    songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
+                songListHTML += "</div>"
 
                 slideTitle.innerText = "Top 10 Songs";
                 slideContent.innerHTML = songListHTML
-            case 6: // Top Songs
-                slideTitle.innerText = "Top 10 Songs";
-                let songsHTML = '';
-                if (wrapped_object.content.tracks && wrapped_object.content.tracks.length > 0) {
-                    wrapped_object.content.tracks.forEach((song, index) => {
-                        // Get the corresponding image from preview_urls for this track
-                        let trackImage = wrapped_object.content.preview_urls[index]?.image_url || '/path/to/default-image.jpg';
-
-                        songsHTML += `
-                <div>
-                    <img src="${trackImage}" alt="${song.name || 'Unknown Song'}"/>
-                    <div>${song.name || 'Unknown Song'}</div>
-                </div>
-            `;
-                    });
-                } else {
-                    songsHTML = "<p>No songs available.</p>";
-                }
-                slideContent.innerHTML = songsHTML;
                 break;
             case 7:
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
@@ -209,38 +191,19 @@
             case 8:
                 const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
 
-                let artistListHTML = '<ol type="1">'; // Start an ordered list for artists
+                let artistListHTML = '<div class="flex flex-col">'; // Start an ordered list for artists
 
                 artists.forEach((artist) => {
                     // Fetch artist name from the inner <div>
                     const artistName = artist.querySelector("div").innerText;
-
+                    const artistImg = artist.querySelector("img").src;
                     // Add the artist name to the list
-                    artistListHTML += `<li><strong>${artistName}</strong></li>`;
+                    artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;
                 });
 
-                artistListHTML += "</ol>"; // Close the ordered list
-                slideTitle.innerText = "Top Artists";
+                artistListHTML += "</div>"; // Close the ordered list
+                slideTitle.innerText = "Top 10 Artists";
                 slideContent.innerHTML = artistListHTML
-            case 8: // Top Artists
-                slideTitle.innerText = "Top Artists";
-                let artistsHTML = '';
-                if (wrapped_object.content.artists && wrapped_object.content.artists.length > 0) {
-                    wrapped_object.content.artists.forEach((artist, index) => {
-                        // Get the corresponding image from preview_urls for this artist
-                        let artistImage = wrapped_object.content.preview_urls[index]?.image_url || '/path/to/default-image.jpg';
-
-                        artistsHTML += `
-                <div>
-                    <img src="${artistImage}" alt="${artist.name || 'Unknown Artist'}"/>
-                    <div>${artist.name || 'Unknown Artist'}</div>
-                </div>
-            `;
-                    });
-                } else {
-                    artistsHTML = "<p>No artists available.</p>";
-                }
-                slideContent.innerHTML = artistsHTML;
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
