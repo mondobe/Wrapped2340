@@ -60,7 +60,15 @@
             // Optionally disable the button to prevent multiple submissions
             button.disabled = true;
 
+
+
             button.closest('form').submit();
+
+            setTimeout(() => {
+                button.disabled = false;
+                buttonText.className = ''; // Reset the button text to its original state (if needed)
+                buttonText.innerText = 'Create'; // Reset the text inside the button
+            }, 5000);
         }
 
         function toggleModal(modalId) {

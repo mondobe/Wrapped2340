@@ -6,22 +6,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Slides</title>
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+    <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: default;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0077FF, #9B2DFF, #000000);
+            background-size: 300% 300%;
+            animation: gradientAnimation 12s ease infinite;
+            margin: 0;
+            padding: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #slide-container {
+            animation: slideIn 1.2s ease-out forwards;
+            margin-bottom: 30px;
+            max-width: 700px;
+            width: 100%;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeInText 1.2s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInText {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Navigation zones */
+        .slide-navigation-zone {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 25%;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .slide-navigation-zone.left {
+            left: 0;
+        }
+
+        .slide-navigation-zone.right {
+            right: 0;
+        }
+
+        .slide-navigation-zone:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #444;
+            border-radius: 50px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            margin: 0;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background-color: #0077FF;
+            border-radius: 50px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
 </head>
+
 <body class="flex items-center w-screen justify-center h-dvh bg-base-200 text-white">
 
 <div id="slide-container" class="card max-h-[3/4] max-w-[3/4] p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
+    <figure>
+        <div id="slide-icon" class="flex justify-center fade-in">
+            <img class="w-28 h-28" id="slide-icon-img" src="" alt="Slide Icon">
+        </div>
+    </figure>
     <!-- Dynamic Slide Content -->
-    <div class="card-body">
-        <h1 id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold">Slide Title</h1>
-        <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+    <div class="card-body text-center">
+        <div id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold w-full">Slide Title</div>
+        <div id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</div>
     </div>
+</div>
 
-    <!-- Slide Navigation Buttons -->
-    <div class="flex justify-between mt-8">
-        <button onclick="prevSlide()" class="btn btn-primary px-4 py-2 rounded-lg">Previous</button>
-        <button onclick="nextSlide()" id="nextButton" class="btn btn-success px-4 py-2 rounded-lg">Next</button>
-    </div>
+<div class="slide-navigation-zone left" onclick="prevSlide()"></div>
+<div class="slide-navigation-zone right" onclick="nextSlide()"></div>
+
+<div id="progress-bar-container">
+    <div id="progress-bar"></div>
 </div>
 
 <!-- Hidden Audio Player -->
@@ -80,7 +196,9 @@
 
     // Initialize page ID and timer
     let pageId = 1;
-    let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
+    let slideTimer = setInterval(nextSlide, 7000); 
+    let progressBarInterval;
+    const progressBar = document.getElementById('progress-bar');
 
     const audioPlayer = document.getElementById("audio-player");
     audioPlayer.volume = 0.3;
@@ -119,20 +237,48 @@
         }
     }
 
+    async function getFlagByCountry(countryName) {
+        const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+        const data = await response.json();
+        return data[0].flags.png;
+    }
+
     // Function to load content based on page ID
     function loadSlideContent() {
         const slideTitle = document.getElementById("slide-title");
         const slideContent = document.getElementById("slide-content");
+        const slideIcon = document.getElementById("slide-icon");
+        const slideIconImg = document.getElementById("slide-icon-img");
+
+        slideTitle.style.animation = 'none';
+        slideContent.style.animation = 'none';
+        slideIcon.style.animation = 'none';
+
+        void slideTitle.offsetWidth;
+        void slideContent.offsetWidth;
+        void slideIcon.offsetWidth;
+
+        slideTitle.style.animation = '';
+        slideContent.style.animation = '';
+        slideIcon.style.animation = '';
+
 
         // Change content based on pageId
         switch (pageId) {
             case 1:
-                slideTitle.innerText = "Get Ready to Travel the World with Audioscape 🌎";
+                slideTitle.innerText = "Get Ready to Travel the World with AudioScape";
                 slideContent.innerText = "Take a journey through music from across the globe!";
+                slideIcon.className = "flex justify-center fade-in"
+                slideIconImg.src = "{% static 'css/images/globe.png' %}"
                 playMusic();
                 break;
             case 2:
                 const locations = JSON.parse("{{ wrapped_object.content.locations|escapejs }}".replace(/'/g, '"'))
+
+                getFlagByCountry(locations[0].country).then(flag => {
+                    slideIconImg.className = "w-40"
+                    slideIconImg.src = flag ? flag : "Flag not found"
+                });
 
                 let locationListHTML = '<ol type="1">'; // Start an ordered list
                 locations.forEach(location => {
@@ -147,6 +293,7 @@
                 slideContent.innerHTML = locationListHTML;
                 break;
             case 3:
+                slideIconImg.className = "w-24 h-24"
                 slideTitle.innerText = "Genre-ous Moments Ahead 🎶";
                 slideContent.innerText = "These are the genres you've been loving this year.";
                 playMusic();
@@ -162,10 +309,12 @@
                 });
 
                 genresListHTML += "</ol>";
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Top 5 Genres"
                 slideContent.innerHTML = genresListHTML;
                 break;
             case 5:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Counting Down the Beats 🔟";
                 slideContent.innerText = "placeholder";
                 playMusic();
@@ -180,10 +329,12 @@
                     songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
                 songListHTML += "</div>"
 
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Top 10 Songs";
                 slideContent.innerHTML = songListHTML
                 break;
             case 7:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
                 slideContent.innerText = "placeholder";
                 playMusic();
@@ -191,7 +342,7 @@
             case 8:
                 const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
 
-                let artistListHTML = '<div class="flex flex-col">'; // Start an ordered list for artists
+                let artistListHTML = '<div class="flex flex-col">';
 
                 artists.forEach((artist) => {
                     // Fetch artist name from the inner <div>
@@ -201,11 +352,14 @@
                     artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;
                 });
 
-                artistListHTML += "</div>"; // Close the ordered list
+                artistListHTML += "</div>";
+
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Top 10 Artists";
                 slideContent.innerHTML = artistListHTML
                 break;
             case 9:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
                 slideContent.innerText = "Let's see where your music tastes take you!";
                 playMusic();
@@ -213,50 +367,47 @@
             case 10:
                 slideTitle.innerText = "Your AI Travel Suggestion";
                 const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
-                console.log(vacation)
                 slideContent.innerText = vacation;
                 break;
             case 11:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Buzzing With Excitement 🐝";
                 slideContent.innerText = "placeholder";
                 playMusic();
                 break;
             case 12:
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "What’s the Buzz?";
                 slideContent.innerText = "placeholder";
                 break;
             case 13:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "2nd Game intro";
                 slideContent.innerText = "placeholder";
                 playMusic();
                 break;
             case 14:
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Guess the Artist";
                 slideContent.innerText = "placeholder";
                 break;
             default:
                 slideTitle.innerText = "Summary";
                 slideContent.innerText = "Your music journey at a glance!";
-                const nextButton = document.getElementById("nextButton");
-                const link = document.createElement('a');  // Create an anchor tag
-                link.href = "/home/my-wraps"; // Set the target URL
-                link.classList.add(...nextButton.classList); // Copy the button's styles
-
-                link.innerText = "Exit"; // Copy button text to anchor tag
-
-                // Replace the button with the anchor link
-                nextButton.replaceWith(link);
                 playMusic();
                 break;
         }
+        resetProgressBar();
     }
 
     // Function to go to the next slide
     function nextSlide() {
-        if (pageId < 16) {
+        if (pageId < 15) {
             pageId++;
             loadSlideContent();
             resetTimer();
+        } else {
+            window.location.href = '/home';
         }
     }
 
@@ -272,7 +423,25 @@
     // Reset the timer whenever the user navigates manually
     function resetTimer() {
         clearInterval(slideTimer);
-        slideTimer = setInterval(nextSlide, 30000);
+        slideTimer = setInterval(nextSlide, 7000);
+    }
+
+    function resetProgressBar() {
+        clearInterval(progressBarInterval);
+        progressBar.style.width = '0%';
+        startProgressBar();
+    }
+
+    function startProgressBar() {
+        let width = 0;
+        progressBarInterval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(progressBarInterval);
+            } else {
+                width++;
+                progressBar.style.width = width + '%';
+            }
+        }, 7000 / 100); 
     }
 
     // Load the first slide when the page loads
