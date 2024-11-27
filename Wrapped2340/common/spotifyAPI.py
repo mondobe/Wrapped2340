@@ -1,9 +1,12 @@
+import time
 import urllib
 import base64
+
 import requests
 import os
 import secrets
 from dotenv import load_dotenv
+from requests import RequestException
 
 # Loads variables from .env
 load_dotenv()
@@ -54,8 +57,20 @@ def get_api_data(userprofile, subdomain, time_range, limit):
         'content-type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer %s' % userprofile.access_token,
     }
+
     api_get = lambda: requests.get(url, params=params, headers=headers)
     response = api_get()
+
+    if response is None:
+        raise ValueError("Failed to get API data after multiple retries")
+
+    if 'error' in response and response['error'].get('status') == 401:
+        refresh_access_token(userprofile, userprofile.refresh_token)
+        headers['Authorization'] = f'Bearer {userprofile.access_token}'
+        response = make_api_request(url, params, headers)
+
+        if response is None or 'error' in response:
+            raise ValueError("Failed to get API data after token refresh")
 
     if response.status_code == 401:
         refresh_token = userprofile.refresh_token
@@ -82,7 +97,7 @@ def refresh_access_token(userprofile, refresh_token):
     }
     response = requests.post(token_url, data=data, headers=headers).json()
     print(response)
-    save_tokens(userprofile, response.get('access_token'),None)
+    save_tokens(userprofile, response.get('access_token'), None)
 
 
 def save_tokens(userprofile, access_token, refresh_token):
@@ -95,13 +110,22 @@ def save_tokens(userprofile, access_token, refresh_token):
 
 
 def get_top_artists(userprofile, limit, timeframe):
+    valid_timeframes = ['short_term', 'medium_term', 'long_term']
+    if timeframe not in valid_timeframes:
+        print(f"Invalid time range: {timeframe}, defaulting to 'short_term'.")
+        timeframe = 'short_term'  # Default to 'short_term' if invalid
+
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
         time_range=timeframe,
         limit=limit,
     )
-    return [{'name': artist['name'], 'id': artist['id']} for artist in artist_response['items']]
+
+    if 'error' in artist_response:
+        raise ValueError(f"Error in Spotify API response: {artist_response['error']}")
+
+    return artist_response['items']  # This will be the list of artists
 
 
 def get_top_tracks(userprofile, timeframe):
@@ -111,13 +135,24 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url']} for track in tracks_response['items']]
+    if 'error' in tracks_response:
+        print(f"Error in Spotify API response: {tracks_response['error']}")
+        return []
+
+    if 'items' not in tracks_response:
+        print(f"Unexpected API response structure: {tracks_response}")
+        return []
+
+    return [{'name': track['name'], 'id': track['id'], 'preview_url': track['preview_url'], 'album': track['album']}
+            for track in tracks_response['items']]
 
 
 def get_wrapped_content(userprofile, timeframe):
     combined = {
         'artists': get_top_artists(userprofile, 10, timeframe),
-        'tracks': get_top_tracks(userprofile, timeframe)
+        'tracks': get_top_tracks(userprofile, timeframe),
+        'genres': get_top_genres(userprofile, timeframe)
+
     }
     return combined
 
@@ -153,3 +188,78 @@ def get_top_artist_tracks(artist_id, userprofile):
     response = requests.get('https://api.spotify.com/v1/artists/%s/top-tracks' % artist_id,
                             params=params, headers=headers)
     return response.json()['tracks']
+
+
+def get_top_genres(userprofile, timeframe, limit=50):
+    artists = get_top_artists(userprofile, limit, timeframe)
+    genre_count = {}
+
+    for artist in artists:
+        artist_id = artist['id']
+        artist_info = get_artist_info(userprofile, artist_id)
+
+        for genre in artist_info.get('genres', []):  # Handle empty genres list
+            genre_count[genre] = genre_count.get(genre, 0) + 1
+
+    sorted_genres = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
+    return [{'genre': genre, 'count': count} for genre, count in sorted_genres]
+
+
+def get_artist_info(userprofile, artist_id):
+    url = f'https://api.spotify.com/v1/artists/{artist_id}'
+    headers = {
+        'Authorization': f'Bearer {userprofile.access_token}',
+    }
+
+    response = make_api_request(url, {}, headers)
+
+    if response is None:
+        raise ValueError(f"Failed to get artist info for artist ID: {artist_id}")
+
+    return response  # Returns the artist info, including genres and images
+
+
+
+def make_api_request(url, params, headers, max_retries=5, initial_backoff=1):
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, params=params, headers=headers)
+            response.raise_for_status()
+            return response.json()
+        except RequestException as e:
+            if response.status_code == 429:
+                retry_after = int(response.headers.get('Retry-After', initial_backoff))
+                time.sleep(retry_after)
+            elif attempt == max_retries - 1:
+                raise e
+            else:
+                time.sleep(initial_backoff * (2 ** attempt))
+    return None
+
+
+def get_artist_images(top_artists):
+    artists_info = []
+    for artist in top_artists:
+        artist_info = {
+            'name': artist['name'],
+            'popularity': artist.get('popularity', 0),  # Use get() with a default value
+            'image_url': artist['images'][0]['url'] if artist.get('images') else None,
+            'spotify_url': artist['external_urls'].get('spotify', '')
+        }
+        artists_info.append(artist_info)
+    return artists_info
+
+
+def get_song_images(top_songs):
+    songs_info = []
+    for song in top_songs['items']:  # Ensure you're accessing the 'items' key correctly
+        print(f"Song data: {song}")  # Debugging to verify structure
+        song_info = {
+            'name': song['name'],
+            'popularity': song['popularity'],
+            'image_url': song['album']['images'][0]['url'] if song['album'].get('images') else 'default_image_url_here',  # Fallback if no image
+            'spotify_url': song['external_urls']['spotify'],
+            'preview_url': song['preview_url']
+        }
+        songs_info.append(song_info)
+    return songs_info
