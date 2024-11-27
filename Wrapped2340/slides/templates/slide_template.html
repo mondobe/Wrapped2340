@@ -7,10 +7,34 @@
     <title>Spotify Wrapped Slides</title>
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
     <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        
+        * {
+            cursor: default;
+        }
+
+        * {
+        user-select: none;
+        }
+
         body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             background: linear-gradient(135deg, #0077FF, #9B2DFF, #000000);
             background-size: 300% 300%;
-            animation: gradientAnimation 10s ease infinite;
+            animation: gradientAnimation 12s ease infinite;
+            margin: 0;
+            padding: 0;
         }
 
         @keyframes gradientAnimation {
@@ -20,23 +44,33 @@
         }
 
         #slide-container {
-            animation: slideIn 1s ease forwards;
+            animation: slideIn 1.2s ease-out forwards;
+            margin-bottom: 30px;
+            max-width: 700px;
+            width: 100%;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            opacity: 0;
         }
 
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(30px) rotate(-1deg);
+                transform: translateY(50px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) rotate(0deg);
+                transform: translateY(0);
             }
         }
 
         .fade-in {
             opacity: 0;
-            animation: fadeInText 1s ease forwards;
+            animation: fadeInText 1.2s ease-out forwards;
+            animation-delay: 0.5s;
         }
 
         @keyframes fadeInText {
@@ -45,7 +79,23 @@
             }
         }
 
-        /* Nav zones to go right left */
+        h1, p {
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FFFFFF;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #D1D1D1;
+        }
+
+        /* Navigation zones */
         .slide-navigation-zone {
             position: fixed;
             top: 0;
@@ -56,39 +106,62 @@
             cursor: pointer;
             z-index: 100;
         }
+
         .slide-navigation-zone.left {
             left: 0;
         }
+
         .slide-navigation-zone.right {
             right: 0;
         }
+
         .slide-navigation-zone:hover {
-            background-color: hwb(0 0% 100% / 0.040);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #444;
+            border-radius: 50px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            margin: 0;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background-color: #0077FF;
+            border-radius: 50px;
+            width: 0%;
+            transition: width 0.3s ease;
         }
     </style>
-
-    
 </head>
-<body class="flex items-center justify-center min-h-screen text-white">
+<body>
 
-<div id="slide-container" class="w-full max-w-md p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-2xl">
-
-
+<div id="slide-container">
     <div id="slide-icon" class="flex justify-center mb-4 fade-in">
-        <img id="slide-icon-img" src="" alt="Slide Icon" style="width: 100px; height: 100px;" class="animate-bounce">
+        <img id="slide-icon-img" src="" alt="Slide Icon" style="width: 100px; height: 100px;">
     </div>
 
-    <!-- Dynamic Slide Content -->
-    <h1 id="slide-title" class="text-2xl font-bold">Slide Title</h1>
-    <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+    <h1 id="slide-title" class="fade-in">Slide Title</h1>
+    <p id="slide-content" class="fade-in">Slide Content goes here...</p>
 </div>
 
 <div class="slide-navigation-zone left" onclick="prevSlide()"></div>
 <div class="slide-navigation-zone right" onclick="nextSlide()"></div>
 
+<div id="progress-bar-container">
+    <div id="progress-bar"></div>
+</div>
+
 <script>
     let pageId = 1;
-    let slideTimer = setInterval(nextSlide, 30000);
+    let slideTimer = setInterval(nextSlide, 7000); 
+    let progressBarInterval;
+    const progressBar = document.getElementById('progress-bar');
 
     const slideIcons = {
         1: "{% static 'css/images/globe.png' %}",
@@ -99,15 +172,17 @@
         const slideContent = document.getElementById("slide-content");
         const slideIcon = document.getElementById("slide-icon");
 
-        slideTitle.classList.remove("fade-in");
-        slideContent.classList.remove("fade-in");
-        slideIcon.classList.remove("fade-in");
+        slideTitle.style.animation = 'none';
+        slideContent.style.animation = 'none';
+        slideIcon.style.animation = 'none';
 
-        setTimeout(() => {
-            slideTitle.classList.add("fade-in");
-            slideContent.classList.add("fade-in");
-            slideIcon.classList.add("fade-in");
-        }, 100);
+        void slideTitle.offsetWidth;
+        void slideContent.offsetWidth;
+        void slideIcon.offsetWidth;
+
+        slideTitle.style.animation = '';
+        slideContent.style.animation = '';
+        slideIcon.style.animation = '';
 
 
         switch (pageId) {
@@ -173,6 +248,7 @@
                 break;
         }
         document.getElementById("slide-icon-img").src = slideIcons[pageId];
+        resetProgressBar();
     }
 
     // Function to go to the next slide
@@ -196,7 +272,25 @@
     // Reset the timer whenever the user navigates manually
     function resetTimer() {
         clearInterval(slideTimer);
-        slideTimer = setInterval(nextSlide, 30000);
+        slideTimer = setInterval(nextSlide, 7000);
+    }
+
+    function resetProgressBar() {
+        clearInterval(progressBarInterval);
+        progressBar.style.width = '0%';
+        startProgressBar();
+    }
+
+    function startProgressBar() {
+        let width = 0;
+        progressBarInterval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(progressBarInterval);
+            } else {
+                width++;
+                progressBar.style.width = width + '%';
+            }
+        }, 7000 / 100); 
     }
 
     // Load the first slide when the page loads
