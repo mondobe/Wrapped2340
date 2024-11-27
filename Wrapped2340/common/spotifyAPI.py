@@ -139,7 +139,7 @@ def get_wrapped_content(userprofile, timeframe):
             if "preview_url" in track:
                 preview_urls.append({"url": track["preview_url"]})
                 del track["preview_url"]  # Remove the preview_url field
-        vacation_spot = gemini.place_to_visit(top_tracks)
+        vacation_spot = gemini.place_to_visit(top_artists)
         top_genres = get_top_genres(top_50_artists)
         combined = {
             'artists': top_artists,

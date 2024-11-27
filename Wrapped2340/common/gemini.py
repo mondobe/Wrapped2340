@@ -14,6 +14,7 @@ def get_top_artists_locations(content):
     response = model.generate_content(request,
                                       generation_config=genai.types.GenerationConfig(
                                           temperature=0,
+                                          top_p=0.5,
                                       )).text
     remove_list = ["`", "json", "[", "]", '"', "\n",]
 
@@ -25,15 +26,17 @@ def get_top_artists_locations(content):
     response = response.split(",")
     response = [item.strip() for item in response]
     country_array = [{"country": country} for country in response]
-    print(country_array)
+    #print(country_array)
     return country_array
 
 def place_to_visit(content) :
-    request = ("Given these songs, where should I visit? Give me the one interesting place, landmark, or city and country. Make a outlandish, funny, rarely known place."
-               "Do not add anything else.").join([str(item) for item in content])
+    prompt = "Based on these songs, recommend a single unusual or rarely known place I should visit—either a landmark or a city and country. Ensure the suggestion is random and not a common choice. Include only the name and location. Avoid providing any additional information."
+    request = prompt.join([str(item) for item in content])
     response = model.generate_content(request,
                                       generation_config=genai.types.GenerationConfig(
-                                          temperature=1.5,
+                                          temperature=1.7,
+                                          top_k=5,
+                                          top_p=1,
                                       )).text
     remove_list = ["`", "json", "[", "]", '"', "\n",]
 

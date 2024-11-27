@@ -13,15 +13,8 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-
-        
-        * {
             cursor: default;
-        }
-
-        * {
-        user-select: none;
+            user-select: none;
         }
 
         body {
@@ -80,28 +73,12 @@
             }
         }
 
-        h1, p {
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #FFFFFF;
-            margin-bottom: 15px;
-        }
-
-        p {
-            font-size: 1.2rem;
-            color: #D1D1D1;
-        }
-
         /* Navigation zones */
         .slide-navigation-zone {
             position: fixed;
             top: 0;
             bottom: 0;
-            width: 30%;
+            width: 25%;
             background-color: transparent;
             transition: background-color 0.3s ease;
             cursor: pointer;
@@ -151,7 +128,7 @@
     </figure>
     <!-- Dynamic Slide Content -->
     <div class="card-body text-center">
-        <div id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold">Slide Title</div>
+        <div id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold w-full">Slide Title</div>
         <div id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</div>
     </div>
 </div>
@@ -223,10 +200,6 @@
     let progressBarInterval;
     const progressBar = document.getElementById('progress-bar');
 
-    const slideIcons = {
-        1: "{% static 'css/images/globe.png' %}",
-    };
-
     const audioPlayer = document.getElementById("audio-player");
     audioPlayer.volume = 0.3;
 
@@ -295,6 +268,8 @@
             case 1:
                 slideTitle.innerText = "Get Ready to Travel the World with AudioScape";
                 slideContent.innerText = "Take a journey through music from across the globe!";
+                slideIcon.className = "flex justify-center fade-in"
+                slideIconImg.src = "{% static 'css/images/globe.png' %}"
                 playMusic();
                 break;
             case 2:
@@ -334,10 +309,12 @@
                 });
 
                 genresListHTML += "</ol>";
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Top 5 Genres"
                 slideContent.innerHTML = genresListHTML;
                 break;
             case 5:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Counting Down the Beats 🔟";
                 slideContent.innerText = "placeholder";
                 playMusic();
@@ -352,10 +329,12 @@
                     songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
                 songListHTML += "</div>"
 
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Top 10 Songs";
                 slideContent.innerHTML = songListHTML
                 break;
             case 7:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
                 slideContent.innerText = "placeholder";
                 playMusic();
@@ -363,7 +342,7 @@
             case 8:
                 const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
 
-                let artistListHTML = '<div class="flex flex-col">'; // Start an ordered list for artists
+                let artistListHTML = '<div class="flex flex-col">';
 
                 artists.forEach((artist) => {
                     // Fetch artist name from the inner <div>
@@ -373,11 +352,14 @@
                     artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;
                 });
 
-                artistListHTML += "</div>"; // Close the ordered list
+                artistListHTML += "</div>";
+
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Top 10 Artists";
                 slideContent.innerHTML = artistListHTML
                 break;
             case 9:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
                 slideContent.innerText = "Let's see where your music tastes take you!";
                 playMusic();
@@ -385,24 +367,27 @@
             case 10:
                 slideTitle.innerText = "Your AI Travel Suggestion";
                 const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
-                console.log(vacation)
                 slideContent.innerText = vacation;
                 break;
             case 11:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Buzzing With Excitement 🐝";
                 slideContent.innerText = "placeholder";
                 playMusic();
                 break;
             case 12:
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "What’s the Buzz?";
                 slideContent.innerText = "placeholder";
                 break;
             case 13:
+                slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "2nd Game intro";
                 slideContent.innerText = "placeholder";
                 playMusic();
                 break;
             case 14:
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Guess the Artist";
                 slideContent.innerText = "placeholder";
                 break;
@@ -412,7 +397,6 @@
                 playMusic();
                 break;
         }
-        document.getElementById("slide-icon-img").src = slideIcons[pageId];
         resetProgressBar();
     }
 
