@@ -1,5 +1,6 @@
 import urllib
 import base64
+
 import requests
 import os
 import secrets
@@ -103,13 +104,18 @@ def save_tokens(userprofile, access_token, refresh_token):
 
 
 def get_top_artists(userprofile, limit, timeframe):
+    valid_timeframes = ['short_term', 'medium_term', 'long_term']
+    if timeframe not in valid_timeframes:
+        print(f"Invalid time range: {timeframe}, defaulting to 'short_term'.")
+        timeframe = 'short_term'  # Default to 'short_term' if invalid
+
     artist_response = get_api_data(
         userprofile=userprofile,
         subdomain='artists',
         time_range=timeframe,
         limit=limit,
     )
-    return [{"name": artist["name"], "id": artist["id"], "genres": artist["genres"]} for artist in artist_response['items']]
+    return [{"name": artist["name"], "id": artist["id"], "genres": artist["genres"], "images": artist["images"][0]} for artist in artist_response['items']]
 
 
 def get_top_tracks(userprofile, timeframe):
@@ -119,13 +125,14 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{"name": track["name"], "preview_url": track["preview_url"], "id": track["id"]} for track in tracks_response['items']]
+    return [{"name": track["name"], "preview_url": track["preview_url"], "id": track["id"], "images": track["album"]["images"][0]} for track in tracks_response['items']]
 
 
 def get_wrapped_content(userprofile, timeframe):
     try:
         top_artists = get_top_artists(userprofile, 10, timeframe)
-        top_artists_locations = gemini.get_top_artists_locations(top_artists)
+        top_50_artists = get_top_artists(userprofile, 50, timeframe)
+        top_artists_locations = gemini.get_top_artists_locations(top_50_artists)
         top_tracks = get_top_tracks(userprofile, timeframe)
         preview_urls = []
         for track in top_tracks:
@@ -133,14 +140,15 @@ def get_wrapped_content(userprofile, timeframe):
                 preview_urls.append({"url": track["preview_url"]})
                 del track["preview_url"]  # Remove the preview_url field
         vacation_spot = gemini.place_to_visit(top_tracks)
-
+        top_genres = get_top_genres(top_50_artists)
         combined = {
-            "artists": top_artists,
-            "tracks": top_tracks,
+            'artists': top_artists,
+            'tracks': top_tracks,
+            'locations': top_artists_locations,
             "preview_urls": preview_urls,
-            "locations": top_artists_locations,
-            "vacation": vacation_spot,
-            "timeframe": timeframe,
+            'vacation': vacation_spot,
+            'timeframe': timeframe,
+            'genres': top_genres,
         }
         return combined
     except Exception as e:
@@ -180,3 +188,25 @@ def get_top_artist_tracks(artist_id, userprofile):
     response = requests.get('https://api.spotify.com/v1/artists/%s/top-tracks' % artist_id,
                             params=params, headers=headers)
     return response.json()['tracks']
+
+
+def get_top_genres(artists):
+    genre_list = []
+    genre_count = {}
+
+    # Extract genres for each artist and add to genre_list
+    for artist in artists:
+        genre_list.extend(artist.get("genres", []))  # Use .get to safely access genres
+
+    # Count occurrences of each genre
+    for genre in genre_list:
+        if genre in genre_count:
+            genre_count[genre] += 1
+        else:
+            genre_count[genre] = 1
+
+    # Sort genres by count in descending order
+    sorted_genres_by_count = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
+    # Return the sorted genres as a list of dictionaries
+    return [{'genre': genre, 'count': count} for genre, count in sorted_genres_by_count]
+

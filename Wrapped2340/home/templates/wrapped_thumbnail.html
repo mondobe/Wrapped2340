@@ -20,9 +20,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                 </svg>
             </div>
-            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-fit p-2 shadow">
+            <ul tabindex="0" class="dropdown-content menu bg-base-300 rounded-box z-[1] w-fit p-2 shadow">
                 <li>
-                    <form class="bg-success hover:bg-success m-1" method="post">
+                    <form class="m-1" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
                         <button type="submit" value="publish" name="action">
@@ -35,7 +35,7 @@
                     </form>
                 </li>
                 <li>
-                    <form class="bg-error hover:bg-error m-1" method="post">
+                    <form class="m-1" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
                         <button type="submit" value="delete" name="action">Delete</button>

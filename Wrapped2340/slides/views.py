@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from ..common.models import Wrapped
-from ..common.spotifyAPI import get_top_tracks
+from ..common import spotifyAPI
+import json
 
 
 # Class-based view for slides, with login required
@@ -10,17 +11,11 @@ class SlidesView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        page_id = self.kwargs.get('page_id')
+        page_id = self.kwargs.get('page_id', 1)  # Default to page 1 if not passed
 
-        # Imports wrapped object from id
+    # Imports wrapped object from id
         wrapped_id = self.kwargs.get('wrapped_id')
         wrapped_object = Wrapped.objects.get(id=wrapped_id)
-
-        # Fetch top songs for the "Top 10 Songs" slide (page_id = 6)
-        if page_id == 6:
-            userprofile = self.request.user.userprofile
-            timeframe = wrapped_object.timeframe  # Assuming Wrapped model has a timeframe field
-            context['top_songs'] = get_top_tracks(userprofile, timeframe)
 
     # Map page IDs to slide titles or any other data specific to each slide
         slide_titles = {
