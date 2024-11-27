@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from ..common.models import Wrapped
-from ..common.spotifyAPI import get_top_tracks, get_top_genres, get_top_artists
+from ..common import spotifyAPI
 import json
 
 
@@ -16,16 +16,7 @@ class SlidesView(LoginRequiredMixin, TemplateView):
     # Imports wrapped object from id
         wrapped_id = self.kwargs.get('wrapped_id')
         wrapped_object = Wrapped.objects.get(id=wrapped_id)
-        userprofile = self.request.user.userprofile
-        timeframe = wrapped_object.time_created
 
-        try:
-            if page_id == 4:
-                top_genres = get_top_genres(userprofile, timeframe)
-                print(f"Top Genres: {top_genres}")  # Check the result
-                context['top_genres'] = json.dumps(top_genres)
-        except Exception as e:
-            print(f"Error fetching data for page {page_id}: {e}")
     # Map page IDs to slide titles or any other data specific to each slide
         slide_titles = {
             1: 'Get Ready to Travel the World with Audioscape 🌎',      # Transition slide

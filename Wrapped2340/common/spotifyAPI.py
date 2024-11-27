@@ -1,4 +1,3 @@
-import time
 import urllib
 import base64
 
@@ -7,7 +6,6 @@ import os
 import secrets
 from dotenv import load_dotenv
 from ..common import gemini
-from requests import RequestException
 
 # Loads variables from .env
 load_dotenv()
@@ -133,7 +131,8 @@ def get_top_tracks(userprofile, timeframe):
 def get_wrapped_content(userprofile, timeframe):
     try:
         top_artists = get_top_artists(userprofile, 10, timeframe)
-        top_artists_locations = gemini.get_top_artists_locations(top_artists)
+        top_50_artists = get_top_artists(userprofile, 50, timeframe)
+        top_artists_locations = gemini.get_top_artists_locations(top_50_artists)
         top_tracks = get_top_tracks(userprofile, timeframe)
         preview_urls = []
         for track in top_tracks:
@@ -141,7 +140,7 @@ def get_wrapped_content(userprofile, timeframe):
                 preview_urls.append({"url": track["preview_url"]})
                 del track["preview_url"]  # Remove the preview_url field
         vacation_spot = gemini.place_to_visit(top_tracks)
-
+        top_genres = get_top_genres(top_50_artists)
         combined = {
             'artists': top_artists,
             'tracks': top_tracks,
@@ -149,6 +148,7 @@ def get_wrapped_content(userprofile, timeframe):
             "preview_urls": preview_urls,
             'vacation': vacation_spot,
             'timeframe': timeframe,
+            'genres': top_genres,
         }
         return combined
     except Exception as e:
@@ -190,48 +190,23 @@ def get_top_artist_tracks(artist_id, userprofile):
     return response.json()['tracks']
 
 
-def get_top_genres(userprofile, timeframe, limit=50):
-    artists = get_top_artists(userprofile, limit, timeframe)
+def get_top_genres(artists):
+    genre_list = []
     genre_count = {}
 
+    # Extract genres for each artist and add to genre_list
     for artist in artists:
-        artist_id = artist['id']
-        artist_info = get_artist_info(userprofile, artist_id)
+        genre_list.extend(artist.get("genres", []))  # Use .get to safely access genres
 
-        for genre in artist_info.get('genres', []):  # Handle empty genres list
-            genre_count[genre] = genre_count.get(genre, 0) + 1
+    # Count occurrences of each genre
+    for genre in genre_list:
+        if genre in genre_count:
+            genre_count[genre] += 1
+        else:
+            genre_count[genre] = 1
 
-    sorted_genres = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
-    return [{'genre': genre, 'count': count} for genre, count in sorted_genres]
+    # Sort genres by count in descending order
+    sorted_genres_by_count = sorted(genre_count.items(), key=lambda x: x[1], reverse=True)
+    # Return the sorted genres as a list of dictionaries
+    return [{'genre': genre, 'count': count} for genre, count in sorted_genres_by_count]
 
-
-def get_artist_info(userprofile, artist_id):
-    url = f'https://api.spotify.com/v1/artists/{artist_id}'
-    headers = {
-        'Authorization': f'Bearer {userprofile.access_token}',
-    }
-
-    response = make_api_request(url, {}, headers)
-
-    if response is None:
-        raise ValueError(f"Failed to get artist info for artist ID: {artist_id}")
-
-    return response  # Returns the artist info, including genres and images
-
-
-
-def make_api_request(url, params, headers, max_retries=5, initial_backoff=1):
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(url, params=params, headers=headers)
-            response.raise_for_status()
-            return response.json()
-        except RequestException as e:
-            if response.status_code == 429:
-                retry_after = int(response.headers.get('Retry-After', initial_backoff))
-                time.sleep(retry_after)
-            elif attempt == max_retries - 1:
-                raise e
-            else:
-                time.sleep(initial_backoff * (2 ** attempt))
-    return None

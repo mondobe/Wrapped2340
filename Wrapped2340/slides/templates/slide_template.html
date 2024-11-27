@@ -27,19 +27,11 @@
     <source src="" type="audio/mpeg">
 </audio>
 
-<div id="artists-data" style="display: none;">
-    {% for artist in wrapped_object.content.artists %}
-        <div class="artist">
-            <strong>{{ artist.name }}</strong>
-        </div>
-    {% endfor %}
-</div>
-
 <!-- Make sure the data is rendering properly in your HTML -->
 <div id="genres-data">
-    {% if top_genres %}
+    {% if wrapped_object.content.genres %}
         <div class="genre">
-            {% for genre in top_genres %}
+            {% for genre in wrapped_object.content.genres %}
                 <strong>{{ genre.genre }}</strong> ({{ genre.count }} plays)
             {% endfor %}
         </div>
@@ -124,9 +116,6 @@
     function loadSlideContent() {
         const slideTitle = document.getElementById("slide-title");
         const slideContent = document.getElementById("slide-content");
-        const topGenres = {{ top_genres|escapejs }};
-        const topSongs = {{ top_songs|escapejs }};
-        const topArtists = {{ top_artists|escapejs }};
 
         // Change content based on pageId
         switch (pageId) {
