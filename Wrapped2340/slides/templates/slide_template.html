@@ -71,6 +71,7 @@
 
 <script>
     // Function to decode HTML entities
+
     function decodeHTML(html) {
         const txt = document.createElement('textarea');
         txt.innerHTML = html;
@@ -161,8 +162,6 @@
                 });
 
                 genresListHTML += "</ol>";
-
-                slideTitle.innerText = "Your Top Genres";
                 slideContent.innerHTML = genresListHTML;
                 break;
             case 5:
@@ -182,6 +181,25 @@
 
                 slideTitle.innerText = "Top 10 Songs";
                 slideContent.innerHTML = songListHTML
+            case 6: // Top Songs
+                slideTitle.innerText = "Top 10 Songs";
+                let songsHTML = '';
+                if (wrapped_object.content.tracks && wrapped_object.content.tracks.length > 0) {
+                    wrapped_object.content.tracks.forEach((song, index) => {
+                        // Get the corresponding image from preview_urls for this track
+                        let trackImage = wrapped_object.content.preview_urls[index]?.image_url || '/path/to/default-image.jpg';
+
+                        songsHTML += `
+                <div>
+                    <img src="${trackImage}" alt="${song.name || 'Unknown Song'}"/>
+                    <div>${song.name || 'Unknown Song'}</div>
+                </div>
+            `;
+                    });
+                } else {
+                    songsHTML = "<p>No songs available.</p>";
+                }
+                slideContent.innerHTML = songsHTML;
                 break;
             case 7:
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
@@ -204,6 +222,25 @@
                 artistListHTML += "</ol>"; // Close the ordered list
                 slideTitle.innerText = "Top Artists";
                 slideContent.innerHTML = artistListHTML
+            case 8: // Top Artists
+                slideTitle.innerText = "Top Artists";
+                let artistsHTML = '';
+                if (wrapped_object.content.artists && wrapped_object.content.artists.length > 0) {
+                    wrapped_object.content.artists.forEach((artist, index) => {
+                        // Get the corresponding image from preview_urls for this artist
+                        let artistImage = wrapped_object.content.preview_urls[index]?.image_url || '/path/to/default-image.jpg';
+
+                        artistsHTML += `
+                <div>
+                    <img src="${artistImage}" alt="${artist.name || 'Unknown Artist'}"/>
+                    <div>${artist.name || 'Unknown Artist'}</div>
+                </div>
+            `;
+                    });
+                } else {
+                    artistsHTML = "<p>No artists available.</p>";
+                }
+                slideContent.innerHTML = artistsHTML;
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
