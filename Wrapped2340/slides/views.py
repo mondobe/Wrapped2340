@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from ..common.models import Wrapped
-from ..common.spotifyAPI import get_top_tracks, get_top_genres, get_song_images, get_artist_images, get_top_artists
+from ..common.spotifyAPI import get_top_tracks, get_top_genres, get_top_artists
 import json
 
 
@@ -24,14 +24,6 @@ class SlidesView(LoginRequiredMixin, TemplateView):
                 top_genres = get_top_genres(userprofile, timeframe)
                 print(f"Top Genres: {top_genres}")  # Check the result
                 context['top_genres'] = json.dumps(top_genres)
-            elif page_id == 6:
-                top_songs = get_top_tracks(userprofile, timeframe)
-                print(f"Top Songs: {top_songs}")  # Check the result
-                context['top_songs'] = get_song_images(top_songs)
-            elif page_id == 8:
-                top_artists = get_top_artists(userprofile, 10, timeframe)
-                print(f"Top Artists: {top_artists}")  # Check the result
-                context['top_artists'] = get_artist_images(top_artists)
         except Exception as e:
             print(f"Error fetching data for page {page_id}: {e}")
     # Map page IDs to slide titles or any other data specific to each slide

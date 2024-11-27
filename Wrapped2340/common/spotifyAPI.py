@@ -117,7 +117,7 @@ def get_top_artists(userprofile, limit, timeframe):
         time_range=timeframe,
         limit=limit,
     )
-    return [{"name": artist["name"], "id": artist["id"], "genres": artist["genres"]} for artist in artist_response['items']]
+    return [{"name": artist["name"], "id": artist["id"], "genres": artist["genres"], "images": artist["images"][0]} for artist in artist_response['items']]
 
 
 def get_top_tracks(userprofile, timeframe):
@@ -127,7 +127,7 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{"name": track["name"], "preview_url": track["preview_url"], "id": track["id"]} for track in tracks_response['items']]
+    return [{"name": track["name"], "preview_url": track["preview_url"], "id": track["id"], "images": track["album"]["images"][0]} for track in tracks_response['items']]
 
 
 def get_wrapped_content(userprofile, timeframe):
@@ -149,7 +149,6 @@ def get_wrapped_content(userprofile, timeframe):
             "preview_urls": preview_urls,
             'vacation': vacation_spot,
             'timeframe': timeframe,
-            'genres': get_top_genres(userprofile, timeframe),
         }
         return combined
     except Exception as e:
@@ -236,31 +235,3 @@ def make_api_request(url, params, headers, max_retries=5, initial_backoff=1):
             else:
                 time.sleep(initial_backoff * (2 ** attempt))
     return None
-
-
-def get_artist_images(top_artists):
-    artists_info = []
-    for artist in top_artists:
-        artist_info = {
-            'name': artist['name'],
-            'popularity': artist.get('popularity', 0),  # Use get() with a default value
-            'image_url': artist['images'][0]['url'] if artist.get('images') else None,
-            'spotify_url': artist['external_urls'].get('spotify', '')
-        }
-        artists_info.append(artist_info)
-    return artists_info
-
-
-def get_song_images(top_songs):
-    songs_info = []
-    for song in top_songs['items']:  # Ensure you're accessing the 'items' key correctly
-        print(f"Song data: {song}")  # Debugging to verify structure
-        song_info = {
-            'name': song['name'],
-            'popularity': song['popularity'],
-            'image_url': song['album']['images'][0]['url'] if song['album'].get('images') else 'default_image_url_here',  # Fallback if no image
-            'spotify_url': song['external_urls']['spotify'],
-            'preview_url': song['preview_url']
-        }
-        songs_info.append(song_info)
-    return songs_info

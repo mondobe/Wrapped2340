@@ -31,7 +31,9 @@
     {% for artist in wrapped_object.content.artists %}
         <div class="artist">
             <strong>{{ artist.name }}</strong>
-            
+        </div>
+    {% endfor %}
+</div>
 
 <!-- Make sure the data is rendering properly in your HTML -->
 <div id="genres-data">
@@ -47,10 +49,10 @@
 </div>
 
 <div id="songs-data">
-    {% if top_songs %}
-        {% for song in top_songs %}
+    {% if wrapped_object.content.tracks %}
+        {% for song in wrapped_object.content.tracks %}
             <div class="song">
-                <img src="{{ song.image_url }}" alt="{{ song.name }}">
+                <img src="{{ song.images.url }}" alt="{{ song.name }}">
                 <div>{{ song.name }}</div>
             </div>
         {% endfor %}
@@ -60,10 +62,10 @@
 </div>
 
 <div id="artists-data">
-    {% if top_artists %}
-        {% for artist in top_artists %}
+    {% if wrapped_object.content.artists %}
+        {% for artist in wrapped_object.content.artists %}
             <div class="artist">
-                <img src="{{ artist.image_url }}" alt="{{ artist.name }}">
+                <img src="{{ artist.images.url }}" alt="{{ artist.name }}">
                 <div>{{ artist.name }}</div>
             </div>
         {% endfor %}
