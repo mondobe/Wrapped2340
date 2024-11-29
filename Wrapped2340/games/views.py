@@ -42,6 +42,7 @@ class WhatsTheBuzzView(FormView):
 
                 post_text = real_post.selftext[:400]
                 context['reveal_text'] = post_text
+
                 post_text = redact_with_artist(post_text, artist, userprofile).replace('\n', '<br>')
 
                 post_title = real_post.title
@@ -50,7 +51,6 @@ class WhatsTheBuzzView(FormView):
 
                 if post_title == '':
                     continue
-
                 context['post_title'] = post_title
                 context['post_text'] = post_text
 
@@ -72,7 +72,7 @@ def get_search_term(artist):
     return 'self:true title:"%s" (artist OR band OR album OR song OR topster OR rym) NOT sale' % (artist['name'])
 
 def get_incorrect_choices(artist, top_artists, userprofile):
-    related = spotifyAPI.get_related_artists(artist['id'], userprofile)
+    related = top_artists
     related = related[:3]
     other_top_artists = list(filter(lambda a: a != artist and artist not in related, top_artists))
     related[random.randrange(3)] = random.choice(other_top_artists)

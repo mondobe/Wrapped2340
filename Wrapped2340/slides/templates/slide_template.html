@@ -381,28 +381,6 @@
                 const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
                 slideContent.innerText = vacation;
                 break;
-            case 11:
-                slideIcon.className = "flex justify-center fade-in"
-                slideTitle.innerText = "Buzzing With Excitement 🐝";
-                slideContent.innerText = "placeholder";
-                playMusic();
-                break;
-            case 12:
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "What’s the Buzz?";
-                slideContent.innerText = "placeholder";
-                break;
-            case 13:
-                slideIcon.className = "flex justify-center fade-in"
-                slideTitle.innerText = "2nd Game intro";
-                slideContent.innerText = "placeholder";
-                playMusic();
-                break;
-            case 14:
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "Guess the Artist";
-                slideContent.innerText = "placeholder";
-                break;
             default:
                 slideTitle.innerText = "Summary";
                 slideContent.innerText = "Your music journey at a glance!";
@@ -414,7 +392,7 @@
 
     // Function to go to the next slide
     function nextSlide() {
-        if (pageId < 15) {
+        if (pageId < 11) {
             pageId++;
             loadSlideContent();
             resetTimer();
