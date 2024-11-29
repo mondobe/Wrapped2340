@@ -4776,6 +4776,10 @@ details.collapse summary::-webkit-details-marker {
   width: 16rem;
 }
 
+.btn-block {
+  width: 100%;
+}
+
 .btn-square:where(.btn-xs) {
   height: 1.5rem;
   width: 1.5rem;
@@ -5878,6 +5882,16 @@ details.collapse summary::-webkit-details-marker {
   line-height: 1.75rem;
 }
 
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
 .font-bold {
   font-weight: 700;
 }
@@ -6074,6 +6088,10 @@ details.collapse summary::-webkit-details-marker {
     font-size: 0.875rem;
   }
 
+  .sm\:btn-block {
+    width: 100%;
+  }
+
   .btn-square:where(.sm\:btn-sm) {
     height: 2rem;
     width: 2rem;
@@ -6181,13 +6199,36 @@ details.collapse summary::-webkit-details-marker {
     width: 5rem;
   }
 
+  .md\:w-80 {
+    width: 20rem;
+  }
+
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .md\:flex-row {
+    flex-direction: row;
   }
 
   .md\:text-4xl {
     font-size: 2.25rem;
     line-height: 2.5rem;
+  }
+
+  .md\:text-5xl {
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .md\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .md\:text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
   }
 }
 
