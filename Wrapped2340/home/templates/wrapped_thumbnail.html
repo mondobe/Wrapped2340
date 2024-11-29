@@ -38,6 +38,13 @@
                     <form class="m-1" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
+                        <button type="submit" value="share" name="action">Share</button>
+                    </form>
+                </li>
+                <li>
+                    <form class="m-1" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
                         <button type="submit" value="delete" name="action">Delete</button>
                     </form>
                 </li>
