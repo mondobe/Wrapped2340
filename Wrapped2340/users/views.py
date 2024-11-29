@@ -155,7 +155,6 @@ class DeleteAccountView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('users:login')
 
     def form_valid(self, form):
-        print("Delete Account")
         if form.delete_account(self.request.user):
             return super().form_valid(form)
         else:

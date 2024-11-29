@@ -10,6 +10,12 @@ class Wrapped(models.Model):
     caption = models.CharField(max_length=100, blank=True)
     content = models.JSONField(default=dict)
 
+    def default_content(self):
+        if self.creator2:
+            return self.content['duo1']
+        else:
+            return self.content
+
     def __str__(self):
         noun = "Public wrapped" if self.public else "Wrapped"
         time = "Created at %s" % self.time_created

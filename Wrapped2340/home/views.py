@@ -109,20 +109,25 @@ class CreateDuoWrappedView(FormView):
     def form_valid(self, form):
         duo1, duo2 = get_duo_users(self.request.user, form.cleaned_data['invite_token'])
         if duo1.userprofile.access_token and duo2.userprofile.access_token:
+            timeframe = form.cleaned_data['timeframe']
+            public = form.cleaned_data['public'] == 'true'
             wrapped_content = {
-                'duo1': spotifyAPI.get_default_wrapped_content(duo1.userprofile),
-                'duo2': spotifyAPI.get_default_wrapped_content(duo2.userprofile),
+                'duo1': spotifyAPI.get_wrapped_content(duo1.userprofile, timeframe),
+                'duo2': spotifyAPI.get_wrapped_content(duo2.userprofile, timeframe),
             }
 
-            Wrapped.objects.create(
+            wrapped = Wrapped.objects.create(
                 creator1=duo1.userprofile,
                 creator2=duo2.userprofile,
                 version='aiden10-30duo',
+                public=public,
                 content=wrapped_content,
+            )
+            return redirect(
+                reverse('slides:slide', kwargs={'page_id': 1, 'wrapped_id': wrapped.id})
             )
         else:
             return HttpResponse('Bad Access Token')
-        return super().form_valid(form)
 
     def form_invalid(self, form):
         return redirect('home:invite', invite_token=form.cleaned_data['invite_token'])

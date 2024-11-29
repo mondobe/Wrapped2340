@@ -54,18 +54,40 @@
 
     <div class="w-full my-1.5">
         <strong class="text-lg">Top Artists:</strong>
-        <ol>
-        {% for artist in wrap.content.artists|slice:":3" %}
-            <li>{{ artist.name }}</li>
-        {% endfor %}
-        </ol>
+        {% if wrap.creator2 %}
+            <ul>
+                {% with wrap.content.duo1.artists|first as top_artist %}
+                    <li>{{ wrap.creator1 }}: {{ top_artist.name }}</li>
+                {% endwith %}
+                {% with wrap.content.duo2.artists|first as top_artist %}
+                    <li>{{ wrap.creator2 }}: {{ top_artist.name }}</li>
+                {% endwith %}
+            </ul>
+        {% else %}
+            <ol>
+                {% for artist in wrap.content.artists|slice:":3" %}
+                    <li>{{ artist.name }}</li>
+                {% endfor %}
+            </ol>
+        {% endif %}
     <br>
         <strong class="text-lg">Top Tracks:</strong>
-        <ol>
-        {% for track in wrap.content.tracks|slice:":3" %}
-            <li>{{ track.name }}</li>
-        {% endfor %}
-        </ol>
+        {% if wrap.creator2 %}
+            <ul>
+                {% with wrap.content.duo1.tracks|first as top_track %}
+                <li>{{ wrap.creator1 }}: {{ top_track.name }}</li>
+                {% endwith %}
+                {% with wrap.content.duo2.tracks|first as top_track %}
+                    <li>{{ wrap.creator2 }}: {{ top_track.name }}</li>
+                {% endwith %}
+            </ul>
+        {% else %}
+            <ol>
+                {% for artist in wrap.content.tracks|slice:":3" %}
+                    <li>{{ artist.name }}</li>
+                {% endfor %}
+            </ol>
+        {% endif %}
     <br>
     </div>
 

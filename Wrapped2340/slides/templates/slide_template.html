@@ -234,8 +234,12 @@
     // Parse music links from Django context
     let musicLinks = [];
     try {
-        musicLinks = decodeHTML("{{ wrapped_object.content.preview_urls|escapejs }}").replace(/'/g,'"')
+        musicLinks = decodeHTML("{{ wrapped_object.default_content.preview_urls|escapejs }}").replace(/'/g,'"')
         musicLinks = JSON.parse(musicLinks)
+        {% if wrapped_object.creator2 %}
+            musicLinks2 = decodeHTML("{{ wrapped_object.content.duo2.preview_urls|escapejs }}").replace(/'/g,'"')
+            musicLinks = musicLinks + JSON.parse(musicLinks)
+        {% endif %}
         //console.log("Music Links:", musicLinks);
     } catch (e) {
         console.error('Failed to parse music links:', e);
@@ -302,7 +306,7 @@
                 playMusic();
                 break;
             case 2:
-                const locations = JSON.parse("{{ wrapped_object.content.locations|escapejs }}".replace(/'/g, '"'))
+                let locations = JSON.parse("{{ wrapped_object.default_content.locations|escapejs }}".replace(/'/g, '"'))
 
                 getFlagByCountry(locations[0].country).then(flag => {
                     slideIconImg.className = "w-40"
@@ -310,13 +314,29 @@
                 });
 
                 let locationListHTML = '<ol type="1">'; // Start an ordered list
+                {% if wrapped_object.creator2 %}
+                    locationListHTML = `<strong>{{ wrapped_object.creator1 }}:</strong>
+                        <br><ol type="1">`; // Start an ordered list
+                {% endif %}
                 locations.forEach(location => {
                     const locationName = location.country;
 
                     // Add each location to the list as a <li> item
-                    locationListHTML += `<li><strong>${locationName}</strong></li>`;
+                    locationListHTML += `<li>${locationName}</li>`;
                 });
                 locationListHTML += "</ol>"; // Close the ordered list
+                {% if wrapped_object.creator2 %}
+                    let locations2 = JSON.parse("{{ wrapped_object.content.duo2.locations|escapejs }}".replace(/'/g, '"'))
+                    locationListHTML += `<br><strong>{{ wrapped_object.creator2 }}:</strong>
+                        <br><ol type="1">`; // Start an ordered list
+                    locations2.forEach(location => {
+                        const locationName = location.country;
+
+                        // Add each location to the list as a <li> item
+                        locationListHTML += `<li>${locationName}</li>`;
+                    });
+                    locationListHTML += "</ol>"; // Close the ordered list
+                {% endif %}
 
                 slideTitle.innerText = "Regions Your Favorite Artists Are From";
                 slideContent.innerHTML = locationListHTML;
@@ -400,8 +420,16 @@
             case 10:
                 slideIcon.className = "hidden"
                 slideTitle.innerText = "Your AI Travel Suggestion";
-                const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
-                slideContent.innerText = vacation;
+                {% if wrapped_object.creator2 %}
+                    const vacation_duo = `<strong>{{ wrapped_object.creator1 }}:</strong><br>
+                        {{ wrapped_object.content.duo1.vacation|escapejs }}<br>
+                        <strong>{{ wrapped_object.creator2 }}:</strong><br>
+                        {{ wrapped_object.content.duo2.vacation|escapejs }}<br>`
+                    slideContent.innerHTML = vacation_duo;
+                {% else %}
+                    const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
+                    slideContent.innerText = vacation;
+                {% endif %}
                 break;
             default:
                 const summarySongs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));

@@ -7,14 +7,101 @@
             Send this to other people to create a Duo-Wrapped and share your music taste!
         </p>
     {% else %}
-        <h1>{{ duo1.username }} and {{ duo2.username }}'s Duo-Wrapped</h1>
-        <p>
-            You have been invited to participate in a Duo-Wrapped with {{ other.username }}!
-        </p>
-        <form method="post" action="{% url 'home:create-duo-wrapped' %}">
-            {% csrf_token %}
-            <input id="invite_token" type="hidden" name="invite_token" value="{{ invite_token }}">
-            <input type="submit" value="Create Duo-Wrapped">
-        </form>
+        <div class="mb-3">
+            <p class="text-2xl md:text-4xl"><strong>{{ duo1.username }} and {{ duo2.username }}'s Duo-Wrapped</strong></p>
+        </div>
+        <br>
+        <div class="m-3">
+            <p>
+                You have been invited to participate in a Duo-Wrapped with {{ other.username }}!
+            </p>
+        </div>
+        <br>
+        <div id="createModal" class="items-center justify-center z-50">
+            <div class="modal-box text-base-content p-6 rounded-lg shadow-lg">
+                <form method="post" action="{% url 'home:create-duo-wrapped' %}">
+                    {% csrf_token %}
+
+                    <div class="flex justify-around my-4">
+                        <button class="btn btn-outline btn-accent" type="button" data-size="sm" onclick="selectSize('sm', 'short_term')">Short</button>
+                        <button class="btn btn-outline btn-accent" type="button" data-size="m" onclick="selectSize('m', 'medium_term')">Medium</button>
+                        <button class="btn btn-outline btn-accent" type="button" data-size="l" onclick="selectSize('l', 'long_term')">Long</button>
+                    </div>
+
+                    <input type="hidden" name="timeframe" id="selectedTimeframe" value="short_term">
+                    <div class="flex justify-between items-center my-4">
+                        <span>Public/Private</span>
+                        <input type="hidden" name="public" value="false">
+                        <input type="checkbox" name="public" id="publicPrivateToggle" value="true" class="toggle toggle-primary">
+                    </div>
+
+                    <input id="invite_token" type="hidden" name="invite_token" value="{{ invite_token }}">
+                    <input type="submit" class="btn btn-accent" value="Create Duo-Wrapped">
+                </form>
+            </div>
+        </div>
+        <script>
+            // javascript code to handle the selection only one SM M L button
+            document.addEventListener('DOMContentLoaded', function() {
+                const sizeButtons = document.querySelectorAll('.btn-outline');
+
+                sizeButtons.forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        const size = event.target.textContent;
+                        // Add logic to handle size selection
+                    });
+                });
+            });
+
+            // Select Size Button Script
+            function selectSize(selectedSize, value) {
+                // Get all size buttons
+                const sizeButtons = document.querySelectorAll('[data-size]');
+
+                // Loop through each button and remove the 'active' class
+                sizeButtons.forEach(button => {
+                    if (button.getAttribute('data-size') === selectedSize) {
+                        // Add 'active' class to the clicked button
+                        document.getElementById('selectedTimeframe').value = value;
+                        button.classList.add('btn-primary'); // Change color when active
+                        button.classList.remove('btn-outline'); // Remove outline when active
+                    } else {
+                        // Remove 'active' class from other buttons
+                        button.classList.remove('btn-primary');
+                        button.classList.add('btn-outline');
+                    }
+                });
+            }
+
+            // toggle sliders for duo wrapped and public wrappeds
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get references to both toggle switches
+                const publicPrivateToggle = document.getElementById('publicPrivateToggle');
+                const duoWrappedToggle = document.getElementById('duoWrappedToggle');
+
+                // Check if elements exist before adding event listeners
+                if (publicPrivateToggle) {
+                    // Add event listener for Public/Private toggle
+                    publicPrivateToggle.addEventListener('change', function() {
+                        if (publicPrivateToggle.checked) {
+                            // Perform actions when Public is selected
+                        } else {
+                            // Perform actions when Private is selected
+                        }
+                    });
+                }
+
+                if (duoWrappedToggle) {
+                    // Add event listener for Duo Wrapped toggle
+                    duoWrappedToggle.addEventListener('change', function() {
+                        if (duoWrappedToggle.checked) {
+                            // Perform actions when Duo Wrapped is enabled
+                        } else {
+                            // Perform actions when Duo Wrapped is disabled
+                        }
+                    });
+                }
+            });
+        </script>
     {% endif %}
 {% endblock %}
