@@ -14,6 +14,7 @@ urlpatterns = [
     path("reset-password-complete/", views.WrappedPasswordResetCompleteView.as_view(), name="password-reset-complete"),
     path('link-spotify/', views.LinkSpotify.as_view(), name='link-spotify'),
     path('rotate-invite-token/', views.RotateInviteTokenView.as_view(), name='rotate-invite-token'),
+    path('delete-account/', views.DeleteAccountView.as_view(), name='delete-account'),
     path('dev-feedback/', views.submit_feedback, name='dev-feedback'),
     path('manage-feedback/', views.manage_feedback, name='manage-feedback'),
 ]

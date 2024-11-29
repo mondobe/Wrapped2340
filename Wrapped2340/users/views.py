@@ -11,7 +11,7 @@ from django.views.generic import UpdateView, CreateView, View, FormView
 from .models import *
 from ..common import spotifyAPI
 from dotenv import load_dotenv
-from .forms import RotateInviteTokenForm, FeedbackForm, UserForm
+from .forms import RotateInviteTokenForm, FeedbackForm, UserForm, DeleteAccountForm
 
 # Loads variables from .env
 load_dotenv()
@@ -148,6 +148,18 @@ class RotateInviteTokenView(FormView):
         self.request.user.userprofile.rotate_invite_token()
         self.request.user.userprofile.save()
         return super().form_valid(form)
+
+class DeleteAccountView(LoginRequiredMixin, FormView):
+    template_name = 'users/delete-account.html'
+    form_class = DeleteAccountForm
+    success_url = reverse_lazy('users:login')
+
+    def form_valid(self, form):
+        print("Delete Account")
+        if form.delete_account(self.request.user):
+            return super().form_valid(form)
+        else:
+            return super().form_invalid(form)
 
 @login_required
 def submit_feedback(request):

@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import BaseUserCreationForm
 from django import forms
 from django.contrib.auth.models import User
-from django.forms import EmailField, ModelForm
+from django.forms import EmailField, ModelForm, CharField
 from django import forms
 from .models import Feedback
 
@@ -21,6 +21,16 @@ class SignUpForm(BaseUserCreationForm):
 
 class RotateInviteTokenForm(forms.Form):
     pass
+
+class DeleteAccountForm(forms.Form):
+    confirm = CharField(required=False)
+
+    def delete_account(self, user):
+        print(self.cleaned_data['confirm'], user.username)
+        matches = self.cleaned_data['confirm'] == user.username
+        if matches:
+            user.delete()
+        return matches
 
 class FeedbackForm(forms.ModelForm):
     class Meta:

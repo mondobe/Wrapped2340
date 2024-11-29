@@ -71,6 +71,11 @@ function copyUrl() {
             <input class="grow h-full" type="submit" value="Log Out">
         </form>
 
+        <form class="btn m-1 btn-error" method="post" action="{% url 'users:delete-account' %}">
+            {% csrf_token %}
+            <input class="grow h-full" type="submit" value="Delete Account">
+        </form>
+
     </div>
 </div>
     <h6 class="text-2xl font-bold m-1">

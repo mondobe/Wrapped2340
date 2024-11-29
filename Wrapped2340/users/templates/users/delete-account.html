@@ -1,0 +1,20 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+    {% url 'users:delete-account' as form_url %}
+    <form method="post" action="{% url 'users:delete-account' %}">
+        {% csrf_token %}
+        <label>
+            <div class="mb-4">
+                Please confirm you want to delete your account by typing your
+                username ({{ user.username }}).
+            </div>
+            <input type="text" class="input input-bordered" name="confirm">
+        </label>
+        <div class="mt-2">
+            <input type="submit" class="btn btn-error m-1" value="Permanently Delete my Account">
+        </div>
+    </form>
+{% endblock %}
