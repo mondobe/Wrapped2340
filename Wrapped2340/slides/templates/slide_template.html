@@ -10,11 +10,15 @@
 </head>
 <body class="flex items-center w-screen justify-center h-dvh bg-base-200 text-white">
 
-<div id="slide-container" class="card md:max-h-[3/4] md:max-w-[3/4] p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
-    <!-- Dynamic Slide Content -->
-    <div class="card-body">
-        <h1 id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold">Slide Title</h1>
-        <p id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</p>
+<div id="slide-container" class="card w-full max-w-[80vw] max-h-[80vh] h-[80vh] p-6 space-y-6 bg-gray-800 rounded-lg shadow-lg overflow-auto">
+    <!-- Title Section -->
+    <div class="flex justify-center items-center">
+        <h1 id="slide-title" class="text-4xl font-bold text-center text-white">Slide Title</h1>
+    </div>
+
+    <!-- Content Section -->
+    <div id="slide-content" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg text-gray-300 overflow-y-auto max-h-[60vh] justify-center items-center">
+        Slide Content goes here...
     </div>
 
     <!-- Slide Navigation Buttons -->
@@ -29,7 +33,7 @@
     <source src="" type="audio/mpeg">
 </audio>
 
-<!-- Make sure the data is rendering properly in your HTML -->
+<!-- Genre data renders properly in HTML -->
 <div id="genres-data" hidden>
     {% if wrapped_object.content.genres %}
         {% for genre in wrapped_object.content.genres|slice:":5" %}
@@ -42,6 +46,7 @@
     {% endif %}
 </div>
 
+<!-- Song data renders properly in HTML -->
 <div id="songs-data" hidden>
     {% if wrapped_object.content.tracks %}
         {% for song in wrapped_object.content.tracks %}
@@ -55,6 +60,7 @@
     {% endif %}
 </div>
 
+<!-- Artist data renders properly in HTML -->
 <div id="artists-data" hidden>
     {% if wrapped_object.content.artists %}
         {% for artist in wrapped_object.content.artists %}
@@ -80,7 +86,7 @@
 
     // Initialize page ID and timer
     let pageId = 1;
-    let slideTimer = setInterval(nextSlide, 30000); // 30-second timer
+    let slideTimer = setInterval(nextSlide, 15000); // 15-second timer
 
     const audioPlayer = document.getElementById("audio-player");
     audioPlayer.volume = 0.3;
@@ -131,7 +137,7 @@
                 slideContent.innerText = "Take a journey through music from across the globe!";
                 playMusic();
                 break;
-            case 2:
+            case 2: // locations artists are from
                 const locations = JSON.parse("{{ wrapped_object.content.locations|escapejs }}".replace(/'/g, '"'))
 
                 let locationListHTML = '<ol type="1">'; // Start an ordered list
@@ -151,7 +157,7 @@
                 slideContent.innerText = "These are the genres you've been loving this year.";
                 playMusic();
                 break;
-            case 4:
+            case 4: // Top Genres
                 const genres = Array.from(document.getElementById("genres-data").getElementsByClassName("genre"));
 
                 let genresListHTML = '<ol type="1">';
@@ -170,40 +176,102 @@
                 slideContent.innerText = "placeholder";
                 playMusic();
                 break;
-            case 6:
-                const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
+            case 6: // Top 10 Songs
+                slideTitle.innerText = "Top 10 Songs";
 
-                let songListHTML = '<div class="flex flex-col">';
-                songs.forEach((song) => {
+                // Clear any previous content
+                slideContent.innerHTML = '';
+
+                // Create two columns for the songs
+                const column1 = document.createElement('div');
+                column1.classList.add('flex', 'flex-col', 'space-y-4', 'w-1/2', 'pr-4'); // Column for songs 1-5
+
+                const column2 = document.createElement('div');
+                column2.classList.add('flex', 'flex-col', 'space-y-4', 'w-1/2'); // Column for songs 6-10
+
+                // Loop over the first 5 songs (for column 1)
+                const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
+                songs.slice(0, 5).forEach((song) => {
                     const songName = song.querySelector("div").innerText;
                     const songImg = song.querySelector("img").src;
-                    songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
-                songListHTML += "</div>"
 
-                slideTitle.innerText = "Top 10 Songs";
-                slideContent.innerHTML = songListHTML
+                    // Create an item for each song (photo + name in column 1)
+                    const songItem = document.createElement('div');
+                    songItem.classList.add('flex', 'items-center', 'space-x-4', 'w-full'); // Flex to align image and text
+                    songItem.innerHTML = `
+                        <img src="${songImg}" alt="${songName}" class="w-12 md:w-20 object-cover rounded-xl">  <!-- Fixed image size -->
+                        <p class="text-white">${songName}</p>`;
+                    column1.appendChild(songItem);
+                });
+
+                // Loop over the next 5 songs (for column 2)
+                songs.slice(5, 10).forEach((song) => {
+                    const songName = song.querySelector("div").innerText;
+                    const songImg = song.querySelector("img").src;
+
+                    // Create an item for each song (photo + name in column 2)
+                    const songItem = document.createElement('div');
+                    songItem.classList.add('flex', 'items-center', 'space-x-4', 'w-full');
+                    songItem.innerHTML = `
+                        <img src="${songImg}" alt="${songName}" class="w-12 md:w-20 object-cover rounded-xl"> <!-- Fixed image size -->
+                        <p class="text-white">${songName}</p>`;
+                    column2.appendChild(songItem);
+                });
+
+                // Append both columns to the content area
+                slideContent.appendChild(column1);
+                slideContent.appendChild(column2);
                 break;
             case 7:
                 slideTitle.innerText = "Artist Appreciation Time 🎤";
                 slideContent.innerText = "placeholder";
                 playMusic();
                 break;
-            case 8:
+            case 8: // Top Artists
+                slideTitle.innerText = "Top 10 Artists";
+
+                // Clear any previous content
+                slideContent.innerHTML = '';
+
+                // Create two columns for the artists
+                const column3 = document.createElement('div');
+                column3.classList.add('flex', 'flex-col', 'space-y-4', 'w-1/2', 'pr-4'); // Column for artists 1-5
+
+                const column4 = document.createElement('div');
+                column4.classList.add('flex', 'flex-col', 'space-y-4', 'w-1/2'); // Column for artists 6-10
+
+                // Loop over the first 5 artists (for column 1)
                 const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
-
-                let artistListHTML = '<div class="flex flex-col">'; // Start an ordered list for artists
-
-                artists.forEach((artist) => {
-                    // Fetch artist name from the inner <div>
+                artists.slice(0, 5).forEach((artist) => {
                     const artistName = artist.querySelector("div").innerText;
                     const artistImg = artist.querySelector("img").src;
-                    // Add the artist name to the list
-                    artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;
+
+                    // Create an item for each artist (photo + name in column 1)
+                    const artistItem = document.createElement('div');
+                    artistItem.classList.add('flex', 'items-center', 'space-x-4', 'w-full'); // Flex to align image and text
+                    artistItem.innerHTML = `
+                        <img src="${artistImg}" alt="${artistName}" class="w-12 md:w-20 object-cover rounded-xl"> <!-- Fixed image size -->
+                        <p class="text-white">${artistName}</p>`;
+                    column3.appendChild(artistItem);
                 });
 
-                artistListHTML += "</div>"; // Close the ordered list
-                slideTitle.innerText = "Top 10 Artists";
-                slideContent.innerHTML = artistListHTML
+                // Loop over the next 5 artists (for column 2)
+                artists.slice(5, 10).forEach((artist) => {
+                    const artistName = artist.querySelector("div").innerText;
+                    const artistImg = artist.querySelector("img").src;
+
+                    // Create an item for each artist (photo + name in column 2)
+                    const artistItem = document.createElement('div');
+                    artistItem.classList.add('flex', 'items-center', 'space-x-4', 'w-full');
+                    artistItem.innerHTML = `
+                        <img src="${artistImg}" alt="${artistName}" class="w-12 md:w-20 object-cover rounded-xl"> <!-- Fixed image size -->
+                        <p class="text-white">${artistName}</p>`;
+                    column4.appendChild(artistItem);
+                });
+
+                // Append both columns to the content area
+                slideContent.appendChild(column3);
+                slideContent.appendChild(column4);
                 break;
             case 9:
                 slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
@@ -263,7 +331,7 @@
     // Reset the timer whenever the user navigates manually
     function resetTimer() {
         clearInterval(slideTimer);
-        slideTimer = setInterval(nextSlide, 30000);
+        slideTimer = setInterval(nextSlide, 15000);
     }
 
     // Load the first slide when the page loads
