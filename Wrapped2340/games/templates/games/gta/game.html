@@ -81,15 +81,15 @@ function revealAnswer(message, alert) {
 {% endblock %}
 
 {% block content %}
-    <h1 class="text-5xl font-bold m-2">
+    <h1 class="text-2xl md:text-5xl font-bold m-2">
         G.T.A.: Guess That Artist
-        <div class="dropdown">
+        <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-ghost btn-xs text-info">
                 How To?
             </div>
             <div
                     tabindex="0"
-                    class="card compact dropdown-content bg-base-100 rounded-box z-[1] w-80 shadow">
+                    class="card compact dropdown-content bg-base-100 rounded-box z-[1] w-40 md:w-80 shadow">
                 <div tabindex="0" class="card-body">
                     You get 5 acronyms for an artist's top 5 songs, and you have 5 chances to guess the artist.
                 </div>
@@ -99,7 +99,7 @@ function revealAnswer(message, alert) {
     <div class="card bg-base-100 w-3/4 shadow-xl justify-self-center m-2">
         <div class="card-body text-center">
             {% for acronym in acronyms %}
-                <h2 class="text-5xl font-bold m-2" id="acronym{{ forloop.counter0 }}"></h2>
+                <h2 class="text-xl md:text-4xl font-bold m-2" id="acronym{{ forloop.counter0 }}"></h2>
             {% endfor %}
         </div>
     </div>

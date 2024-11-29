@@ -51,15 +51,15 @@ function reveal(message, status) {
 {% endblock %}
 
 {% block content %}
-    <div class="text-5xl font-bold m-2">
+    <div class="text-2xl md:text-5xl font-bold m-2">
         What's the Buzz?
-        <div class="dropdown">
+        <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-ghost btn-xs text-info">
                 How To?
             </div>
             <div
                     tabindex="0"
-                    class="card compact dropdown-content bg-base-100 rounded-box z-[1] w-80 shadow">
+                    class="card compact dropdown-content bg-base-100 rounded-box z-[1] w-40 md:w-80 shadow">
                 <div tabindex="0" class="card-body">
                     Given the Reddit post about an artist, guess which artist it's talking about.
                 </div>
@@ -68,14 +68,14 @@ function reveal(message, status) {
     </div>
     <div class="card bg-base-100 w-3/4 shadow-xl justify-self-center m-2">
         <div class="card-body">
-            <h2 class="card-title" id="title">{{ post_title|safe }}</h2>
-            <div id="selftext">{{ post_text|safe }}</div>
+            <h2 class="card-title text-sm md:text-xl" id="title">{{ post_title|safe }}</h2>
+            <div class="text-sm md:text-base" id="selftext">{{ post_text|safe }}</div>
         </div>
     </div>
-    <div class="grid grid-cols-4 justify-items-center m-2" id="choices">
+    <div class="flex flex-col md:flex-row justify-evenly justify-items-center m-2" id="choices">
         {% for choice in choices %}
-            <form id="input-form{{ forloop.counter0 }}">
-                <input class="btn btn-primary sm:btn-sm md:btn-md lg:btn-lg m-2" type="submit" value="{{ choice }}">
+            <form class="justify-center" id="input-form{{ forloop.counter0 }}">
+                <input class="btn btn-primary btn-block md:btn-md lg:btn-lg m-2" type="submit" value="{{ choice }}">
             </form>
         {% endfor %}
     </div>

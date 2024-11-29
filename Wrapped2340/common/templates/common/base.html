@@ -15,7 +15,7 @@
             <div class="flex-1">
                 <a href="{% url 'home:home-redirect' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>
                 <div class="dropdown flex-nowrap">
-                    <div  class="btn m-1" tabindex="0" role="button">
+                    <div  class="btn m-1 bg-base-300" tabindex="0" role="button">
                         Theme
                         <svg
                                 width="12px"
@@ -107,7 +107,7 @@
             </div>
         </div>
 
-        <div class="container mx-auto p-6 overflow-y-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <div class="container mx-auto p-6 overflow-y-auto h-dvh" style="scrollbar-width: none; -ms-overflow-style: none;">
             {% block content %}
             {% endblock %}
         </div>

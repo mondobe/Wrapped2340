@@ -27,3 +27,11 @@ class CommonFeedback(models.Model):
 
     def __str__(self):
         return f"Feedback: {self.message[:20]}"
+
+class PreviewUrl(models.Model):
+    name = models.CharField(max_length=255)
+    artist = models.CharField(max_length=255, null=True)
+    url = models.TextField()
+
+    def __str__(self):
+        return f"Name: {self.name}"

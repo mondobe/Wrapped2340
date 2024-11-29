@@ -38,6 +38,13 @@
                     <form class="m-1" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
+                        <button type="submit" value="share" name="action">Share</button>
+                    </form>
+                </li>
+                <li>
+                    <form class="m-1" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
                         <button type="submit" value="delete" name="action">Delete</button>
                     </form>
                 </li>
@@ -62,7 +69,13 @@
     <br>
     </div>
 
-    <a href="{% url 'slides:slide' wrap.id 0 %}" class="btn btn-accent">Play</a>
+    <a href="{% url 'slides:slide' wrap.id 1 %}" class="btn btn-accent">
+        {% if wrap.public %}
+            Play
+        {% else %}
+            Replay
+        {% endif %}
+    </a>
 
     <div class="justify-self-end pt-1">
         <p class="text-sm text-gray-500">

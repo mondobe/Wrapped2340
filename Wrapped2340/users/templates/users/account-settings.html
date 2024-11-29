@@ -22,7 +22,7 @@ function copyUrl() {
     <h6 class="text-2xl font-bold m-1">
         Account Settings
     </h6>
-<div class="flex flex-row">
+<div class="flex flex-col md:flex-row">
     <div class="basis-1/2 m-1">
         {% if next_page %}
             <form method="post" action="{{ form_url }}?next={{ next_page }}">
@@ -76,7 +76,7 @@ function copyUrl() {
     <h6 class="text-2xl font-bold m-1">
         Invite URL
     </h6>
-<div class="flex flex-row">
+<div class="flex flex-col md:flex-row">
     <div class="basis-1/2">
         <div class="m-1">
             <label id="input-label" class="input input-bordered flex items-center gap-2" onmousedown="copyUrl()">
