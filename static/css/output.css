@@ -5448,6 +5448,10 @@ details.collapse summary::-webkit-details-marker {
   min-width: fit-content;
 }
 
+.min-w-full {
+  min-width: 100%;
+}
+
 .max-w-\[3\/4\] {
   max-width: 3/4;
 }

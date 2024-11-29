@@ -139,9 +139,9 @@
         </div>
     </figure>
     <!-- Dynamic Slide Content -->
-    <div class="card-body text-center">
-        <div id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold w-full">Slide Title</div>
-        <div id="slide-content" class="text-lg text-gray-300">Slide Content goes here...</div>
+    <div class="card-body text-center items-center">
+        <div id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold">Slide Title</div>
+        <div id="slide-content" class="text-lg text-gray-300 w-full">Slide Content goes here...</div>
     </div>
 </div>
 
@@ -154,7 +154,7 @@
 
 <!-- Hidden Audio Player -->
 <audio id="audio-player" hidden autoplay loop data-wrapped="{{ wrapped_object.content.tracks.preview_url }}">
-    <source src="" type="audio/mpeg">
+    <source src="" type="audio/mp4">
 </audio>
 
 <!-- Make sure the data is rendering properly in your HTML -->
@@ -243,7 +243,8 @@
             do {
                 randomNumber = Math.floor(Math.random() * musicLinks.length); // Get a random index
             } while (randomNumber === lastPlayedIndex);
-            playTrack(musicLinks[randomNumber].url)
+            lastPlayedIndex = randomNumber
+            playTrack(musicLinks[randomNumber])
         } catch {
             console.warn(`No music available`);
         }
@@ -306,8 +307,9 @@
                 break;
             case 3:
                 slideIconImg.className = "w-24 h-24"
-                slideTitle.innerText = "Genre-ous Moments Ahead 🎶";
+                slideTitle.innerText = "Genre-ous Moments Ahead";
                 slideContent.innerText = "These are the genres you've been loving this year.";
+                slideIconImg.src = "{% static 'css/images/generous.png' %}"
                 playMusic();
                 break;
             case 4:
@@ -327,9 +329,10 @@
                 break;
             case 5:
                 slideIcon.className = "flex justify-center fade-in"
-                slideTitle.innerText = "Counting Down the Beats 🔟";
-                slideContent.innerText = "placeholder";
+                slideTitle.innerText = "Counting Down the Beats";
+                slideContent.innerText = "Each moment pulses with unstoppable rhythm!";
                 playMusic();
+                timer();
                 break;
             case 6:
                 const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
@@ -347,8 +350,9 @@
                 break;
             case 7:
                 slideIcon.className = "flex justify-center fade-in"
-                slideTitle.innerText = "Artist Appreciation Time 🎤";
-                slideContent.innerText = "placeholder";
+                slideTitle.innerText = "Artist Appreciation Time";
+                slideContent.innerText = "Celebrating creativity, one masterpiece at a time!";
+                slideIconImg.src = "{% static 'css/images/appreciation.png' %}"
                 playMusic();
                 break;
             case 8:
@@ -371,23 +375,51 @@
                 slideContent.innerHTML = artistListHTML
                 break;
             case 9:
+                slideIconImg.src = "{% static 'css/images/suitcases.png' %}"
                 slideIcon.className = "flex justify-center fade-in"
-                slideTitle.innerText = "Pack Your Vibes with Audioscape.AI 🌴";
+                slideTitle.innerText = "Pack Your Vibes with AudioScape.AI";
                 slideContent.innerText = "Let's see where your music tastes take you!";
                 playMusic();
                 break;
             case 10:
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Your AI Travel Suggestion";
                 const vacation = "{{ wrapped_object.content.vacation|escapejs }}"
                 slideContent.innerText = vacation;
                 break;
             default:
+                slideIcon.className = "hidden"
                 slideTitle.innerText = "Summary";
                 slideContent.innerText = "Your music journey at a glance!";
                 playMusic();
                 break;
         }
         resetProgressBar();
+    }
+
+    function timer() {
+        const slideIconImg = document.getElementById("slide-icon-img");
+        const images = [
+            "{% static 'css/images/number-7.png' %}",
+            "{% static 'css/images/number-6.png' %}",
+            "{% static 'css/images/number-5.png' %}",
+            "{% static 'css/images/number-4.png' %}",
+            "{% static 'css/images/number-3.png' %}",
+            "{% static 'css/images/number-2.png' %}",
+            "{% static 'css/images/number-1.png' %}",
+        ];
+
+        let index = 0;
+
+        function updateImage() {
+            if (index < images.length) {
+                slideIconImg.src = images[index]; // Update the image source
+                index++;
+                setTimeout(updateImage, 1000); // Call the next image update after 1 second
+            }
+        }
+
+        updateImage(); // Start the sequence
     }
 
     // Function to go to the next slide

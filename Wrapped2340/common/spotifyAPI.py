@@ -4,7 +4,11 @@ import base64
 import requests
 import os
 import secrets
+
+from django.db.models.expressions import result
 from dotenv import load_dotenv
+
+from .models import PreviewUrl
 from ..common import gemini
 
 # Loads variables from .env
@@ -125,7 +129,7 @@ def get_top_tracks(userprofile, timeframe):
         time_range=timeframe,
         limit=10
     )
-    return [{"name": track["name"], "preview_url": track["preview_url"], "id": track["id"], "images": track["album"]["images"][0]} for track in tracks_response['items']]
+    return [{"name": track["name"], "artistName": track["artists"][0]["name"], "id": track["id"], "images": track["album"]["images"][0]} for track in tracks_response['items']]
 
 
 def get_wrapped_content(userprofile, timeframe):
@@ -136,9 +140,21 @@ def get_wrapped_content(userprofile, timeframe):
         top_tracks = get_top_tracks(userprofile, timeframe)
         preview_urls = []
         for track in top_tracks:
-            if "preview_url" in track:
-                preview_urls.append({"url": track["preview_url"]})
-                del track["preview_url"]  # Remove the preview_url field
+            # Check if the track already exists in the database
+            existing_preview_url = PreviewUrl.objects.filter(name=track['name'], artist=track['artistName']).first()
+            if existing_preview_url:
+                # If the track exists, append the preview URL from the model
+                preview_urls.append(existing_preview_url.url)
+            else:
+                # If the track doesn't exist, get the preview URL
+                preview_url = get_preview(track['name'], track['artistName'])
+
+                # If a preview URL was found, create a new PreviewUrl object
+                if preview_url:
+                    new_preview = PreviewUrl(name=track['name'], artist=track['artistName'], url=preview_url)
+                    new_preview.save()
+                    preview_urls.append(preview_url)
+
         vacation_spot = gemini.place_to_visit(top_artists)
         top_genres = get_top_genres(top_50_artists)
         combined = {
@@ -154,17 +170,28 @@ def get_wrapped_content(userprofile, timeframe):
     except Exception as e:
         print(f"Error fetching wrapped content: {e}")
         return {"error": "Failed to fetch wrapped content"}
-    
 
 
-def get_related_artists(artist_id, userprofile):
-    headers = {
-        'Authorization': 'Bearer %s' % userprofile.access_token,
+def get_preview(song, artist):
+    song = song.replace(' ', '+')
+    params = {
+        'term': song,
+        'media': 'music',
+        'entity': 'song',
+        'limit': 5
     }
-    response = requests.get('https://api.spotify.com/v1/artists/%s/related-artists' % artist_id,
-                            headers=headers)
-    return response.json()['artists']
+    response = requests.get('https://itunes.apple.com/search?',
+                            params=params)
 
+    results = response.json()['results']
+
+    for track in results:
+        # Check if the artist name matches
+        if track['artistName'].lower() == artist.lower():  # Case insensitive comparison
+            preview_url = track.get('previewUrl')
+            if preview_url:
+                print(track["trackName"])
+                return preview_url
 
 def get_albums(artist_id, userprofile):
     params = {
