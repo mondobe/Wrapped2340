@@ -82,7 +82,7 @@
             background-color: transparent;
             transition: background-color 0.3s ease;
             cursor: pointer;
-            z-index: 100;
+            z-index: 2;
         }
 
         @media (max-width: 1200px) {
@@ -127,10 +127,26 @@
             width: 0%;
             transition: width 0.3s ease;
         }
+
+        #top-button {
+            position: fixed;
+            top: 10px;  /* Adjust to your desired distance from the top */
+            left: 10px;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;  /* Ensures the button stays on top */
+        }
+
     </style>
 </head>
 
 <body class="flex items-center w-screen justify-center h-dvh bg-base-200 text-white">
+
+<a href="/home/discover" id="top-button" class="btn btn-circle btn-neutral">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+    </svg>
+</a>
 
 <div id="slide-container" class="card max-h-[3/4] max-w-[3/4] p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
     <figure>
@@ -388,9 +404,64 @@
                 slideContent.innerText = vacation;
                 break;
             default:
+                const summarySongs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
+
+                let summarySongListHTML = '<div class="flex flex-col justify-start">';
+                summarySongs.forEach((song, index) => {
+                    if (index >= 5) {
+                        return
+                    }
+                    const songName = song.querySelector("div").innerText;
+                    summarySongListHTML += `<div class="flex justify-self-start text-sm m-1">${songName}</div>`;})
+                summarySongListHTML += "</div>"
+
+                const summaryArtists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
+
+                let summaryArtistListHTML = '<div class="flex flex-col">';
+
+                summaryArtists.forEach((artist, index) => {
+                    if (index >= 5) {
+                        return
+                    }
+                    // Fetch artist name from the inner <div>
+                    const artistName = artist.querySelector("div").innerText;
+                    // Add the artist name to the list
+                    summaryArtistListHTML += `<div class="flex text-sm m-1"><strong class="mr-1" >${artistName}</strong></div>`;
+                });
+
+                summaryArtistListHTML += "</div>";
+
+                const genreName = document.querySelector("#genres-data .genre").innerText;
+                const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}"
+
                 slideIcon.className = "hidden"
                 slideTitle.innerText = "Summary";
-                slideContent.innerText = "Your music journey at a glance!";
+                slideContent.innerHTML =
+                    "<div class='text-sm'>Your music journey at a glance!</div>" +
+                        "<div class='grid grid-cols-2 gap-6'>" +
+                            "<div class='justify-start'>" +
+                                "<div class='justify-self-start'>Top Songs</div>" +
+                                summarySongListHTML +
+                            "</div>" +
+                            "<div>" +
+                                "<div class='justify-self-start'>Top Artists</div>" +
+                                summaryArtistListHTML +
+                            "</div>" +
+                            "<div>" +
+                                "<div class='justify-self-start'>Top Genre</div>" +
+                                "<div class='justify-self-start text-sm'>" +
+                                    genreName +
+                                "</div>" +
+                            "</div>" +
+                            "<div>" +
+                                "<div class='justify-self-start'>Vacation Spot</div>" +
+                                "<div class='justify-self-start text-xs'>" +
+                                    vacationSpot +
+                                "</div>" +
+                            "</div>" +
+                        "</div>" +
+                    "</div>"
+                ;
                 playMusic();
                 break;
         }
@@ -412,10 +483,14 @@
         let index = 0;
 
         function updateImage() {
-            if (index < images.length) {
+            let timeoutId;
+            if (index < images.length && pageId === 5) {
                 slideIconImg.src = images[index]; // Update the image source
                 index++;
-                setTimeout(updateImage, 1000); // Call the next image update after 1 second
+                timeoutId = setTimeout(updateImage, 1000); // Call the next image update after 1 second
+            } else if (pageId !== 5) {
+            // Stop the update if the pageId is no longer 5
+                clearTimeout(timeoutId); // Clear the timeout, stopping the recursion
             }
         }
 
@@ -445,7 +520,9 @@
     // Reset the timer whenever the user navigates manually
     function resetTimer() {
         clearInterval(slideTimer);
-        slideTimer = setInterval(nextSlide, 7000);
+        if (pageId < 11) {
+            slideTimer = setInterval(nextSlide, 7000);
+        }
     }
 
     function resetProgressBar() {
