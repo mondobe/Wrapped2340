@@ -5987,6 +5987,10 @@ details.collapse summary::-webkit-details-marker {
   font-weight: 600;
 }
 
+.font-black {
+  font-weight: 900;
+}
+
 .normal-case {
   text-transform: none;
 }
