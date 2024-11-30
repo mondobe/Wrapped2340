@@ -402,47 +402,32 @@
                 // Get the songs from the DOM
                 const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
 
-                // Start the grid container for two columns
-                let songListHTML = '<div class="grid grid-cols-2 gap-4">';
+                // Start the grid container for one column on mobile, two columns on larger screens
+                let songListHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
 
-                // Add songs to the first column
-                songs.slice(0, 5).forEach((song, index) => {
-                    const rank = index + 1; // Rank starts from 1 for the first column
+                // Add songs to the grid
+                songs.slice(0, 10).forEach((song, index) => {
+                    const rank = index + 1; // Rank starts from 1
                     const songName = song.querySelector("div").innerText; // Song name
                     const songImg = song.querySelector("img").src; // Song image source
 
-                    // Add each song to the first column
+                    // Add each song to the grid
                     songListHTML += `
-            <div class="flex items-center space-x-4">
-                <span class="text-lg font-bold">#${rank}</span>
-                <img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
-                <strong>${songName}</strong>
-            </div>
-        `;
-                });
-
-                // Add songs to the second column
-                songs.slice(5, 10).forEach((song, index) => {
-                    const rank = index + 6; // Rank starts from 6 for the second column
-                    const songName = song.querySelector("div").innerText; // Song name
-                    const songImg = song.querySelector("img").src; // Song image source
-
-                    // Add each song to the second column
-                    songListHTML += `
-            <div class="flex items-center space-x-4">
-                <span class="text-lg font-bold">#${rank}</span>
-                <img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
-                <strong>${songName}</strong>
-            </div>
-        `;
+                    <div class="flex items-center space-x-4">
+                        <span class="text-lg font-bold">#${rank}</span>
+                        <img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
+                        <strong>${songName}</strong>
+                    </div>
+                    `;
                 });
 
                 // Close the grid container
                 songListHTML += "</div>";
 
-                // Set the content
+                // Set the content for the slide
                 slideContent.innerHTML = songListHTML;
                 break;
+
             case 7:
                 slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Artist Appreciation Time";
@@ -453,39 +438,23 @@
             case 8:
                 const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
 
-                // Start the grid container for two columns
-                let artistListHTML = '<div class="grid grid-cols-2 gap-4">';
+                // Start the grid container for one column on mobile, two columns on larger screens
+                let artistListHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
 
-                // Add artists to the first column
-                artists.slice(0, 5).forEach((artist, index) => {
-                    const rank = index + 1; // Rank starts from 1 for the first column
+                // Add artists to the grid
+                artists.slice(0, 10).forEach((artist, index) => {
+                    const rank = index + 1; // Rank starts from 1
                     const artistName = artist.querySelector("div").innerText;
                     const artistImg = artist.querySelector("img").src;
 
-                    // Add each artist to the first column
+                    // Add each artist to the grid
                     artistListHTML += `
-            <div class="flex items-center space-x-4">
-                <span class="text-lg font-bold">#${rank}</span>
-                <img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
-                <strong>${artistName}</strong>
-            </div>
-        `;
-                });
-
-                // Add artists to the second column
-                artists.slice(5, 10).forEach((artist, index) => {
-                    const rank = index + 6; // Rank starts from 6 for the second column
-                    const artistName = artist.querySelector("div").innerText;
-                    const artistImg = artist.querySelector("img").src;
-
-                    // Add each artist to the second column
-                    artistListHTML += `
-            <div class="flex items-center space-x-4">
-                <span class="text-lg font-bold">#${rank}</span>
-                <img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
-                <strong>${artistName}</strong>
-            </div>
-        `;
+                    <div class="flex items-center space-x-4">
+                        <span class="text-lg font-bold">#${rank}</span>
+                        <img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
+                        <strong>${artistName}</strong>
+                    </div>
+                    `;
                 });
 
                 // Close the grid container
@@ -495,9 +464,7 @@
                 slideIcon.className = "hidden";
                 slideTitle.innerText = "Top 10 Artists";
                 slideContent.innerHTML = artistListHTML;
-
                 break;
-
             case 9:
                 slideIconImg.src = "{% static 'css/images/suitcases.png' %}"
                 slideIcon.className = "flex justify-center fade-in"
@@ -561,34 +528,34 @@
 
                 // share button in bottom-right corner
                 const shareButtonHTML = `
-    <button id="shareButton" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 z-30">
-        <!-- Share SVG Icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
-        </svg>
-    </button>`;
+                <button id="shareButton" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 z-30">
+                    <!-- Share SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                    </svg>
+                </button>`;
 
 
                 // Share Modal HTML (hidden by default)
                 const shareModalHTML = `
-    <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
-        <div class="bg-white p-6 rounded-lg w-80 shadow-xl relative">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">Share this</h2>
-                <button id="closeShareModal" class="text-gray-500 hover:text-gray-700">&times;</button>
-            </div>
-            <!-- Placeholder for the 4 share icons -->
-            <div class="grid grid-cols-2 gap-4">
-                <button class="share-icon p-2 bg-gray-200 rounded-full">
-                    <!-- Placeholder for the first share icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 3.75h-10.5a2.25 2.25 0 0 0-2.25 2.25v12a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-12a2.25 2.25 0 0 0-2.25-2.25zM15 12h-3v6h-2v-6H8v-2h2V7.5c0-2.25 1.5-3 3-3h3v2h-2.5c-.5 0-.5.5-.5.5v2h3l-1.5 2h-2.5v6h2V12z" />
-                    </svg>
-                </button>
-                <!-- Add more buttons for the other 3 icons as needed -->
-            </div>
-        </div>
-    </div>`;
+                <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
+                    <div class="bg-white p-6 rounded-lg w-80 shadow-xl relative">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold">Share this</h2>
+                            <button id="closeShareModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                        </div>
+                    <!-- Placeholder for the 4 share icons -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <button class="share-icon p-2 bg-gray-200 rounded-full">
+                            <!-- Placeholder for the first share icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 3.75h-10.5a2.25 2.25 0 0 0-2.25 2.25v12a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-12a2.25 2.25 0 0 0-2.25-2.25zM15 12h-3v6h-2v-6H8v-2h2V7.5c0-2.25 1.5-3 3-3h3v2h-2.5c-.5 0-.5.5-.5.5v2h3l-1.5 2h-2.5v6h2V12z" />
+                                </svg>
+                            </button>
+                        <!-- Add more buttons for the other 3 icons as needed -->
+                        </div>
+                    </div>
+                </div>`;
 
                 slideIcon.className = "hidden";
                 slideTitle.innerText = "Summary";
