@@ -371,18 +371,52 @@
                 timer();
                 break;
             case 6:
+                slideIcon.className = "hidden";
+                slideTitle.innerText = "Top 10 Songs";
+
+                // Get the songs from the DOM
                 const songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
 
-                let songListHTML = '<div class="flex flex-col">';
-                songs.forEach((song) => {
-                    const songName = song.querySelector("div").innerText;
-                    const songImg = song.querySelector("img").src;
-                    songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
-                songListHTML += "</div>"
+                // Start the grid container for two columns
+                let songListHTML = '<div class="grid grid-cols-2 gap-4">';
 
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "Top 10 Songs";
-                slideContent.innerHTML = songListHTML
+                // Add songs to the first column
+                songs.slice(0, 5).forEach((song, index) => {
+                    const rank = index + 1; // Rank starts from 1 for the first column
+                    const songName = song.querySelector("div").innerText; // Song name
+                    const songImg = song.querySelector("img").src; // Song image source
+
+                    // Add each song to the first column
+                    songListHTML += `
+            <div class="flex items-center space-x-4">
+                <span class="text-lg font-bold">#${rank}</span>
+                <img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
+                <strong>${songName}</strong>
+            </div>
+        `;
+                });
+
+                // Add songs to the second column
+                songs.slice(5, 10).forEach((song, index) => {
+                    const rank = index + 6; // Rank starts from 6 for the second column
+                    const songName = song.querySelector("div").innerText; // Song name
+                    const songImg = song.querySelector("img").src; // Song image source
+
+                    // Add each song to the second column
+                    songListHTML += `
+            <div class="flex items-center space-x-4">
+                <span class="text-lg font-bold">#${rank}</span>
+                <img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
+                <strong>${songName}</strong>
+            </div>
+        `;
+                });
+
+                // Close the grid container
+                songListHTML += "</div>";
+
+                // Set the content
+                slideContent.innerHTML = songListHTML;
                 break;
             case 7:
                 slideIcon.className = "flex justify-center fade-in"
@@ -394,22 +428,51 @@
             case 8:
                 const artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
 
-                let artistListHTML = '<div class="flex flex-col">';
+                // Start the grid container for two columns
+                let artistListHTML = '<div class="grid grid-cols-2 gap-4">';
 
-                artists.forEach((artist) => {
-                    // Fetch artist name from the inner <div>
+                // Add artists to the first column
+                artists.slice(0, 5).forEach((artist, index) => {
+                    const rank = index + 1; // Rank starts from 1 for the first column
                     const artistName = artist.querySelector("div").innerText;
                     const artistImg = artist.querySelector("img").src;
-                    // Add the artist name to the list
-                    artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;
+
+                    // Add each artist to the first column
+                    artistListHTML += `
+            <div class="flex items-center space-x-4">
+                <span class="text-lg font-bold">#${rank}</span>
+                <img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
+                <strong>${artistName}</strong>
+            </div>
+        `;
                 });
 
+                // Add artists to the second column
+                artists.slice(5, 10).forEach((artist, index) => {
+                    const rank = index + 6; // Rank starts from 6 for the second column
+                    const artistName = artist.querySelector("div").innerText;
+                    const artistImg = artist.querySelector("img").src;
+
+                    // Add each artist to the second column
+                    artistListHTML += `
+            <div class="flex items-center space-x-4">
+                <span class="text-lg font-bold">#${rank}</span>
+                <img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
+                <strong>${artistName}</strong>
+            </div>
+        `;
+                });
+
+                // Close the grid container
                 artistListHTML += "</div>";
 
-                slideIcon.className = "hidden"
+                // Set the content for the slide
+                slideIcon.className = "hidden";
                 slideTitle.innerText = "Top 10 Artists";
-                slideContent.innerHTML = artistListHTML
+                slideContent.innerHTML = artistListHTML;
+
                 break;
+
             case 9:
                 slideIconImg.src = "{% static 'css/images/suitcases.png' %}"
                 slideIcon.className = "flex justify-center fade-in"
@@ -434,64 +497,69 @@
             default:
                 const summarySongs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
 
-                let summarySongListHTML = '<div class="flex flex-col justify-start">';
+                let summarySongListHTML = '<div class="flex flex-col justify-start text-center">';
                 summarySongs.forEach((song, index) => {
                     if (index >= 5) {
-                        return
+                        return;
                     }
                     const songName = song.querySelector("div").innerText;
-                    summarySongListHTML += `<div class="flex justify-self-start text-sm m-1">${songName}</div>`;})
-                summarySongListHTML += "</div>"
+                    const songImg = song.querySelector("img").src; // Assuming there's an image in the song element
+                    summarySongListHTML += `
+            <div class="flex items-center justify-start m-2">
+                <img class="w-12 h-12 rounded-full mr-3" src="${songImg}" alt="${songName}" />  <!-- Space between img and number -->
+                <span class="text-xl font-semibold ml-2">${index + 1}.</span> <!-- Space between number and name -->
+                <span class="text-sm">${songName}</span>
+            </div>`;
+                });
+                summarySongListHTML += "</div>";
 
                 const summaryArtists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
 
-                let summaryArtistListHTML = '<div class="flex flex-col">';
-
+                let summaryArtistListHTML = '<div class="flex flex-col justify-start text-center">';
                 summaryArtists.forEach((artist, index) => {
                     if (index >= 5) {
-                        return
+                        return;
                     }
-                    // Fetch artist name from the inner <div>
                     const artistName = artist.querySelector("div").innerText;
-                    // Add the artist name to the list
-                    summaryArtistListHTML += `<div class="flex text-sm m-1"><strong class="mr-1" >${artistName}</strong></div>`;
+                    const artistImg = artist.querySelector("img").src; // Assuming there's an image for the artist
+                    summaryArtistListHTML += `
+            <div class="flex items-center justify-start m-2">
+                <img class="w-12 h-12 rounded-full mr-3" src="${artistImg}" alt="${artistName}" />  <!-- Space between img and number -->
+                <span class="text-xl font-semibold ml-2">${index + 1}.</span> <!-- Space between number and name -->
+                <span class="text-sm">${artistName}</span>
+            </div>`;
                 });
-
                 summaryArtistListHTML += "</div>";
 
                 const genreName = document.querySelector("#genres-data .genre").innerText;
-                const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}"
+                const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}";
 
-                slideIcon.className = "hidden"
+                slideIcon.className = "hidden";
                 slideTitle.innerText = "Summary";
                 slideContent.innerHTML =
-                    "<div class='text-sm'>Your music journey at a glance!</div>" +
-                        "<div class='grid grid-cols-2 gap-6'>" +
-                            "<div class='justify-start'>" +
-                                "<div class='justify-self-start'>Top Songs</div>" +
-                                summarySongListHTML +
-                            "</div>" +
-                            "<div>" +
-                                "<div class='justify-self-start'>Top Artists</div>" +
-                                summaryArtistListHTML +
-                            "</div>" +
-                            "<div>" +
-                                "<div class='justify-self-start'>Top Genre</div>" +
-                                "<div class='justify-self-start text-sm'>" +
-                                    genreName +
-                                "</div>" +
-                            "</div>" +
-                            "<div>" +
-                                "<div class='justify-self-start'>Vacation Spot</div>" +
-                                "<div class='justify-self-start text-xs'>" +
-                                    vacationSpot +
-                                "</div>" +
-                            "</div>" +
-                        "</div>" +
-                    "</div>"
-                ;
+                    "<div class='text-sm text-center mb-4'>Your music journey at a glance!</div>" +
+                    "<div class='grid grid-cols-1 md:grid-cols-2 gap-6 p-4'>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Top Songs</div>" +
+                    summarySongListHTML +
+                    "</div>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Top Artists</div>" +
+                    summaryArtistListHTML +
+                    "</div>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Top Genre</div>" +
+                    "<div class='text-sm'>" + genreName + "</div>" +
+                    "</div>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Vacation Spot</div>" +
+                    "<div class='text-sm'>" + vacationSpot + "</div>" +
+                    "</div>" +
+                    "</div>";
                 playMusic();
                 break;
+
+
         }
         resetProgressBar();
     }
