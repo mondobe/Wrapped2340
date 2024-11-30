@@ -137,6 +137,31 @@
             z-index: 1000;  /* Ensures the button stays on top */
         }
 
+        #shareModal {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999; /* Ensure it’s on top of other elements */
+        }
+
+        #shareModal > div {
+            background-color: white;
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        button#shareButton {
+            position: absolute;
+            bottom: 4rem; /* Adjust as needed */
+            right: 4rem; /* Adjust as needed */
+        }
+
+
     </style>
 </head>
 
@@ -505,11 +530,11 @@
                     const songName = song.querySelector("div").innerText;
                     const songImg = song.querySelector("img").src; // Assuming there's an image in the song element
                     summarySongListHTML += `
-            <div class="flex items-center justify-start m-2">
-                <img class="w-12 h-12 rounded-full mr-3" src="${songImg}" alt="${songName}" />  <!-- Space between img and number -->
-                <span class="text-xl font-semibold ml-2">${index + 1}.</span> <!-- Space between number and name -->
-                <span class="text-sm">${songName}</span>
-            </div>`;
+                        <div class="flex items-center justify-start m-2">
+                            <img class="w-12 h-12 rounded-full mr-3" src="${songImg}" alt="${songName}" />  <!-- Space between img and number -->
+                            <span class="text-xl font-semibold ml-2">${index + 1}.</span> <!-- Space between number and name -->
+                            <span class="text-sm">${songName}</span>
+                        </div>`;
                 });
                 summarySongListHTML += "</div>";
 
@@ -523,16 +548,47 @@
                     const artistName = artist.querySelector("div").innerText;
                     const artistImg = artist.querySelector("img").src; // Assuming there's an image for the artist
                     summaryArtistListHTML += `
-            <div class="flex items-center justify-start m-2">
-                <img class="w-12 h-12 rounded-full mr-3" src="${artistImg}" alt="${artistName}" />  <!-- Space between img and number -->
-                <span class="text-xl font-semibold ml-2">${index + 1}.</span> <!-- Space between number and name -->
-                <span class="text-sm">${artistName}</span>
-            </div>`;
+                    <div class="flex items-center justify-start m-2">
+                        <img class="w-12 h-12 rounded-full mr-3" src="${artistImg}" alt="${artistName}" />  <!-- Space between img and number -->
+                        <span class="text-xl font-semibold ml-2">${index + 1}.</span> <!-- Space between number and name -->
+                        <span class="text-sm">${artistName}</span>
+                    </div>`;
                 });
                 summaryArtistListHTML += "</div>";
 
                 const genreName = document.querySelector("#genres-data .genre").innerText;
                 const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}";
+
+                // share button in bottom-right corner
+                const shareButtonHTML = `
+    <button id="shareButton" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 z-30">
+        <!-- Share SVG Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+        </svg>
+    </button>`;
+
+
+                // Share Modal HTML (hidden by default)
+                const shareModalHTML = `
+    <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
+        <div class="bg-white p-6 rounded-lg w-80 shadow-xl relative">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold">Share this</h2>
+                <button id="closeShareModal" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <!-- Placeholder for the 4 share icons -->
+            <div class="grid grid-cols-2 gap-4">
+                <button class="share-icon p-2 bg-gray-200 rounded-full">
+                    <!-- Placeholder for the first share icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 3.75h-10.5a2.25 2.25 0 0 0-2.25 2.25v12a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-12a2.25 2.25 0 0 0-2.25-2.25zM15 12h-3v6h-2v-6H8v-2h2V7.5c0-2.25 1.5-3 3-3h3v2h-2.5c-.5 0-.5.5-.5.5v2h3l-1.5 2h-2.5v6h2V12z" />
+                    </svg>
+                </button>
+                <!-- Add more buttons for the other 3 icons as needed -->
+            </div>
+        </div>
+    </div>`;
 
                 slideIcon.className = "hidden";
                 slideTitle.innerText = "Summary";
@@ -555,7 +611,19 @@
                     "<div class='font-bold text-lg mb-2'>Vacation Spot</div>" +
                     "<div class='text-sm'>" + vacationSpot + "</div>" +
                     "</div>" +
-                    "</div>";
+                    "</div>" +
+                    shareButtonHTML +
+                    shareModalHTML;
+
+                // Open and close the modal
+                document.getElementById('shareButton').addEventListener('click', () => {
+                    document.getElementById('shareModal').classList.remove('hidden'); // Show modal
+                });
+
+                document.getElementById('closeShareModal').addEventListener('click', () => {
+                    document.getElementById('shareModal').classList.add('hidden'); // Hide modal
+                });
+
                 playMusic();
                 break;
 
