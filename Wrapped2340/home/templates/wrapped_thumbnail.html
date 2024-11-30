@@ -5,6 +5,7 @@
 {% endcomment %}
 
 <div class="card bg-base-100 flex flex-col items-center" style="padding: 15px">
+    <div class="card-body w-full">
     <div class="card-title text-center justify-between w-full">
         <div class="btn btn-circle btn-sm btn-ghost"></div>
         <h2>
@@ -52,15 +53,15 @@
         </div>
     </div>
 
-    <div class="w-full my-1.5">
-        <strong class="text-lg">Top Artists:</strong>
+    <div class="w-full h-full my-1.5">
+        <div class="text-lg font-extrabold">Top Artists:</div>
         {% if wrap.creator2 %}
             <ul>
                 {% with wrap.content.duo1.artists|first as top_artist %}
-                    <li>{{ wrap.creator1 }}: {{ top_artist.name }}</li>
+                    <li><strong>{{ wrap.creator1 }}</strong>: {{ top_artist.name }}</li>
                 {% endwith %}
                 {% with wrap.content.duo2.artists|first as top_artist %}
-                    <li>{{ wrap.creator2 }}: {{ top_artist.name }}</li>
+                    <li><strong>{{ wrap.creator2 }}</strong>: {{ top_artist.name }}</li>
                 {% endwith %}
             </ul>
         {% else %}
@@ -71,14 +72,14 @@
             </ol>
         {% endif %}
     <br>
-        <strong class="text-lg">Top Tracks:</strong>
+        <div class="text-lg font-extrabold">Top Tracks:</div>
         {% if wrap.creator2 %}
             <ul>
                 {% with wrap.content.duo1.tracks|first as top_track %}
-                <li>{{ wrap.creator1 }}: {{ top_track.name }}</li>
+                <li><strong>{{ wrap.creator1 }}</strong>: {{ top_track.name }}</li>
                 {% endwith %}
                 {% with wrap.content.duo2.tracks|first as top_track %}
-                    <li>{{ wrap.creator2 }}: {{ top_track.name }}</li>
+                    <li><strong>{{ wrap.creator2 }}</strong>: {{ top_track.name }}</li>
                 {% endwith %}
             </ul>
         {% else %}
@@ -99,12 +100,13 @@
         {% endif %}
     </a>
 
-    <div class="justify-self-end pt-1">
+    <div class="justify-self-end pt-1 text-center">
         <p class="text-sm text-gray-500">
             {{ wrap.time_created|naturaltime }}
             {% if show_public %}
                 - {% if wrap.public %} Public {% else %} Private {% endif %}
             {% endif %}
         </p>
+    </div>
     </div>
 </div>
