@@ -137,22 +137,8 @@
             z-index: 1000;  /* Ensures the button stays on top */
         }
 
-        #shareModal {
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 999; /* Ensure it’s on top of other elements */
-        }
-
-        #shareModal > div {
-            background-color: white;
-            max-width: 400px;
-            width: 100%;
-            padding: 20px;
-            border-radius: 8px;
+        #shareButton {
+            z-index: 1000;
         }
 
     </style>
@@ -711,37 +697,26 @@
                 const genreName = document.querySelector("#genres-data .genre1").innerText;
                 const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}";
                 const cardAction = document.getElementById("card-buttons");
-                // share button in bottom-right corner
-                const shareButtonHTML = `
-                <button id="shareButton" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 z-30">
+
+                // Share Modal HTML (hidden by default)
+                const shareModalHTML = `
+                <button id="shareButton" onclick="my_modal_2.showModal()" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 [z]-30" >
                     <!-- Share SVG Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
                     </svg>
-                </button>`;
+                </button>
+                <dialog id="my_modal_2" class="modal">
+                  <div class="modal-box">
+                    <h3 class="text-lg font-bold">Hello!</h3>
+                    <p class="py-4">Press ESC key or click outside to close</p>
+                  </div>
+                  <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                  </form>
+                </dialog>`;
 
-                // Share Modal HTML (hidden by default)
-                const shareModalHTML = `
-                <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
-                    <div class="bg-white p-6 rounded-lg w-80 shadow-xl relative">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-semibold">Share this</h2>
-                            <button id="closeShareModal" class="text-gray-500 hover:text-gray-700">&times;</button>
-                        </div>
-                    <!-- Placeholder for the 4 share icons -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <button class="share-icon p-2 bg-gray-200 rounded-full">
-                            <!-- Placeholder for the first share icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 3.75h-10.5a2.25 2.25 0 0 0-2.25 2.25v12a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-12a2.25 2.25 0 0 0-2.25-2.25zM15 12h-3v6h-2v-6H8v-2h2V7.5c0-2.25 1.5-3 3-3h3v2h-2.5c-.5 0-.5.5-.5.5v2h3l-1.5 2h-2.5v6h2V12z" />
-                                </svg>
-                            </button>
-                        <!-- Add more buttons for the other 3 icons as needed -->
-                        </div>
-                    </div>
-                </div>`;
-
-                cardAction.innerHTML = shareButtonHTML + shareModalHTML;
+                cardAction.innerHTML = shareModalHTML;
                 slideIcon.className = "hidden";
                 slideTitle.innerText = "Summary";
                 slideContent.innerHTML =
