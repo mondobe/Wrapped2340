@@ -137,6 +137,10 @@
             z-index: 1000;  /* Ensures the button stays on top */
         }
 
+        #shareButton {
+            z-index: 1000;
+        }
+
     </style>
 </head>
 
@@ -148,7 +152,7 @@
     </svg>
 </a>
 
-<div id="slide-container" class="card max-h-[3/4] max-w-[3/4] p-6 space-y-6 text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
+<div id="slide-container" class="card card-compact md:card-normal max-h-[3/4] max-w-[3/4] text-center bg-gray-800 rounded-lg shadow-lg transition duration-700 transform">
     <figure>
         <div id="slide-icon" class="flex justify-center fade-in">
             <img class="w-28 h-28" id="slide-icon-img" src="" alt="Slide Icon">
@@ -157,7 +161,10 @@
     <!-- Dynamic Slide Content -->
     <div class="card-body text-center items-center">
         <div id="slide-title" class="card-title text-2xl md:text-4xl text-center justify-self-center font-bold">Slide Title</div>
-        <div id="slide-content" class="text-lg text-gray-300 w-full">Slide Content goes here...</div>
+        <div id="slide-content" class="w-full">Slide Content goes here...</div>
+    </div>
+    <div id="card-buttons" class="card-actions">
+
     </div>
 </div>
 
@@ -175,14 +182,35 @@
 
 <!-- Make sure the data is rendering properly in your HTML -->
 <div id="genres-data" hidden>
-    {% if wrapped_object.default_content.genres %}
-        {% for genre in wrapped_object.default_content.genres|slice:":5" %}
-            <div class="genre">
-                <div>{{ genre.genre }}</div>
-            </div>
-        {% endfor %}
+    {% if wrapped_object.creator2 %}
+        {% if wrapped_object.content.duo1.genres %}
+            {% for genre in wrapped_object.content.duo1.genres|slice:":5" %}
+                <div class="genre1">
+                    <div>{{ genre.genre }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No genres available.</p>
+        {% endif %}
+        {% if wrapped_object.content.duo2.genres %}
+            {% for genre in wrapped_object.content.duo2.genres|slice:":5" %}
+                <div class="genre2">
+                    <div>{{ genre.genre }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No genres available.</p>
+        {% endif %}
     {% else %}
-        <p>No genres available.</p>
+        {% if wrapped_object.content.genres %}
+            {% for genre in wrapped_object.content.genres|slice:":5" %}
+                <div class="genre1">
+                    <div>{{ genre.genre }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No genres available.</p>
+        {% endif %}
     {% endif %}
 </div>
 
@@ -201,15 +229,32 @@
 {% endif %}
 
 <div id="songs-data" hidden>
-    {% if wrapped_object.default_content.tracks %}
-        {% for song in wrapped_object.default_content.tracks %}
-            <div class="song">
-                <img src="{{ song.images.url }}" alt="{{ song.name }}">
-                <div>{{ song.name }}</div>
-            </div>
-        {% endfor %}
+    {% if wrapped_object.creator2 %}
+        {% if wrapped_object.content.duo1.tracks %}
+            {% for song in wrapped_object.content.duo1.tracks|slice:":5" %}
+                <div class="song1">
+                    <img src="{{ song.images.url }}" alt="{{ song.name }}">
+                    <div>{{ song.name }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if wrapped_object.content.duo2.tracks %}
+            {% for song in wrapped_object.content.duo2.tracks|slice:":5" %}
+                <div class="song2">
+                    <img src="{{ song.images.url }}" alt="{{ song.name }}">
+                    <div>{{ song.name }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
     {% else %}
-        <p>No songs available.</p>
+        {% if wrapped_object.content.tracks %}
+            {% for song in wrapped_object.content.tracks|slice:":10" %}
+                <div class="song1">
+                    <img src="{{ song.images.url }}" alt="{{ song.name }}">
+                    <div>{{ song.name }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
     {% endif %}
 </div>
 
@@ -229,15 +274,32 @@
 {% endif %}
 
 <div id="artists-data" hidden>
-    {% if wrapped_object.default_content.artists %}
-        {% for artist in wrapped_object.default_content.artists %}
-            <div class="artist">
-                <img src="{{ artist.images.url }}" alt="{{ artist.name }}">
-                <div>{{ artist.name }}</div>
-            </div>
-        {% endfor %}
+    {% if wrapped_object.creator2 %}
+        {% if wrapped_object.content.duo1.artists %}
+            {% for artist in wrapped_object.content.duo1.artists|slice:":5" %}
+                <div class="artist1">
+                    <img src="{{ artist.images.url }}" alt="{{ artist.name }}">
+                    <div>{{ artist.name }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if wrapped_object.content.duo2.artists %}
+            {% for artist in wrapped_object.content.duo2.artists|slice:":5" %}
+                <div class="artist2">
+                    <img src="{{ artist.images.url }}" alt="{{ artist.name }}">
+                    <div>{{ artist.name }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
     {% else %}
-        <p>No artists available.</p>
+        {% if wrapped_object.content.artists %}
+            {% for artist in wrapped_object.content.artists|slice:":10" %}
+                <div class="artist1">
+                    <img src="{{ artist.images.url }}" alt="{{ artist.name }}">
+                    <div>{{ artist.name }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
     {% endif %}
 </div>
 
@@ -277,12 +339,17 @@
 
     // Parse music links from Django context
     let musicLinks = [];
+    let musicLinks2 = [];
     try {
-        musicLinks = decodeHTML("{{ wrapped_object.default_content.preview_urls|escapejs }}").replace(/'/g,'"')
-        musicLinks = JSON.parse(musicLinks)
+
         {% if wrapped_object.creator2 %}
+            musicLinks = decodeHTML("{{ wrapped_object.content.duo1.preview_urls|escapejs }}").replace(/'/g,'"')
             musicLinks2 = decodeHTML("{{ wrapped_object.content.duo2.preview_urls|escapejs }}").replace(/'/g,'"')
-            musicLinks = musicLinks + JSON.parse(musicLinks)
+            musicLinks = JSON.parse(musicLinks)
+            musicLinks2 = JSON.parse(musicLinks2)
+        {% else %}
+            musicLinks = decodeHTML("{{ wrapped_object.default_content.preview_urls|escapejs }}").replace(/'/g,'"')
+            musicLinks = JSON.parse(musicLinks)
         {% endif %}
         //console.log("Music Links:", musicLinks);
     } catch (e) {
@@ -300,17 +367,43 @@
     }
 
     // Function to play music based on slide
-    let lastPlayedIndex = -1;
+    let history = []; // History of played tracks across both arrays
+    const MAX_HISTORY = 5; // Maximum number of recently played tracks to keep in history
+
     function playMusic() {
         try {
-            let randomNumber;
-            do {
-                randomNumber = Math.floor(Math.random() * musicLinks.length); // Get a random index
-            } while (randomNumber === lastPlayedIndex);
-            lastPlayedIndex = randomNumber
-            playTrack(musicLinks[randomNumber])
-        } catch {
-            console.warn(`No music available`);
+            // Combine the two arrays into one
+            let combinedArray = [
+                ...musicLinks.map((track, index) => ({ track, source: "musicLinks", index })),
+                ...musicLinks2.map((track, index) => ({ track, source: "musicLinks2", index }))
+            ];
+
+            // Filter out tracks that are recently played
+            let availableTracks = combinedArray.filter(item => {
+                return !history.some(hist => hist.source === item.source && hist.index === item.index);
+            });
+
+            // If no tracks are available (all are in history), allow replay by clearing the history
+            if (availableTracks.length === 0) {
+                console.warn("All tracks are in history, clearing history for replay.");
+                history = [];
+                availableTracks = combinedArray;
+            }
+
+            // Randomly pick a track from the available ones
+            const randomIndex = Math.floor(Math.random() * availableTracks.length);
+            const selectedTrack = availableTracks[randomIndex];
+
+            // Update the history
+            history.push({ source: selectedTrack.source, index: selectedTrack.index });
+            if (history.length > MAX_HISTORY) {
+                history.shift(); // Remove the oldest entry to maintain the max history size
+            }
+
+            // Play the selected track
+            playTrack(selectedTrack.track);
+        } catch (error) {
+            console.warn(`No music available: ${error.message}`);
         }
     }
 
@@ -339,6 +432,7 @@
         slideContent.style.animation = '';
         slideIcon.style.animation = '';
 
+        let index = 1;
 
         // Change content based on pageId
         switch (pageId) {
@@ -357,30 +451,37 @@
                     slideIconImg.src = flag ? flag : "Flag not found"
                 });
 
-                let locationListHTML = '<ol type="1">'; // Start an ordered list
+                let locationListHTML = '<div class="grid grid-cols-1 gap-4">'; // Start an ordered list
+                let locationHTML1 = '<div>';
                 {% if wrapped_object.creator2 %}
-                    locationListHTML = `<strong>{{ wrapped_object.creator1 }}:</strong>
-                        <br><ol type="1">`; // Start an ordered list
+                    locationListHTML = '<div class="grid grid-cols-2 gap-4">'; // Start an ordered list
+                    locationHTML1 += `<div class='underline font-black	 text-xl'>{{ wrapped_object.creator1 }}</div>`; // Start an ordered list
                 {% endif %}
+
                 locations.forEach(location => {
                     const locationName = location.country;
 
                     // Add each location to the list as a <li> item
-                    locationListHTML += `<li>${locationName}</li>`;
+                    locationHTML1 += `<div>${locationName}</div>`;
                 });
-                locationListHTML += "</ol>"; // Close the ordered list
+                locationHTML1 += '</div>'
+
+                let locationHTML2 = '<div>'
                 {% if wrapped_object.creator2 %}
                     let locations2 = JSON.parse("{{ wrapped_object.content.duo2.locations|escapejs }}".replace(/'/g, '"'))
-                    locationListHTML += `<br><strong>{{ wrapped_object.creator2 }}:</strong>
-                        <br><ol type="1">`; // Start an ordered list
+                    locationHTML2 += `<div class='underline font-black	 text-xl'>{{ wrapped_object.creator2 }}</div>`; // Start an ordered list
                     locations2.forEach(location => {
                         const locationName = location.country;
 
                         // Add each location to the list as a <li> item
-                        locationListHTML += `<li>${locationName}</li>`;
+                        locationHTML2 += `<div>${locationName}</div>`;
                     });
-                    locationListHTML += "</ol>"; // Close the ordered list
                 {% endif %}
+                locationHTML2 += '</div>'
+
+                locationListHTML += locationHTML1;
+                locationListHTML += locationHTML2;
+                locationListHTML += "</div>"; // Close the ordered list
 
                 slideTitle.innerText = "Regions Your Favorite Artists Are From";
                 slideContent.innerHTML = locationListHTML;
@@ -393,33 +494,63 @@
                 playMusic();
                 break;
             case 4:
-                const genres = Array.from(document.getElementById("genres-data").getElementsByClassName("genre"));
-
-                let genresListHTML = '<ol type="1">';
+                index = 1;
+                let genresListHTML = '<div class="grid grid-cols-1 gap-4">'; // Start a grid layout for genres
+                let genresHTML1 = '<div>';
                 {% if wrapped_object.creator2 %}
-                    const genres2 = Array.from(document.getElementById("genres-data2").getElementsByClassName("genre"));
-                    genresListHTML = `<strong>{{ wrapped_object.creator1 }}:</strong><br>
-                        <ol type="1">`;
+                    genresListHTML = '<div class="grid grid-cols-2 gap-4">'; // Start a grid layout for genres
+                    genresHTML1 += `<div class='underline font-black text-xl'>{{ wrapped_object.creator1 }}</div>`; // Add creator1 heading
                 {% endif %}
 
-                genres.forEach(genre => {
+                let genres1 = Array.from(document.getElementById("genres-data").getElementsByClassName("genre1"));
+                genres1.forEach(genre => {
+                    const rank = index++;
                     const genreName = genre.querySelector("div").innerText;
-                    genresListHTML += `<li>${genreName}</li>`;
+
+                    // Add each genre to the list
+                    genresHTML1 += `
+                        <div class="flex justify-center items-center space-x-4">
+                          <div class="flex items-center w-1/2 justify-between">
+                            <span class="text-lg font-bold mr-2">#${rank}</span>
+                            <div class="flex justify-center w-full">
+                              <strong class="text-xs md:text-base">${genreName}</strong>
+                            </div>
+                          </div>
+                        </div>`;
                 });
-                genresListHTML += "</ol><br>";
+                genresHTML1 += '</div>';
 
+                let genresHTML2 = '<div>';
                 {% if wrapped_object.creator2 %}
-                    genresListHTML += `<strong>{{ wrapped_object.creator2 }}:</strong><br>
-                        <ol type="1">`;
-                    genres2.forEach(genre => {
-                        const genreName = genre.querySelector("div").innerText;
-                        genresListHTML += `<li>${genreName}</li>`;
-                    });
-                    genresListHTML += "</ol>";
-                {% endif %}
+                    index = 1;
+                    let genres2 = Array.from(document.getElementById("genres-data").getElementsByClassName("genre2"));
+                    genresHTML2 += `<div class='underline font-black text-xl'>{{ wrapped_object.creator2 }}</div>`; // Add creator2 heading
 
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "Top 5 Genres"
+                    // Loop through the second set of genres
+                    genres2.forEach(genre => {
+                        const rank = index++;
+                        const genreName = genre.querySelector("div").innerText;
+
+                        // Add each genre to the list
+                        genresHTML2 += `
+                            <div class="flex justify-center items-center space-x-4">
+                              <div class="flex items-center w-1/2 justify-between">
+                                <span class="text-lg font-bold mr-2">#${rank}</span>
+                                <div class="flex justify-center w-full">
+                                  <strong class="text-xs md:text-base">${genreName}</strong>
+                                </div>
+                              </div>
+                            </div>`;
+                    });
+                {% endif %}
+                genresHTML2 += '</div>';
+
+                genresListHTML += genresHTML1;
+                genresListHTML += genresHTML2;
+
+                genresListHTML += "</div>";
+                slideIcon.className = "hidden";
+                slideTitle.innerText = "Top 5 Genres";
                 slideContent.innerHTML = genresListHTML;
                 break;
             case 5:
@@ -430,37 +561,85 @@
                 timer();
                 break;
             case 6:
-                let songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
-
-                let songListHTML = '<div class="flex flex-col">';
-                {% if wrapped_object.creator2 %}
-                    songs = songs.slice(0, 5);
-                    const songs2 = Array.from(document.getElementById("songs-data2").getElementsByClassName("song")).slice(0, 5);
-                    songListHTML = `<div class="flex flex-col">
-                            <p class="text-xl">{{ wrapped_object.creator1 }}:</p>`;
-                {% endif %}
-
-                songs.forEach((song) => {
-                    const songName = song.querySelector("div").innerText;
-                    const songImg = song.querySelector("img").src;
-                    songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
-                songListHTML += "</div>"
+                index = 1;
+                let songListHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">'; // Start a grid layout for songs
+                let songHTML1 = '<div>';
+                let songHTML2 = '<div>';
 
                 {% if wrapped_object.creator2 %}
-                    songListHTML += `<div class="flex flex-col">
-                                <p class="text-xl">{{ wrapped_object.creator2 }}:</p>`;
-
-                    songs2.forEach((song) => {
+                    songListHTML = '<div class="grid grid-cols-2 gap-4">'
+                    songHTML1 += `<div class='underline font-black text-xl'>{{ wrapped_object.creator1 }}</div>`; // Add creator1 heading
+                    let songs1 = Array.from(document.getElementById("songs-data").getElementsByClassName("song1"));
+                    songs1.forEach(song => {
+                        const rank = index++; // Rank starts from 1
                         const songName = song.querySelector("div").innerText;
                         const songImg = song.querySelector("img").src;
-                        songListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${songName}</strong><img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}"/></div>`;})
-                    songListHTML += "</div>"
+
+                        // Add each song to the list
+                        songHTML1 += `
+                        <div class="flex items-center space-x-4">
+                            <span class="text-lg font-bold">#${rank}</span>
+                            <div class='flex justify-between items-center w-full'>
+                                <strong class='text-xs md:text-base'>${songName}</strong>
+                                <img class="w-6 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
+                            </div>
+                        </div>`;
+                    });
+                    songHTML1 += '</div>';
+                    index = 1;
+                    let songs2 = Array.from(document.getElementById("songs-data").getElementsByClassName("song2"));
+                    songHTML2 += `<div class='underline font-black text-xl'>{{ wrapped_object.creator2 }}</div>`; // Add creator2 heading
+
+                    // Loop through the second set of songs
+                    songs2.forEach(song => {
+                        const rank = index++; // Rank starts from 1
+                        const songName = song.querySelector("div").innerText;
+                        const songImg = song.querySelector("img").src;
+
+                        // Add each song to the list
+                        songHTML2 += `
+                            <div class="flex items-center space-x-4">
+                                <span class="text-lg font-bold">#${rank}</span>
+                                    <div class='flex justify-between items-center w-full'>
+                                    <strong class='text-xs md:text-base'>${songName}</strong>
+                                    <img class="w-6 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
+                                </div>
+                            </div>`;
+                    });
+                    songHTML2 += '</div>';
+                    songListHTML += songHTML1;
+                    songListHTML += songHTML2;
+                {% else %}
+                    let songs = Array.from(document.getElementById("songs-data").getElementsByClassName("song1"));
+                    songs.forEach(song => {
+                        const rank = index++; // Rank starts from 1
+                        const songName = song.querySelector("div").innerText;
+                        const songImg = song.querySelector("img").src;
+
+                        // Add each song to the list
+                        songListHTML += `
+                        <div class="flex items-center space-x-4">
+                            <span class="text-lg font-bold">#${rank}</span>
+                            <div class='flex justify-between items-center w-full'>
+                                <strong>${songName}</strong>
+                                <img class="w-12 md:w-20 rounded-xl" src="${songImg}" alt="${songName || 'Unknown Song'}" />
+                            </div>
+                        </div>`;
+                    });
                 {% endif %}
 
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "Top 10 Songs";
-                slideContent.innerHTML = songListHTML
+                songListHTML += "</div>";
+                slideIcon.className = "hidden";
+                slideTitle.innerText = "Top Songs";
+                slideContent.innerHTML = songListHTML;
+
+                // Close the grid container
+                songListHTML += "</div>";
+
+                // Set the content for the slide
+                slideContent.innerHTML = songListHTML;
                 break;
+
             case 7:
                 slideIcon.className = "flex justify-center fade-in"
                 slideTitle.innerText = "Artist Appreciation Time";
@@ -469,39 +648,84 @@
                 playMusic();
                 break;
             case 8:
-                let artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
-
-                let artistListHTML = '<div class="flex flex-col">';
-                {% if wrapped_object.creator2 %}
-                    artists = artists.slice(0, 5);
-                    const artists2 = Array.from(document.getElementById("artists-data2").getElementsByClassName("artist")).slice(0, 5);
-                    artistListHTML = `<div class="flex flex-col">
-                                <p class="text-xl">{{ wrapped_object.creator1 }}:</p>`;
-                {% endif %}
-
-                artists.forEach((artist) => {
-                    // Fetch artist name from the inner <div>
-                    const artistName = artist.querySelector("div").innerText;
-                    const artistImg = artist.querySelector("img").src;
-                    // Add the artist name to the list
-                    artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;
-                });
-                artistListHTML += "</div>";
+                index = 1;
+                let artistListHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">'; // Start a grid layout for artists
+                let artistHTML1 = '<div>';
+                let artistHTML2 = '<div>';
 
                 {% if wrapped_object.creator2 %}
-                    artistListHTML += `<div class="flex flex-col">
-                                    <p class="text-xl">{{ wrapped_object.creator2 }}:</p>`;
-
-                    artists2.forEach((artist) => {
+                    artistListHTML = '<div class="grid grid-cols-2 gap-4">'; // Use grid for two creators
+                    artistHTML1 += '<div class="underline font-black text-xl">{{ wrapped_object.creator1 }}</div>'; // Add creator1 heading
+                    let artists1 = Array.from(document.getElementById("artists-data").getElementsByClassName("artist1"));
+                    artists1.forEach(artist => {
+                        const rank = index++; // Rank starts from 1
                         const artistName = artist.querySelector("div").innerText;
                         const artistImg = artist.querySelector("img").src;
-                        artistListHTML += `<div class="flex justify-between items-center m-1"><strong class="mr-1" >${artistName}</strong><img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Song'}"/></div>`;})
-                    artistListHTML += "</div>"
+
+                        // Add each artist to the list
+                        artistHTML1 +=
+                            `<div class="flex items-center space-x-4">
+                                <span class="text-lg font-bold">#${rank}</span>
+                                <div class='flex justify-between items-center w-full'>
+                                    <strong class='text-xs md:text-base'>${artistName}</strong>
+                                    <img class="w-6 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
+                                </div>
+                            </div>`;
+                    });
+                    artistHTML1 += '</div>';
+                    index = 1;
+                    let artists2 = Array.from(document.getElementById("artists-data").getElementsByClassName("artist2"));
+                    artistHTML2 += '<div class="underline font-black text-xl">{{ wrapped_object.creator2 }}</div>'; // Add creator2 heading
+
+                    // Loop through the second set of artists
+                    artists2.forEach(artist => {
+                        const rank = index++; // Rank starts from 1
+                        const artistName = artist.querySelector("div").innerText;
+                        const artistImg = artist.querySelector("img").src;
+
+                        // Add each artist to the list
+                        artistHTML2 +=
+                            `<div class="flex items-center space-x-4">
+                                <span class="text-lg font-bold">#${rank}</span>
+                                <div class='flex justify-between items-center w-full'>
+                                    <strong class='text-xs md:text-base'>${artistName}</strong>
+                                    <img class="w-6 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
+                                </div>
+                            </div>`;
+                    });
+                        artistHTML2 += '</div>';
+                        artistListHTML += artistHTML1;
+                        artistListHTML += artistHTML2;
+                {% else %}
+                    let artists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist1"));
+                    artists.forEach(artist => {
+                        const rank = index++; // Rank starts from 1
+                        const artistName = artist.querySelector("div").innerText;
+                        const artistImg = artist.querySelector("img").src;
+
+                        // Add each artist to the list
+                        artistListHTML +=
+                            `<div class="flex items-center space-x-4">
+                                <span class="text-lg font-bold">#${rank}</span>
+                                <div class='flex justify-between items-center w-full'>
+                                    <strong>${artistName}</strong>
+                                    <img class="w-12 md:w-20 rounded-xl" src="${artistImg}" alt="${artistName || 'Unknown Artist'}" />
+                                </div>
+                            </div>`;
+                    });
                 {% endif %}
 
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "Top 10 Artists";
-                slideContent.innerHTML = artistListHTML
+                artistListHTML += "</div>";
+                slideIcon.className = "hidden";
+                slideTitle.innerText = "Top Artists";
+
+                // Close the grid container
+                artistListHTML += "</div>";
+
+                // Set the content for the slide
+                slideIcon.className = "hidden";
+                slideTitle.innerText = "Top Artists";
+                slideContent.innerHTML = artistListHTML;
                 break;
             case 9:
                 slideIconImg.src = "{% static 'css/images/suitcases.png' %}"
@@ -525,64 +749,186 @@
                 {% endif %}
                 break;
             case 11:
-                const summarySongs = Array.from(document.getElementById("songs-data").getElementsByClassName("song"));
+                {% if wrapped_object.creator2 %}
+                    const summarySongs2 = Array.from(document.getElementById("songs-data").getElementsByClassName("song2"));
 
-                let summarySongListHTML = '<div class="flex flex-col justify-start">';
+                    let summarySongListHTML2 = '<div class="flex flex-col justify-start text-center">';
+                    summarySongs2.forEach((song, index) => {
+                        if (index >= 5) {
+                            return;
+                        }
+                        const songName2 = song.querySelector("div").innerText;
+                        const songImg2 = song.querySelector("img").src; // Assuming there's an image in the song element
+                        summarySongListHTML2 += `
+                            <div class="flex items-center justify-start mb-2">
+                                <span class="text-sm font-semibold mr-2">#${index + 1} </span> <!-- Space between number and name -->
+                                <div class='flex justify-between items-center w-full'>
+                                    <span class="text-xs md:text-sm">${songName2}</span>
+                                    <img class="w-6 h-6 md:w-12 md:h-12 rounded-xl mr-3" src="${songImg2}" alt="${songName2}" />  <!-- Space between img and number -->
+                                </div>
+                            </div>`;
+                    });
+                    summarySongListHTML2 += "</div>";
+
+                    const summaryArtists2 = Array.from(document.getElementById("artists-data").getElementsByClassName("artist2"));
+
+                    let summaryArtistListHTML2 = '<div class="flex flex-col justify-start text-center">';
+                    summaryArtists2.forEach((artist, index) => {
+                        if (index >= 5) {
+                            return;
+                        }
+                        const artistName2 = artist.querySelector("div").innerText;
+                        const artistImg2 = artist.querySelector("img").src; // Assuming there's an image for the artist
+                        summaryArtistListHTML2 += `
+                        <div class="flex items-center justify-start mb-2">
+                            <span class="text-sm font-semibold mr-2">#${index + 1} </span> <!-- Space between number and name -->
+                            <div class='flex justify-between items-center w-full'>
+                                <span class="text-xs md:text-sm">${artistName2}</span>
+                                <img class="w-6 h-6 md:w-12 md:h-12 rounded-xl mr-3" src="${artistImg2}" alt="${artistName2}" />  <!-- Space between img and number -->
+                            </div>
+                        </div>`;
+                    });
+                    summaryArtistListHTML2 += "</div>";
+
+                    const genreName2 = document.querySelector("#genres-data .genre2").innerText;
+                    const vacationSpot2 = "{{ wrapped_object.content.duo2.vacation|escapejs }}";
+                    const cardAction2 = document.getElementById("card-buttons");
+
+                    // Share Modal HTML (hidden by default)
+                    const shareModalHTML2 = `
+                    <button id="shareButton" onclick="my_modal_2.showModal()" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 [z]-30" >
+                        <!-- Share SVG Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                        </svg>
+                    </button>
+                    <dialog id="my_modal_2" class="modal">
+                      <div class="modal-box">
+                        <h3 class="text-lg font-bold">Hello!</h3>
+                        <p class="py-4">Press ESC key or click outside to close</p>
+                      </div>
+                      <form method="dialog" class="modal-backdrop">
+                        <button>close</button>
+                      </form>
+                    </dialog>`;
+
+                    cardAction2.innerHTML = shareModalHTML2;
+                    slideIcon.className = "hidden";
+                    slideTitle.innerHTML = "<div>Summary for {{ wrapped_object.creator2 }}</div>"
+                    slideContent.innerHTML =
+                        "<div class='text-sm text-center'>Your music journey at a glance!</div>" +
+                        "<div class='grid grid-cols-2 gap-3 md:gap-6 md:p-4'>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Top Songs</div>" +
+                        summarySongListHTML2 +
+                        "</div>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Top Artists</div>" +
+                        summaryArtistListHTML2 +
+                        "</div>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Top Genre</div>" +
+                        "<div class='text-sm'>" + genreName2 + "</div>" +
+                        "</div>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Vacation Spot</div>" +
+                        "<div class='text-sm'>" + vacationSpot2 + "</div>" +
+                        "</div>" +
+                        "</div>"
+                    break;
+                {% endif %}
+            default:
+                const summarySongs = Array.from(document.getElementById("songs-data").getElementsByClassName("song1"));
+
+                let summarySongListHTML = '<div class="flex flex-col justify-start text-center">';
                 summarySongs.forEach((song, index) => {
                     if (index >= 5) {
-                        return
+                        return;
                     }
                     const songName = song.querySelector("div").innerText;
-                    summarySongListHTML += `<div class="flex justify-self-start text-sm m-1">${songName}</div>`;})
-                summarySongListHTML += "</div>"
+                    const songImg = song.querySelector("img").src; // Assuming there's an image in the song element
+                    summarySongListHTML += `
+                        <div class="flex items-center justify-start mb-2">
+                            <span class="text-sm font-semibold mr-2">#${index + 1} </span> <!-- Space between number and name -->
+                            <div class='flex justify-between items-center w-full'>
+                                <span class="text-xs md:text-sm">${songName}</span>
+                                <img class="w-6 h-6 md:w-12 md:h-12 rounded-xl mr-3" src="${songImg}" alt="${songName}" />  <!-- Space between img and number -->
+                            </div>
+                        </div>`;
+                });
+                summarySongListHTML += "</div>";
 
-                const summaryArtists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist"));
+                const summaryArtists = Array.from(document.getElementById("artists-data").getElementsByClassName("artist1"));
 
-                let summaryArtistListHTML = '<div class="flex flex-col">';
-
+                let summaryArtistListHTML = '<div class="flex flex-col justify-start text-center">';
                 summaryArtists.forEach((artist, index) => {
                     if (index >= 5) {
-                        return
+                        return;
                     }
-                    // Fetch artist name from the inner <div>
                     const artistName = artist.querySelector("div").innerText;
-                    // Add the artist name to the list
-                    summaryArtistListHTML += `<div class="flex text-sm m-1"><strong class="mr-1" >${artistName}</strong></div>`;
+                    const artistImg = artist.querySelector("img").src; // Assuming there's an image for the artist
+                    summaryArtistListHTML += `
+                    <div class="flex items-center justify-start mb-2">
+                        <span class="text-sm font-semibold mr-2">#${index + 1} </span> <!-- Space between number and name -->
+                        <div class='flex justify-between items-center w-full'>
+                            <span class="text-xs md:text-sm">${artistName}</span>
+                            <img class="w-6 h-6 md:w-12 md:h-12 rounded-xl mr-3" src="${artistImg}" alt="${artistName}" />  <!-- Space between img and number -->
+                        </div>
+                    </div>`;
                 });
-
                 summaryArtistListHTML += "</div>";
 
-                const genreName = document.querySelector("#genres-data .genre").innerText;
-                const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}"
+                const genreName = document.querySelector("#genres-data .genre1").innerText;
+                let vacationSpot;
+            {% if wrapped_object.creator2 %}
+                vacationSpot = "{{ wrapped_object.content.duo1.vacation|escapejs }}";
+            {% else %}
+                vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}";
+            {% endif %}
+                const cardAction = document.getElementById("card-buttons");
 
-                slideIcon.className = "hidden"
-                slideTitle.innerText = "Summary";
+                // Share Modal HTML (hidden by default)
+                const shareModalHTML = `
+                <button id="shareButton" onclick="my_modal_2.showModal()" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 [z]-30" >
+                    <!-- Share SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                    </svg>
+                </button>
+                <dialog id="my_modal_2" class="modal">
+                  <div class="modal-box">
+                    <h3 class="text-lg font-bold">Hello!</h3>
+                    <p class="py-4">Press ESC key or click outside to close</p>
+                  </div>
+                  <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                  </form>
+                </dialog>`;
+
+                cardAction.innerHTML = shareModalHTML;
+                slideIcon.className = "hidden";
+                slideTitle.innerHTML = "<div>Summary for {{ wrapped_object.creator1 }}</div>";
                 slideContent.innerHTML =
-                    "<div class='text-sm'>Your music journey at a glance!</div>" +
-                        "<div class='grid grid-cols-2 gap-6'>" +
-                            "<div class='justify-start'>" +
-                                "<div class='justify-self-start'>Top Songs</div>" +
-                                summarySongListHTML +
-                            "</div>" +
-                            "<div>" +
-                                "<div class='justify-self-start'>Top Artists</div>" +
-                                summaryArtistListHTML +
-                            "</div>" +
-                            "<div>" +
-                                "<div class='justify-self-start'>Top Genre</div>" +
-                                "<div class='justify-self-start text-sm'>" +
-                                    genreName +
-                                "</div>" +
-                            "</div>" +
-                            "<div>" +
-                                "<div class='justify-self-start'>Vacation Spot</div>" +
-                                "<div class='justify-self-start text-xs'>" +
-                                    vacationSpot +
-                                "</div>" +
-                            "</div>" +
-                        "</div>" +
+                    "<div class='text-sm text-center'>Your music journey at a glance!</div>" +
+                    "<div class='grid grid-cols-2 gap-3 md:gap-6 md:p-4'>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Top Songs</div>" +
+                    summarySongListHTML +
+                    "</div>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Top Artists</div>" +
+                    summaryArtistListHTML +
+                    "</div>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Top Genre</div>" +
+                    "<div class='text-sm'>" + genreName + "</div>" +
+                    "</div>" +
+                    "<div class='text-center'>" +
+                    "<div class='font-bold text-lg mb-2'>Vacation Spot</div>" +
+                    "<div class='text-sm'>" + vacationSpot + "</div>" +
+                    "</div>" +
                     "</div>"
-                ;
+
                 playMusic();
                 break;
         }
@@ -620,7 +966,13 @@
 
     // Function to go to the next slide
     function nextSlide() {
-        if (pageId < 11) {
+        if (pageId < 12) {
+            if (pageId === 11) {
+                const creator2Exists = {{ wrapped_object.creator2|yesno:"true,false" }};
+                if (!creator2Exists) {
+                    window.location.href = '/home';
+                }
+            }
             pageId++;
             loadSlideContent();
             resetTimer();
