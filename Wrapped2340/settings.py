@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     'Wrapped2340.home',
     'Wrapped2340.slides',
     'Wrapped2340.users',
-    'daphne',
 ]
 
 MIDDLEWARE = [
