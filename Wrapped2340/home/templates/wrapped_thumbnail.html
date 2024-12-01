@@ -106,6 +106,9 @@
             {% if show_public %}
                 - {% if wrap.public %} Public {% else %} Private {% endif %}
             {% endif %}
+            {% if wrap.content.timeframe %}
+                - {{ wrap.content.timeframe }}
+            {% endif %}
         </p>
     </div>
     </div>

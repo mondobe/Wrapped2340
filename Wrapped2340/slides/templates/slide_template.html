@@ -450,6 +450,7 @@
                 playMusic();
                 break;
             case 4:
+                index = 1;
                 let genresListHTML = '<div class="grid grid-cols-1 gap-4">'; // Start a grid layout for genres
                 let genresHTML1 = '<div>';
                 {% if wrapped_object.creator2 %}
@@ -459,24 +460,43 @@
 
                 let genres1 = Array.from(document.getElementById("genres-data").getElementsByClassName("genre1"));
                 genres1.forEach(genre => {
+                    const rank = index++;
                     const genreName = genre.querySelector("div").innerText;
 
                     // Add each genre to the list
-                    genresHTML1 += `<div>${genreName}</div>`;
+                    genresHTML1 += `
+                        <div class="flex justify-center items-center space-x-4">
+                          <div class="flex items-center w-1/2 justify-between">
+                            <span class="text-lg font-bold mr-2">#${rank}</span>
+                            <div class="flex justify-center w-full">
+                              <strong class="text-xs md:text-base">${genreName}</strong>
+                            </div>
+                          </div>
+                        </div>`;
                 });
                 genresHTML1 += '</div>';
 
                 let genresHTML2 = '<div>';
                 {% if wrapped_object.creator2 %}
+                    index = 1;
                     let genres2 = Array.from(document.getElementById("genres-data").getElementsByClassName("genre2"));
                     genresHTML2 += `<div class='underline font-black text-xl'>{{ wrapped_object.creator2 }}</div>`; // Add creator2 heading
 
                     // Loop through the second set of genres
                     genres2.forEach(genre => {
+                        const rank = index++;
                         const genreName = genre.querySelector("div").innerText;
 
                         // Add each genre to the list
-                        genresHTML2 += `<div>${genreName}</div>`;
+                        genresHTML2 += `
+                            <div class="flex justify-center items-center space-x-4">
+                              <div class="flex items-center w-1/2 justify-between">
+                                <span class="text-lg font-bold mr-2">#${rank}</span>
+                                <div class="flex justify-center w-full">
+                                  <strong class="text-xs md:text-base">${genreName}</strong>
+                                </div>
+                              </div>
+                            </div>`;
                     });
                 {% endif %}
                 genresHTML2 += '</div>';
