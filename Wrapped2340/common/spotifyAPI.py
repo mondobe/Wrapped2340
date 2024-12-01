@@ -163,7 +163,7 @@ def get_wrapped_content(userprofile, timeframe):
             'locations': top_artists_locations,
             "preview_urls": preview_urls,
             'vacation': vacation_spot,
-            'timeframe': timeframe,
+            'timeframe': timeframe.replace('_term',""),
             'genres': top_genres,
         }
         return combined
