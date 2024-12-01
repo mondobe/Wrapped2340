@@ -295,12 +295,17 @@
 
     // Parse music links from Django context
     let musicLinks = [];
+    let musicLinks2 = [];
     try {
-        musicLinks = decodeHTML("{{ wrapped_object.default_content.preview_urls|escapejs }}").replace(/'/g,'"')
-        musicLinks = JSON.parse(musicLinks)
+
         {% if wrapped_object.creator2 %}
+            musicLinks = decodeHTML("{{ wrapped_object.content.duo1.preview_urls|escapejs }}").replace(/'/g,'"')
             musicLinks2 = decodeHTML("{{ wrapped_object.content.duo2.preview_urls|escapejs }}").replace(/'/g,'"')
-            musicLinks = musicLinks + JSON.parse(musicLinks)
+            musicLinks = JSON.parse(musicLinks)
+            musicLinks2 = JSON.parse(musicLinks2)
+        {% else %}
+            musicLinks = decodeHTML("{{ wrapped_object.default_content.preview_urls|escapejs }}").replace(/'/g,'"')
+            musicLinks = JSON.parse(musicLinks)
         {% endif %}
         //console.log("Music Links:", musicLinks);
     } catch (e) {
@@ -321,12 +326,20 @@
     let lastPlayedIndex = -1;
     function playMusic() {
         try {
-            let randomNumber;
+            let selectedArray, randomNumber;
+
+            if (Math.random() < 0.5) {
+                selectedArray = musicLinks;
+            } else {
+                selectedArray = musicLinks2;
+            }
+
             do {
-                randomNumber = Math.floor(Math.random() * musicLinks.length); // Get a random index
+                randomNumber = Math.floor(Math.random() * selectedArray.length);
             } while (randomNumber === lastPlayedIndex);
+
             lastPlayedIndex = randomNumber
-            playTrack(musicLinks[randomNumber])
+            playTrack(selectedArray[randomNumber]);
         } catch {
             console.warn(`No music available`);
         }
@@ -653,6 +666,95 @@
                     slideContent.innerText = vacation;
                 {% endif %}
                 break;
+            case 11:
+                {% if wrapped_object.creator2 %}
+                    const summarySongs2 = Array.from(document.getElementById("songs-data").getElementsByClassName("song2"));
+
+                    let summarySongListHTML2 = '<div class="flex flex-col justify-start text-center">';
+                    summarySongs2.forEach((song, index) => {
+                        if (index >= 5) {
+                            return;
+                        }
+                        const songName2 = song.querySelector("div").innerText;
+                        const songImg2 = song.querySelector("img").src; // Assuming there's an image in the song element
+                        summarySongListHTML2 += `
+                            <div class="flex items-center justify-start mb-2">
+                                <span class="text-sm font-semibold mr-2">#${index + 1} </span> <!-- Space between number and name -->
+                                <div class='flex justify-between items-center w-full'>
+                                    <span class="text-xs md:text-sm">${songName2}</span>
+                                    <img class="w-6 h-6 md:w-12 md:h-12 rounded-xl mr-3" src="${songImg2}" alt="${songName2}" />  <!-- Space between img and number -->
+                                </div>
+                            </div>`;
+                    });
+                    summarySongListHTML2 += "</div>";
+
+                    const summaryArtists2 = Array.from(document.getElementById("artists-data").getElementsByClassName("artist2"));
+
+                    let summaryArtistListHTML2 = '<div class="flex flex-col justify-start text-center">';
+                    summaryArtists2.forEach((artist, index) => {
+                        if (index >= 5) {
+                            return;
+                        }
+                        const artistName2 = artist.querySelector("div").innerText;
+                        const artistImg2 = artist.querySelector("img").src; // Assuming there's an image for the artist
+                        summaryArtistListHTML2 += `
+                        <div class="flex items-center justify-start mb-2">
+                            <span class="text-sm font-semibold mr-2">#${index + 1} </span> <!-- Space between number and name -->
+                            <div class='flex justify-between items-center w-full'>
+                                <span class="text-xs md:text-sm">${artistName2}</span>
+                                <img class="w-6 h-6 md:w-12 md:h-12 rounded-xl mr-3" src="${artistImg2}" alt="${artistName2}" />  <!-- Space between img and number -->
+                            </div>
+                        </div>`;
+                    });
+                    summaryArtistListHTML2 += "</div>";
+
+                    const genreName2 = document.querySelector("#genres-data .genre2").innerText;
+                    const vacationSpot2 = "{{ wrapped_object.content.duo2.vacation|escapejs }}";
+                    const cardAction2 = document.getElementById("card-buttons");
+
+                    // Share Modal HTML (hidden by default)
+                    const shareModalHTML2 = `
+                    <button id="shareButton" onclick="my_modal_2.showModal()" class="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white absolute bottom-4 right-4 [z]-30" >
+                        <!-- Share SVG Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25" />
+                        </svg>
+                    </button>
+                    <dialog id="my_modal_2" class="modal">
+                      <div class="modal-box">
+                        <h3 class="text-lg font-bold">Hello!</h3>
+                        <p class="py-4">Press ESC key or click outside to close</p>
+                      </div>
+                      <form method="dialog" class="modal-backdrop">
+                        <button>close</button>
+                      </form>
+                    </dialog>`;
+
+                    cardAction2.innerHTML = shareModalHTML2;
+                    slideIcon.className = "hidden";
+                    slideTitle.innerHTML = "<div>Summary for {{ wrapped_object.creator2 }}</div>"
+                    slideContent.innerHTML =
+                        "<div class='text-sm text-center'>Your music journey at a glance!</div>" +
+                        "<div class='grid grid-cols-2 gap-3 md:gap-6 md:p-4'>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Top Songs</div>" +
+                        summarySongListHTML2 +
+                        "</div>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Top Artists</div>" +
+                        summaryArtistListHTML2 +
+                        "</div>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Top Genre</div>" +
+                        "<div class='text-sm'>" + genreName2 + "</div>" +
+                        "</div>" +
+                        "<div class='text-center'>" +
+                        "<div class='font-bold text-lg mb-2'>Vacation Spot</div>" +
+                        "<div class='text-sm'>" + vacationSpot2 + "</div>" +
+                        "</div>" +
+                        "</div>"
+                    break;
+                {% endif %}
             default:
                 const summarySongs = Array.from(document.getElementById("songs-data").getElementsByClassName("song1"));
 
@@ -695,7 +797,12 @@
                 summaryArtistListHTML += "</div>";
 
                 const genreName = document.querySelector("#genres-data .genre1").innerText;
-                const vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}";
+                let vacationSpot;
+            {% if wrapped_object.creator2 %}
+                vacationSpot = "{{ wrapped_object.content.duo1.vacation|escapejs }}";
+            {% else %}
+                vacationSpot = "{{ wrapped_object.content.vacation|escapejs }}";
+            {% endif %}
                 const cardAction = document.getElementById("card-buttons");
 
                 // Share Modal HTML (hidden by default)
@@ -718,7 +825,7 @@
 
                 cardAction.innerHTML = shareModalHTML;
                 slideIcon.className = "hidden";
-                slideTitle.innerText = "Summary";
+                slideTitle.innerHTML = "<div>Summary for {{ wrapped_object.creator1 }}</div>";
                 slideContent.innerHTML =
                     "<div class='text-sm text-center'>Your music journey at a glance!</div>" +
                     "<div class='grid grid-cols-2 gap-3 md:gap-6 md:p-4'>" +
@@ -740,19 +847,8 @@
                     "</div>" +
                     "</div>"
 
-                // Open and close the modal
-                document.getElementById('shareButton').addEventListener('click', () => {
-                    document.getElementById('shareModal').classList.remove('hidden'); // Show modal
-                });
-
-                document.getElementById('closeShareModal').addEventListener('click', () => {
-                    document.getElementById('shareModal').classList.add('hidden'); // Hide modal
-                });
-
                 playMusic();
                 break;
-
-
         }
         resetProgressBar();
     }
@@ -788,7 +884,13 @@
 
     // Function to go to the next slide
     function nextSlide() {
-        if (pageId < 11) {
+        if (pageId < 12) {
+            if (pageId === 11) {
+                const creator2Exists = {{ wrapped_object.creator2|yesno:"true,false" }};
+                if (!creator2Exists) {
+                    window.location.href = '/home';
+                }
+            }
             pageId++;
             loadSlideContent();
             resetTimer();
