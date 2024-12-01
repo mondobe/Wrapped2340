@@ -323,25 +323,43 @@
     }
 
     // Function to play music based on slide
-    let lastPlayedIndex = -1;
+    let history = []; // History of played tracks across both arrays
+    const MAX_HISTORY = 5; // Maximum number of recently played tracks to keep in history
+
     function playMusic() {
         try {
-            let selectedArray, randomNumber;
+            // Combine the two arrays into one
+            let combinedArray = [
+                ...musicLinks.map((track, index) => ({ track, source: "musicLinks", index })),
+                ...musicLinks2.map((track, index) => ({ track, source: "musicLinks2", index }))
+            ];
 
-            if (Math.random() < 0.5) {
-                selectedArray = musicLinks;
-            } else {
-                selectedArray = musicLinks2;
+            // Filter out tracks that are recently played
+            let availableTracks = combinedArray.filter(item => {
+                return !history.some(hist => hist.source === item.source && hist.index === item.index);
+            });
+
+            // If no tracks are available (all are in history), allow replay by clearing the history
+            if (availableTracks.length === 0) {
+                console.warn("All tracks are in history, clearing history for replay.");
+                history = [];
+                availableTracks = combinedArray;
             }
 
-            do {
-                randomNumber = Math.floor(Math.random() * selectedArray.length);
-            } while (randomNumber === lastPlayedIndex);
+            // Randomly pick a track from the available ones
+            const randomIndex = Math.floor(Math.random() * availableTracks.length);
+            const selectedTrack = availableTracks[randomIndex];
 
-            lastPlayedIndex = randomNumber
-            playTrack(selectedArray[randomNumber]);
-        } catch {
-            console.warn(`No music available`);
+            // Update the history
+            history.push({ source: selectedTrack.source, index: selectedTrack.index });
+            if (history.length > MAX_HISTORY) {
+                history.shift(); // Remove the oldest entry to maintain the max history size
+            }
+
+            // Play the selected track
+            playTrack(selectedTrack.track);
+        } catch (error) {
+            console.warn(`No music available: ${error.message}`);
         }
     }
 
@@ -911,7 +929,7 @@
     // Reset the timer whenever the user navigates manually
     function resetTimer() {
         clearInterval(slideTimer);
-        if (pageId < 0) {
+        if (pageId < 11) {
             slideTimer = setInterval(nextSlide, 7000);
         }
     }

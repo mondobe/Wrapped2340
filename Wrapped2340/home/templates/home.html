@@ -1,6 +1,19 @@
 {% extends 'home/base.html' %}
 
 {% block content %}
+    {% if not access_token %}
+        <div class="alert alert-error m-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+            Please go into settings and link your Spotify account!
+        </div>
+    {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success shadow-lg mb-2"><span>{{ message }}</span></div>
+        {% endfor %}
+    {% endif %}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Trigger Button for Modal -->
         <div class="card bg-base-100 shadow-lg">

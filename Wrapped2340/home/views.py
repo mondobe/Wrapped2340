@@ -1,7 +1,7 @@
 from os import times
 from plistlib import dumps
 from string import Formatter
-
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import HttpResponse
@@ -24,6 +24,8 @@ class WrappedListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        userprofile = self.request.user.userprofile
+        context["access_token"] = userprofile.access_token
         return context
 
     def post(self, request):
@@ -58,14 +60,14 @@ class WrappedListView(TemplateView):
             wrap_id = request.POST.get('wrap_id')
             wrap = get_object_or_404(Wrapped, id=wrap_id)
             wrap.delete()
-            print(request, "Wrap deleted successfully!")
+            messages.success(request, 'Post Deleted')
 
         elif request.POST.get('action') == 'publish':
             wrap_id = request.POST.get('wrap_id')
             wrap = get_object_or_404(Wrapped, id=wrap_id)
             wrap.public = not wrap.public  # Toggle publish status
             wrap.save()
-            print("Wrap publish status updated!")
+            messages.success(request, 'Changed Public Status')
         return super().get(request)
 
 class HomeView(LoginRequiredMixin, WrappedListView):
