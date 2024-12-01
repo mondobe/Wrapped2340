@@ -7,10 +7,11 @@
         <title>{% block title %}Wrapped Up{% endblock %}</title>
         <link href="{% static 'css/output.css' %}" rel="stylesheet">
         <link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
         {% block head %}{% endblock %}
     </head>
-    <body class="bg-base-200 flex flex-col max-h-dvh">
+    <body class="bg-base-200 flex flex-col max-h-dvh" style="font-family: 'Poppins', sans-serif;">
         <div class="navbar bg-base-200 shadow-lg">
             <div class="flex-1">
                 <a href="{% url 'home:home-redirect' %}" class="btn btn-ghost normal-case text-xl">AudioScape</a>

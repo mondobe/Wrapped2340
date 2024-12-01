@@ -48,6 +48,10 @@
         </div>
     </div>
 
+    <div class="mt-8 text-center text-sm text-gray-500">
+        <p>Designed with love by the AudioScape Team</p>
+    </div>
+
     <!-- JavaScript code for opening the modal -->
     <script>
         function showSpinner() {
@@ -155,6 +159,18 @@
                 });
             }
         });
+
+        // Close modal with escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.querySelector('.modal.show');
+                if (modal) {
+                    toggleModal(modal.id);
+                }
+            }
+        });
+    
+        
     </script>
 
     <style>
@@ -171,6 +187,18 @@
         .btn-circle {
             z-index: 60; /* Ensure it's on top */
             cursor: pointer; /* Ensure it looks clickable */
+        }
+
+        .btn-circle:hover {
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(5px); }
         }
 
         button {
