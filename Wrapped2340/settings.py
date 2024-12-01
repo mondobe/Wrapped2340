@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'Wrapped2340.home',
     'Wrapped2340.slides',
     'Wrapped2340.users',
+    'daphne',
 ]
 
 MIDDLEWARE = [
@@ -99,7 +100,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Wrapped2340.wsgi.application'
-
+ASGI_APPLICATION = "Wrapped2340.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
