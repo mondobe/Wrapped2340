@@ -1,0 +1,18 @@
+services:
+  spotifywrapped:
+    container_name: spotifywrapped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: gunicorn -b 0.0.0.0 Wrapped2340.wsgi:application
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    env_file:
+      - .env
+      
+networks:
+  default:
+    external: true
+    name: serverout
