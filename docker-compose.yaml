@@ -1,0 +1,28 @@
+services:
+  spotifywrapped:
+    container_name: spotifywrapped
+    image: python:3.10
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=Wrapped2340.settings
+    env_file:
+      - .env
+    command: >
+      sh -c "
+        pip install --no-cache-dir -r requirements.txt &&
+        python manage.py migrate &&
+        yes yes | python manage.py collectstatic &&
+        daphne -b 0.0.0.0 -p 8000 Wrapped2340.asgi:application
+      "
+    restart: unless-stopped  # Automatically restart in case of failure
+    networks:
+      - default
+
+networks:
+  default:
+    external: true
+    name: serverout

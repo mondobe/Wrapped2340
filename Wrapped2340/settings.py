@@ -15,6 +15,7 @@ from pathlib import Path
 import praw
 from dotenv import load_dotenv
 from django.urls import reverse_lazy
+import whitenoise
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,9 +29,9 @@ load_dotenv()
 SECRET_KEY = os.getenv("DJANGO_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = reverse_lazy("users:login")
 
@@ -51,6 +52,7 @@ reddit = praw.Reddit(
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -73,6 +75,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = False
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://wrapped.lovelylilo.com',
 ]
 
 ROOT_URLCONF = 'Wrapped2340.urls'
@@ -95,7 +106,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Wrapped2340.wsgi.application'
-
+ASGI_APPLICATION = "Wrapped2340.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
