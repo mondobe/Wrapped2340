@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv("DJANGO_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['wrapped.lovelylilo.com']
+ALLOWED_HOSTS = ['wrapped.lovelylilo.com', '127.0.0.1']
 
 LOGIN_URL = reverse_lazy("users:login")
 
@@ -52,7 +52,6 @@ reddit = praw.Reddit(
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
