@@ -52,6 +52,7 @@ reddit = praw.Reddit(
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -101,6 +102,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Wrapped2340.wsgi.application'
+ASGI_APPLICATION = "Wrapped2340.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
