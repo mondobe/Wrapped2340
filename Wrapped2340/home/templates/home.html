@@ -40,6 +40,7 @@
             <button onclick="toggleModal('createModal')" class="absolute top-2 right-2 btn btn-circle btn-sm">✕</button>
             <h2 class="font-bold text-lg mb-4">Create New Wrapped</h2>
             <p>Time Frame:</p>
+            <div class="text-xs">short = 1 month | medium = 6 months | long = 1 year</div>
             <form method="post">
                 {% csrf_token %}
                 <div class="flex justify-around my-4">
@@ -62,7 +63,7 @@
     </div>
 
     <div class="mt-8 text-center text-sm text-gray-500">
-        <p>Designed with love by the AudioScape Team</p>
+        <a href="https://sites.google.com/view/2340group55/project-2">Designed with love by the AudioScape Team</a>
     </div>
 
     <!-- JavaScript code for opening the modal -->
@@ -197,6 +198,7 @@
             visibility: visible !important; /* Ensure it's visible */
         }
 
+<<<<<<< Updated upstream
         .btn-circle {
             z-index: 60; /* Ensure it's on top */
             cursor: pointer; /* Ensure it looks clickable */
@@ -214,6 +216,8 @@
             100% { transform: translateX(5px); }
         }
 
+=======
+>>>>>>> Stashed changes
         button {
             pointer-events: auto; /* Ensure button is clickable */
         }
@@ -222,5 +226,8 @@
             pointer-events: auto !important;
         }
     </style>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 {% endblock %}
