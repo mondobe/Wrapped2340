@@ -15,7 +15,7 @@ services:
       sh -c "
         pip install --no-cache-dir -r requirements.txt &&
         python manage.py migrate &&
-        daphne -b 0.0.0.0 -p 8000 Wrapped2340.asgi:application
+        python manage.py runserver 0.0.0.0:8000
       "
     restart: unless-stopped  # Automatically restart in case of failure
     networks:

@@ -28,7 +28,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("DJANGO_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'Wrapped2340.common',
@@ -78,7 +77,7 @@ MIDDLEWARE = [
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 ROOT_URLCONF = 'Wrapped2340.urls'
 
@@ -100,7 +99,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Wrapped2340.wsgi.application'
-ASGI_APPLICATION = "Wrapped2340.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
