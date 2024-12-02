@@ -77,6 +77,7 @@ class HomeView(LoginRequiredMixin, WrappedListView):
         context['wraps'] = Wrapped.objects.filter(
             Q(creator1=profile) | Q(creator2=profile)).order_by("-time_created")
         context['show_public'] = True
+        context['user'] = self.request.user
         return context
 
 class DiscoverView(LoginRequiredMixin, WrappedListView):
