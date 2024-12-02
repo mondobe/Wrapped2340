@@ -82,6 +82,10 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = False
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://wrapped.lovelylilo.com',
+]
+
 ROOT_URLCONF = 'Wrapped2340.urls'
 
 TEMPLATES = [
