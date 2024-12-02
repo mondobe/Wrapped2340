@@ -41,7 +41,7 @@
                     <form class="m-1" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="wrap_id" value="{{ wrap.id }}">
-                        <button type="submit" value="share" name="action">Share</button>
+                        <button type="submit" value="share" name="action" onclick="copyToClipboard()">Share</button>
                     </form>
                 </li>
                 {% if wrap.creator1.user == user or wrap.creator2 and wrap.creator2.user == user %}
@@ -117,3 +117,25 @@
     </div>
     </div>
 </div>
+
+<script>
+    // Function to copy the message and URL to the clipboard
+    function copyToClipboard() {
+        try {
+            const message = "Check out my Audioscape Music Journey!";
+            const url = `${window.location.origin}/wrapped/{{ wrap.id }}/`;  // Dynamically get the current wrap's URL
+            const fullMessage = `${message} ${url}`;
+
+            // Copy the message and URL to clipboard
+            navigator.clipboard.writeText(fullMessage).then(() => {
+                // Show confirmation popup
+                alert("Link and message copied to clipboard!");
+            }).catch(err => {
+                console.error("Clipboard error:", err);
+                alert("Failed to copy message. Please try again.");
+            });
+        } catch (error) {
+            console.error("Error copying to clipboard:", error);
+        }
+    }
+</script>
